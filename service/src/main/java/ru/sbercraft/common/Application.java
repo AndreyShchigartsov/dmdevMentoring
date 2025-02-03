@@ -7,4 +7,5 @@ public class Application {
         NavigationController navigationController = new NavigationController();
         navigationController.getNavigation();
     }
+
 }

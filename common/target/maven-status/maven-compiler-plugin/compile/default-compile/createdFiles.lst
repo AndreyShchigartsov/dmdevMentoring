@@ -1,0 +1,4 @@
+ru\sbercraft\common\entity\User.class
+ru\sbercraft\common\entity\User$UserBuilder.class
+ru\sbercraft\common\Application.class
+ru\sbercraft\common\entity\Role.class

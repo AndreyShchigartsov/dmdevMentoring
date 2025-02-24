@@ -1,4 +1,4 @@
-package ru.sbercraft.common.integration;
+package ru.sbercraft.service.integration;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,3 +1,0 @@
-app:
-  filename: #{project.version}
-  filename2: 1.0-SNAPSHOT

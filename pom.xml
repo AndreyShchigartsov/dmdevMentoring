@@ -25,6 +25,8 @@
         <mockito.version>5.12.0</mockito.version>
         <junit.version>5.11.4</junit.version>
         <assertj.version>3.27.3</assertj.version>
+        <hibernate.version>6.6.7.Final</hibernate.version>
+        <hibernate-validator.version>8.0.2.Final</hibernate-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -35,6 +37,7 @@
                 <version>${apache.commons.version}</version>
             </dependency>
 
+            <!-- DB-->
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
@@ -42,13 +45,24 @@
                 <scope>runtime</scope>
             </dependency>
 
+            <!-- Hibernate-->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            <!-- lombook-->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
@@ -186,7 +200,6 @@
                                 <goal>report</goal>
                             </goals>
                             <phase>verify</phase>
-<!--                            <phase>prepare-package</phase>-->
                         </execution>
                     </executions>
                 </plugin>

@@ -2,46 +2,26 @@ package ru.sbercraft.service;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.cfg.Configuration;
-import ru.sbercraft.service.entity.Subdivision;
 import ru.sbercraft.service.entity.User;
-
-import java.time.LocalDateTime;
+import ru.sbercraft.service.util.HibernateSessionFactory;
 
 public class Application {
 
     public static void main(String[] args) {
-
-        Configuration configuration = new Configuration();
-        configuration.configure();
-        configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-//        configuration.addAnnotatedClass(Users.class);
-
-        Subdivision subdivision = Subdivision.builder()
-                .subdivision("Экскурсвита")
-                .build();
-        User user = User.builder()
-                .firstname("Слава")
-                .lastname("Слава")
-                .email("Слава")
-                .password("Слава")
-                .role("Слава")
-                .dateRegistration(LocalDateTime.now())
-                .active(true)
-                .subdivision(subdivision)
-                .build();
-        try (SessionFactory sessionFactory = configuration.buildSessionFactory();
-             Session session = sessionFactory.openSession()) {
+        try (SessionFactory sessionFactory = HibernateSessionFactory.buildSessionFactory()) {
+            Session session = sessionFactory.getCurrentSession();
             session.beginTransaction();
 
-//            Users users = session.get(Users.class, 2);
-            Subdivision subdivision1 = session.get(Subdivision.class, 1);
-//            session.evict(users);
-
-//            session.persist(user);
+            User event1 = session.get(User.class, 1L);
 
             session.getTransaction().commit();
+
+            Session session1 = sessionFactory.openSession();
+            session1.beginTransaction();
+
+            User event2 = session1.get(User.class, 1L);
+
+            session1.getTransaction().commit();
         }
     }
 }

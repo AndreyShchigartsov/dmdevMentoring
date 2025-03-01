@@ -4,42 +4,37 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.cfg.Configuration;
-import ru.sbercraft.service.entity.Subdivision;
+import org.hibernate.graph.GraphSemantic;
+import org.hibernate.graph.RootGraph;
 import ru.sbercraft.service.entity.User;
 
-import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 public class Application {
 
     public static void main(String[] args) {
-
         Configuration configuration = new Configuration();
-        configuration.configure();
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
-//        configuration.addAnnotatedClass(Users.class);
+        configuration.configure();
 
-        Subdivision subdivision = Subdivision.builder()
-                .subdivision("Экскурсвита")
-                .build();
-        User user = User.builder()
-                .firstname("Слава")
-                .lastname("Слава")
-                .email("Слава")
-                .password("Слава")
-                .role("Слава")
-                .dateRegistration(LocalDateTime.now())
-                .active(true)
-                .subdivision(subdivision)
-                .build();
         try (SessionFactory sessionFactory = configuration.buildSessionFactory();
              Session session = sessionFactory.openSession()) {
             session.beginTransaction();
 
-//            Users users = session.get(Users.class, 2);
-            Subdivision subdivision1 = session.get(Subdivision.class, 1);
-//            session.evict(users);
 
-//            session.persist(user);
+            Map<String, Object> properties = Map.of(
+                    GraphSemantic.LOAD.getJakartaHintName(), session.getEntityGraph("WithImageAndStructureDivision")
+            );
+
+            session.find(User.class, 1L, properties);
+
+//            List<User> users = session.createQuery("select u from User u join fetch u.images", User.class)
+//                    .list();
+//
+//            users.forEach(user -> System.out.println(user.getImages()));
+//            users.forEach(user -> System.out.println(user.getStructureDivision()));
+//            users.forEach(user -> System.out.println(user.getPersonalInformation()));
 
             session.getTransaction().commit();
         }

@@ -1,0 +1,45 @@
+package ru.sbercraft.service.entity;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+import java.time.Duration;
+
+@Data
+@EqualsAndHashCode(of = "name")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Entity
+public class ExtraService {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private StructureDivision structureDivision;
+
+    @Column(unique = true)
+    private String name;
+
+    private Integer price;
+
+    private Duration duration;
+
+    public void setStructureDivision(StructureDivision structureDivision) {
+        this.structureDivision = structureDivision;
+        structureDivision.getExtraServices().add(this);
+    }
+}

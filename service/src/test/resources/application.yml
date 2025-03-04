@@ -1,0 +1,3 @@
+app:
+  filename: #{project.version}
+  filename2: ${project.version}

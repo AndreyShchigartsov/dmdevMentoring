@@ -55,9 +55,4 @@ public class Schedule {
         this.user = user;
         user.getSchedules().add(this);
     }
-
-//    public void setEvent(Event event) {
-//        this.event = event;
-//        event.getSchedules().add(this);
-//    }
 }

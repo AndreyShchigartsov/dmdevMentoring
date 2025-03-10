@@ -23,7 +23,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(of = {"id", "extraServices"})
-@ToString(exclude = {"users", "extraServices", "rooms"})
+@ToString(of = {"id", "extraServices"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity

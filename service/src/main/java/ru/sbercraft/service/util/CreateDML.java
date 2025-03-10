@@ -1,4 +1,4 @@
-package ru.sbercraft.service.integration;
+package ru.sbercraft.service.util;
 
 import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
@@ -27,7 +27,10 @@ import java.time.LocalDate;
 @UtilityClass
 public class CreateDML {
 
-    public void createData(Session session) {
+    public void createData(SessionFactory sessionFactory) {
+        @Cleanup Session session = sessionFactory.openSession();
+        session.beginTransaction();
+
         Event event1 = saveEvent(session, "Баскетбол", CategoryEvent.SPORT);
         Event event2 = saveEvent(session, "Волейбол", CategoryEvent.SPORT);
         Event event3 = saveEvent(session, "Легкая атлетика", CategoryEvent.SPORT);
@@ -129,6 +132,8 @@ public class CreateDML {
         personalInfo(session, worker1);
         personalInfo(session, worker2);
         personalInfo(session, camper1);
+
+        session.getTransaction().commit();
     }
 
     private void personalInfo(Session session, User user) {

@@ -1,6 +1,5 @@
 package ru.sbercraft.service.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,17 +11,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
+import lombok.ToString;
 
 import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(of = {"passportData", "birthCertificate"})
+@ToString(of = {"passportData", "birthCertificate"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-//@BatchSize(size = 5)
 public class PersonalInformation {
 
     @Id

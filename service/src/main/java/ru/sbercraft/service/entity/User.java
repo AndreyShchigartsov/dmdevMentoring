@@ -1,34 +1,43 @@
 package ru.sbercraft.service.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import ru.sbercraft.service.entity.enums.Role;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+//@NamedEntityGraph(
+//        name = "WithImageAndStructureDivision",
+//        attributeNodes = {
+//                @NamedAttributeNode("images"),
+//                @NamedAttributeNode("structureDivision")
+//        }
+//)
 @Data
+@ToString(exclude = {"images", "schedules"})
+@EqualsAndHashCode(of = "login")
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@ToString(exclude = "subdivision")
-@EqualsAndHashCode(of = "email")
+@SuperBuilder
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "users")
+@DiscriminatorColumn(name = "type")
+//@OptimisticLocking(type = OptimisticLockType.VERSION)
+//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+//@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@RequiredArgsConstructor
 public class User {
 
     @Id
@@ -36,22 +45,17 @@ public class User {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Post post;
+    private Room room;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Subdivision subdivision;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Role role;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Room room;
+    private StructureDivision structureDivision;
 
     private String firstname;
 
     private String lastname;
 
-    private String email;
+    @Column(unique = true)
+    private String login;
 
     private String password;
 
@@ -59,30 +63,38 @@ public class User {
 
     private boolean active;
 
-    @OneToMany(mappedBy = "user")
-    private List<Image> images = new ArrayList<>();
+    private Role role;
 
-    @OneToOne(mappedBy = "user")
+    //Правильно понимаю что пару строк ниже можно удалить потому что когда
+    // bidirectional и у дочерней сущности есть син ключ то не нужна свзяь?
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonalInformation personalInformation;
 
-    @OneToMany(mappedBy = "user")
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Image> images = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<UserChat> userChats = new ArrayList<>();
+    public void setStructureDivision(StructureDivision structureDivision) {
+        this.structureDivision = structureDivision;
+        structureDivision.getUsers().add(this);
+    }
 
-    public void addImage(Image image) {
+    public void setRoom(Room room) {
+        this.room = room;
+        room.getUsers().add(this);
+    }
+
+    public void addImages(Image image) {
         images.add(image);
         image.setUser(this);
     }
 
-    public void addSchedule(Schedule schedule) {
+    public void addSchedules(Schedule schedule) {
         schedules.add(schedule);
         schedule.setUser(this);
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-        this.role.getUsers().add(this);
     }
 }

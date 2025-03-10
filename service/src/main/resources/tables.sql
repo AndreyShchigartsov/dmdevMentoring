@@ -1,14 +1,14 @@
-CREATE TABLE subdivision
+CREATE TABLE structure_division
 (
     id SERIAL PRIMARY KEY,
-    subdivision VARCHAR(100) NOT NULL UNIQUE
+    name VARCHAR(100) NOT NULL UNIQUE
 );
 
-CREATE TABLE service
+CREATE TABLE extra_service
 (
     id SERIAL PRIMARY KEY,
-    subdivision_id INTEGER REFERENCES subdivision (id),
-    service VARCHAR(100) NOT NULL,
+    subdivision_id INTEGER REFERENCES structureDivision (id),
+    name VARCHAR(100) NOT NULL,
     price VARCHAR(100),
     duration TIMESTAMP
 );
@@ -16,21 +16,21 @@ CREATE TABLE service
 CREATE TABLE priority
 (
     id SERIAL PRIMARY KEY,
-    priority VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE,
     comment VARCHAR(255)
 );
 
 CREATE TABLE post
 (
     id SERIAL PRIMARY KEY,
-    post VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL UNIQUE,
     priority_id INTEGER REFERENCES priority (id)
 );
 
 CREATE TABLE role
 (
     id SERIAL PRIMARY KEY,
-    role VARCHAR(100) NOT NULL UNIQUE
+    name VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE TABLE room
@@ -45,7 +45,7 @@ CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
     post_id INTEGER NOT NULL REFERENCES post (id),
-    subdivision_id INTEGER NOT NULL REFERENCES subdivision (id),
+    subdivision_id INTEGER NOT NULL REFERENCES structureDivision (id),
     role_id INTEGER NOT NULL REFERENCES role (id),
     room_id INTEGER NOT NULL REFERENCES room (id),
     lastname VARCHAR(100) NOT NULL,
@@ -95,5 +95,5 @@ CREATE TABLE personal_information
     address VARCHAR(255) NOT NULL,
     birth_certificate VARCHAR(100) NOT NULL,
     date TIMESTAMP NOT NULL,
-    user_id BIGINT NOT NULL REFERENCES users (id)
+    user_id BIGINT NOT NULL UNIQUE REFERENCES users (id)
 )

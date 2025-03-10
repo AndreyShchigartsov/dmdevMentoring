@@ -3,8 +3,8 @@ package ru.sbercraft.service.dao;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.graph.GraphSemantic;
-import org.hibernate.graph.RootGraph;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
 
@@ -12,9 +12,11 @@ import java.util.List;
 
 import static ru.sbercraft.service.entity.QEvent.*;
 
-public class EventDao {
+public class EventDao extends BaseDao<Integer, Event> {
 
-    private static final EventDao INSTANCE = new EventDao();
+    public EventDao(Class<Event> clazz, SessionFactory sessionFactory) {
+        super(clazz, sessionFactory);
+    }
 
     /**
      * @return list всех событий
@@ -62,9 +64,5 @@ public class EventDao {
                 .from(event)
                 .setHint(GraphSemantic.FETCH.getJakartaHintName(), session.getEntityGraph("EventSchedules"))
                 .fetch();
-    }
-
-    public static EventDao getInstance() {
-        return INSTANCE;
     }
 }

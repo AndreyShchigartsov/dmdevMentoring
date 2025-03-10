@@ -12,6 +12,7 @@ import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.Schedule;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.entity.enums.Status;
+import ru.sbercraft.service.integration.CreateDML;
 import ru.sbercraft.service.integration.HibernateTestUtil;
 
 import java.time.Instant;
@@ -30,6 +31,7 @@ class ScheduleIT {
     @BeforeEach
     void init() {
         session = sessionFactory.openSession();
+        CreateDML.createData(session);
         session.beginTransaction();
     }
 

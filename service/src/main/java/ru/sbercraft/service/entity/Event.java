@@ -30,7 +30,7 @@ import java.util.List;
         subgraphs = @NamedSubgraph(name = "users", attributeNodes = @NamedAttributeNode("user"))
 )
 @Data
-@ToString(exclude = "schedules")
+@ToString(of = "name")
 @EqualsAndHashCode(of = "name")
 @AllArgsConstructor
 @NoArgsConstructor

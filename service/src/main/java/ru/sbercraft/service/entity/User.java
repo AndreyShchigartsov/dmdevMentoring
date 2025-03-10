@@ -6,24 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import ru.sbercraft.service.entity.enums.Role;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-//@NamedEntityGraph(
-//        name = "WithImageAndStructureDivision",
-//        attributeNodes = {
-//                @NamedAttributeNode("images"),
-//                @NamedAttributeNode("structureDivision")
-//        }
-//)
+@NamedEntityGraph(
+        name = "WithImageAndStructureDivision",
+        attributeNodes = {
+                @NamedAttributeNode("images"),
+                @NamedAttributeNode("structureDivision")
+        }
+)
 @Data
 @ToString(exclude = {"images", "schedules"})
 @EqualsAndHashCode(of = "login")
@@ -37,7 +34,6 @@ import java.util.List;
 //@OptimisticLocking(type = OptimisticLockType.VERSION)
 //@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 //@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@RequiredArgsConstructor
 public class User {
 
     @Id
@@ -65,8 +61,6 @@ public class User {
 
     private Role role;
 
-    //Правильно понимаю что пару строк ниже можно удалить потому что когда
-    // bidirectional и у дочерней сущности есть син ключ то не нужна свзяь?
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonalInformation personalInformation;
 

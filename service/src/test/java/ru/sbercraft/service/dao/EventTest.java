@@ -1,4 +1,4 @@
-package ru.sbercraft.service.integration.entity;
+package ru.sbercraft.service.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -16,9 +16,9 @@ import ru.sbercraft.service.integration.HibernateTestUtil;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class EventIT {
+class EventTest {
 
     private static SessionFactory sessionFactory;
 
@@ -32,7 +32,6 @@ class EventIT {
     @BeforeEach
     void init() {
         session = sessionFactory.openSession();
-        CreateDML.createData(session);
         session.beginTransaction();
     }
 
@@ -49,7 +48,7 @@ class EventIT {
 
     @Test
     void checkThatEventAdding() {
-        Event event = createEvent("Волейбол1", CategoryEvent.SPORT);
+        Event event = createEvent("Волейбол", CategoryEvent.SPORT);
         session.persist(event);
         session.evict(event);
 

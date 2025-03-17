@@ -1,11 +1,17 @@
 package ru.sbercraft.service.dao;
 
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import ru.sbercraft.service.entity.Schedule;
 
+@Repository
 public class ScheduleDao extends BaseDao<Long, Schedule> {
 
-    public ScheduleDao(Class<Schedule> clazz, SessionFactory sessionFactory) {
-        super(clazz, sessionFactory);
+    private final Session session;
+
+    public ScheduleDao(Session session) {
+        super(Schedule.class, session);
+        this.session = session;
     }
 }

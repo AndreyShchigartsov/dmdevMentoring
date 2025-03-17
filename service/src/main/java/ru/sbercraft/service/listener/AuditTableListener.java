@@ -10,7 +10,9 @@ import org.hibernate.event.spi.PreUpdateEventListener;
 import ru.sbercraft.service.entity.Audit;
 import ru.sbercraft.service.entity.Audit.Operation;
 
+//Жалко удалять, пусть еще нескольуо раз попадется на глаза для освежения памаяти)
 public class AuditTableListener implements PreDeleteEventListener, PreInsertEventListener, PreUpdateEventListener {
+
     @Override
     public boolean onPreDelete(PreDeleteEvent event) {
         auditEntity(event, Operation.DELETE);
@@ -30,10 +32,9 @@ public class AuditTableListener implements PreDeleteEventListener, PreInsertEven
     }
 
     public void auditEntity(AbstractPreDatabaseOperationEvent event, Operation operation) {
-        if(event.getEntity().getClass() != Audit.class) {
+        if (event.getEntity().getClass() != Audit.class) {
             Audit audit = Audit.builder()
                     .entityName(event.getPersister().getEntityName())
-//                    .entityContext(event.getEntity().toString())
                     .operation(operation)
                     .build();
             event.getSession().persist(audit);

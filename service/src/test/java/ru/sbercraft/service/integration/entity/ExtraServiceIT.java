@@ -58,7 +58,6 @@ class ExtraServiceIT {
 
         assertThat(responseExtraService.getStructureDivision()).isEqualTo(null);
         assertThat(responseExtraService.getName()).isEqualTo("Вата");
-//        Assertions.assertThat(responseExtraService).isEqualTo(extraService);//todo почему тест проходит объекты же отличаются?
     }
 
     private StructureDivision createStuctureDivision() {

@@ -1,11 +1,17 @@
 package ru.sbercraft.service.dao;
 
-import org.hibernate.SessionFactory;
+import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 import ru.sbercraft.service.entity.User;
 
+@Repository
 public class UserDao extends BaseDao<Integer, User> {
 
-    public UserDao(Class<User> clazz, SessionFactory sessionFactory) {
-        super(clazz, sessionFactory);
+    private final Session session;
+
+    public UserDao(Session session) {
+        super(User.class, session);
+        this.session = session;
     }
 }

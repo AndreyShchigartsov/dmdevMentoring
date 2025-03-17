@@ -4,6 +4,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import ru.sbercraft.service.entity.Event;
 
+//Жалко удалять, пусть еще нескольуо раз попадется на глаза для освежения памаяти)
 public class AuditListener {
 
     @PrePersist

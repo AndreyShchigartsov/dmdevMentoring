@@ -7,9 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.OptimisticLockType;
-import org.hibernate.annotations.OptimisticLocking;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.listener.AuditListener;
 
@@ -36,17 +33,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-//@OptimisticLocking(type = OptimisticLockType.DIRTY)
-//@DynamicInsert
 @EntityListeners(value = AuditListener.class)
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-//    @Version
-//    private Long version;
 
     @Column(unique = true)
     private String name;

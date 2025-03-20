@@ -2,26 +2,31 @@ package ru.sbercraft.service.dao;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Repository;
 import ru.sbercraft.service.dto.ExtraServicesFilter;
-import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.ExtraService;
 
 import java.util.List;
 
 import static ru.sbercraft.service.entity.QExtraService.*;
 
+@Repository
 public class ExtraServiceDao extends BaseDao<Integer, ExtraService>{
 
-    public ExtraServiceDao(Class<ExtraService> clazz, SessionFactory sessionFactory) {
-        super(clazz, sessionFactory);
+    private final Session session;
+
+    public ExtraServiceDao(Session session) {
+        super(ExtraService.class, session);
+        this.session = session;
     }
 
     /**
      * @return услугу по name
      */
-    public List<ExtraService> findByName(Session session, String name) {
+    public List<ExtraService> findByName(String name) {
         return new JPAQuery<ExtraService>(session)
                 .select(extraService)
                 .from(extraService)
@@ -32,7 +37,7 @@ public class ExtraServiceDao extends BaseDao<Integer, ExtraService>{
     /**
      * @return list всех дополнительных услуг
      */
-    public List<ExtraService> findAll(Session session) {
+    public List<ExtraService> findAllQueryDsl() {
         return new JPAQuery<ExtraService>(session)
                 .select(extraService)
                 .from(extraService)
@@ -42,7 +47,7 @@ public class ExtraServiceDao extends BaseDao<Integer, ExtraService>{
     /**
      * @return list всех доп услуг от n суммы по возрастанию
      */
-    public List<ExtraService> findPrice(Session session, Integer price) {
+    public List<ExtraService> findPrice(Integer price) {
         return new JPAQuery<ExtraService>(session)
                 .select(extraService)
                 .from(extraService)
@@ -53,7 +58,7 @@ public class ExtraServiceDao extends BaseDao<Integer, ExtraService>{
     /**
      * @return list всех доп услуг от n суммы по возрастанию
      */
-    public List<ExtraService> findAll(Session session, ExtraServicesFilter filter) {
+    public List<ExtraService> findAllQueryDslFilter(ExtraServicesFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getName(), extraService.name::eq)
                 .add(filter.getStructureDivision(), extraService.structureDivision::eq)
@@ -64,5 +69,20 @@ public class ExtraServiceDao extends BaseDao<Integer, ExtraService>{
                 .from(extraService)
                 .where(predicate)
                 .fetch();
+    }
+
+    /**
+     * @return list всех доп услуг от n суммы по возрастанию
+     */
+    public List<ExtraService> findAllCriteriaApiFilter(ExtraServicesFilter filter) {
+        Predicate predicate = QPredicate.builder()
+                .add(filter.getName(), extraService.name::eq)
+                .add(filter.getStructureDivision(), extraService.structureDivision::eq)
+                .buildAnd();
+
+        CriteriaQuery<ExtraService> criteria = session.getCriteriaBuilder().createQuery(ExtraService.class);
+        criteria.from(ExtraService.class);
+//        criteria.where(predicate);
+        return session.createQuery(criteria).getResultList();
     }
 }

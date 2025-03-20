@@ -4,15 +4,18 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ru.sbercraft.service.config.AppConfig;
 import ru.sbercraft.service.dao.EventDao;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.integration.CreateDML;
-import ru.sbercraft.service.integration.HibernateTestUtil;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,20 +24,14 @@ import static org.assertj.core.api.Assertions.*;
 
 class EventDaoTest {
 
-    private EventDao eventDao = new EventDao(Event.class, sessionFactory);
+    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-    private static SessionFactory sessionFactory;
+    private final EventDao eventDao = context.getBean("eventDao", EventDao.class);
 
-    private Session session;
-
-    @BeforeAll
-    static void beforeAll() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-    }
+    private final Session session = context.getBean("session", Session.class);
 
     @BeforeEach
     void init() {
-        session = sessionFactory.openSession();
         CreateDML.createData(session);
         session.beginTransaction();
     }
@@ -45,31 +42,23 @@ class EventDaoTest {
         session.close();
     }
 
-    @AfterAll
-    static void afterAll() {
-        sessionFactory.close();
-    }
-
     @Test
     void checkThatReturnAllEvent() {
 //        session = sessionFactory.openSession();
 //        session.beginTransaction();
         //Почему когда транзакцию открыаем второй раз, то результат 0 в тесте?
 
-        List<Event> events = eventDao.findAll(session);
+        List<Event> events = eventDao.findAll();
 
         assertThat(events.size()).isEqualTo(6);
-
-//        session.getTransaction().commit();
-//        session.close();
     }
 
     @Test
     void checkEventById() {
-        Event event = eventDao.findById(session, 1);
+        Optional<Event> event = eventDao.findById(1);
 
-        assertThat(event.getName()).isEqualTo("Баскетбол");
-        assertThat(event.getCategory()).isEqualTo(CategoryEvent.SPORT);
+        assertThat(event.get().getName()).isEqualTo("Баскетбол");
+        assertThat(event.get().getCategory()).isEqualTo(CategoryEvent.SPORT);
     }
 
     @Test
@@ -78,7 +67,7 @@ class EventDaoTest {
                 .name("Java")
                 .build();
 
-        List<Event> event = eventDao.findAllFilter(session, eventFilter);
+        List<Event> event = eventDao.findAllFilter(eventFilter);
 
         assertThat(event.size()).isEqualTo(1);
         assertThat(event.get(0).getName()).isEqualTo("Java");
@@ -92,14 +81,14 @@ class EventDaoTest {
                 .categoryEvent(CategoryEvent.SPORT)
                 .build();
 
-        List<Event> event = eventDao.findAllFilter(session, eventFilter);
+        List<Event> event = eventDao.findAllFilter(eventFilter);
 
         assertThat(event.size()).isEqualTo(0);
     }
 
     @Test
     void checkThatWithEventReturnAndSchedule() {
-        List<Event> eventWithSchedule = eventDao.getEventWithSchedule(session);
+        List<Event> eventWithSchedule = eventDao.getEventWithSchedule();
 
         Optional<Event> mayBeEvent = eventWithSchedule.stream()
                 .filter(event -> event.getName().equals("Баскетбол"))

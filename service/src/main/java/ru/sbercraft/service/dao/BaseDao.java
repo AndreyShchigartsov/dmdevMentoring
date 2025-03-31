@@ -1,5 +1,6 @@
 package ru.sbercraft.service.dao;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public abstract class BaseDao<K extends Serializable, E> implements Dao<K, E> {
 
     private final Class<E> clazz;
-    private final Session session;
+    private final EntityManager session;
 
     @Override
     public E save(E entity) {

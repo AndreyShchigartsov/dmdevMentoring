@@ -1,53 +1,34 @@
 package ru.sbercraft.service.integration.dao;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.sbercraft.service.config.AppConfig;
 import ru.sbercraft.service.dao.EventDao;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
-import ru.sbercraft.service.integration.CreateDML;
+import ru.sbercraft.service.integration.annotation.IT;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-class EventDaoTest {
+@IT
+@RequiredArgsConstructor
+class EventDaoIT {
 
-    AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+    private final EventDao eventDao;
+    private final EntityManager entityManager;
 
-    private final EventDao eventDao = context.getBean("eventDao", EventDao.class);
-
-    private final Session session = context.getBean("session", Session.class);
-
-    @BeforeEach
-    void init() {
-        CreateDML.createData(session);
-        session.beginTransaction();
-    }
-
-    @AfterEach
-    void delete() {
-        session.getTransaction().rollback();
-        session.close();
+    @Test
+    void findById() {
+        var company = entityManager.find(Event.class, 1);
+        assertThat(company.getName()).isEqualTo("Баскетбол");
     }
 
     @Test
     void checkThatReturnAllEvent() {
-//        session = sessionFactory.openSession();
-//        session.beginTransaction();
-        //Почему когда транзакцию открыаем второй раз, то результат 0 в тесте?
-
         List<Event> events = eventDao.findAll();
 
         assertThat(events.size()).isEqualTo(6);

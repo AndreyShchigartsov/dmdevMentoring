@@ -26,7 +26,7 @@ class EventTest {
 
     @BeforeAll
     static void beforeAll() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
+//        sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
     @BeforeEach

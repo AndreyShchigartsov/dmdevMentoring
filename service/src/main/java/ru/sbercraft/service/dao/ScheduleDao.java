@@ -1,17 +1,8 @@
 package ru.sbercraft.service.dao;
 
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.sbercraft.service.entity.Schedule;
 
-@Repository
-public class ScheduleDao extends BaseDao<Long, Schedule> {
+public interface ScheduleDao extends JpaRepository<Schedule, Long> {
 
-    private final Session session;
-
-    public ScheduleDao(Session session) {
-        super(Schedule.class, session);
-        this.session = session;
-    }
 }

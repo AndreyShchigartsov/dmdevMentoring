@@ -7,6 +7,7 @@ import ru.sbercraft.service.dao.EventDao;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
+import ru.sbercraft.service.integration.IntegrationTestBase;
 import ru.sbercraft.service.integration.annotation.IT;
 
 import java.util.List;
@@ -14,9 +15,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@IT
 @RequiredArgsConstructor
-class EventDaoIT {
+class EventDaoIT extends IntegrationTestBase {
 
     private final EventDao eventDao;
     private final EntityManager entityManager;

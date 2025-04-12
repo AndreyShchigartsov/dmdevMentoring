@@ -1,11 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/postgres
-    username: postgres
-    password: pass
-    driver-class-name: org.postgresql.Driver
+    username: test
+    password: test
   jpa:
     properties.hibernate:
-      show_sql: true
-      format_sql: true
-#      hbm2ddl.auto: validate
+      hbm2ddl.auto: validate

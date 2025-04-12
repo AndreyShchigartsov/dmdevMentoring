@@ -1,7 +1,7 @@
 package ru.sbercraft.service.service;
 
 import org.springframework.stereotype.Component;
-import ru.sbercraft.service.dao.EventDao;
+import ru.sbercraft.service.dao.querydsl.FilterEventDaoImpl;
 import ru.sbercraft.service.entity.Event;
 
 import java.util.Optional;
@@ -9,9 +9,9 @@ import java.util.Optional;
 @Component
 public class TestService {
 
-    private final EventDao eventDao;
+    private final FilterEventDaoImpl eventDao;
 
-    public TestService(EventDao eventDao) {
+    public TestService(FilterEventDaoImpl eventDao) {
         this.eventDao = eventDao;
     }
 

@@ -1,17 +1,8 @@
 package ru.sbercraft.service.dao;
 
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.sbercraft.service.entity.StructureDivision;
 
-@Repository
-public class StructureDivisionDao extends BaseDao<Integer, StructureDivision> {
+public interface StructureDivisionDao extends JpaRepository<StructureDivision, Integer> {
 
-    private final Session session;
-
-    public StructureDivisionDao(Session session) {
-        super(StructureDivision.class, session);
-        this.session = session;
-    }
 }

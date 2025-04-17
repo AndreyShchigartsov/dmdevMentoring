@@ -3,22 +3,22 @@ package ru.sbercraft.service.integration.dao;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import ru.sbercraft.service.dao.EventDao;
+import ru.sbercraft.service.repository.EventRepository;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.integration.IntegrationTestBase;
-import ru.sbercraft.service.integration.annotation.IT;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @RequiredArgsConstructor
 class EventDaoIT extends IntegrationTestBase {
 
-    private final EventDao eventDao;
+    private final EventRepository eventDao;
     private final EntityManager entityManager;
 
     @Test

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.sbercraft.service.dao.querydsl.FilterEventDaoImpl;
+import ru.sbercraft.service.repository.querydsl.FilterEventRepositoryImpl;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 
@@ -18,7 +18,7 @@ class TestServiceTest {
     private static final Integer EVENT_ID = 1;
 
     @Mock
-    private FilterEventDaoImpl eventDao;
+    private FilterEventRepositoryImpl eventDao;
     @InjectMocks
     private TestService testService;
 

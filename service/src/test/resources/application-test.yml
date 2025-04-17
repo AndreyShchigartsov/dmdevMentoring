@@ -2,6 +2,6 @@ spring:
   datasource:
     username: test
     password: test
-  jpa:
-    properties.hibernate:
-      hbm2ddl.auto: validate
+#  jpa:
+#    properties.hibernate:
+#      hbm2ddl.auto: validate

@@ -36,7 +36,7 @@ CREATE TABLE users
     active BOOLEAN NOT NULL,
     role VARCHAR(32) NOT NULL,
     salary INTEGER,
-    job_position INTEGER,
+    job_position VARCHAR(32),
     room_id INTEGER NOT NULL REFERENCES room (id),
     structure_division_id INTEGER NOT NULL REFERENCES structure_division (id)
 );
@@ -69,7 +69,7 @@ CREATE TABLE schedule
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users (id),
     event_id INTEGER NOT NULL REFERENCES event (id),
-    structure_division_id INTEGER NOT NULL REFERENCES structure_division (id),
+    structure_division_id INTEGER REFERENCES structure_division (id),
     date_time TIMESTAMP,
     status VARCHAR(32),
     action VARCHAR(128)
@@ -83,7 +83,7 @@ CREATE TABLE extra_service
     structure_division_id INTEGER REFERENCES structure_division (id),
     service VARCHAR(64) NOT NULL,
     price INTEGER,
-    duration TIMESTAMP
+    duration INTERVAL
 );
 --rollback DROP TABLE structure_division
 

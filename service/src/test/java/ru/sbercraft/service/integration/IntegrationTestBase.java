@@ -9,9 +9,9 @@ import ru.sbercraft.service.integration.annotation.IT;
 
 @IT
 @Sql({
-        "classpath:sql/data.sql"
+    "classpath:sql/data.sql"
 })
-public class IntegrationTestBase {
+public abstract class IntegrationTestBase {
 
     public static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
 

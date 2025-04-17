@@ -18,10 +18,7 @@ public class TestServiceIT extends IntegrationTestBase {
 
     private static final Integer EVENT_ID = 1;
 
-    @Autowired
-    private TestService testService;
-    @Autowired
-    private AppProperties appProperties;
+    private final TestService testService;
 
     @Test
     void test() {
@@ -36,8 +33,8 @@ public class TestServiceIT extends IntegrationTestBase {
     private Event createEvent() {
         return Event.builder()
                 .id(1)
-                .name("Шахматы фишера")
-                .category(CategoryEvent.CHESS)
+                .name("Баскетбол")
+                .category(CategoryEvent.SPORT)
                 .build();
     }
 }

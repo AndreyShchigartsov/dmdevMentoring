@@ -27,7 +27,7 @@ public class ExtraService {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private StructureDivision structureDivision;

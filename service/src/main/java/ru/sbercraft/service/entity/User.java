@@ -1,6 +1,21 @@
 package ru.sbercraft.service.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +28,10 @@ import ru.sbercraft.service.entity.enums.Role;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 
 @NamedEntityGraph(
         name = "WithImageAndStructureDivision",
@@ -28,7 +47,7 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = SINGLE_TABLE)
 @Table(name = "users")
 @DiscriminatorColumn(name = "type")
 //@OptimisticLocking(type = OptimisticLockType.VERSION)
@@ -37,13 +56,13 @@ import java.util.List;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     private Room room;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = LAZY)
     private StructureDivision structureDivision;
 
     private String firstname;

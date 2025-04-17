@@ -1,10 +1,7 @@
 package ru.sbercraft.service.integration;
 
 import jakarta.persistence.EntityManager;
-import lombok.Cleanup;
 import lombok.experimental.UtilityClass;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import ru.sbercraft.service.entity.Camper;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.ExtraService;

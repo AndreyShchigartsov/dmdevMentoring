@@ -1,17 +1,13 @@
 package ru.sbercraft.service.dao;
 
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.sbercraft.service.entity.Room;
 
-@Repository
-public class RoomDao extends BaseDao<Integer, Room> {
+import java.util.Optional;
 
-    private final Session session;
+public interface RoomDao extends JpaRepository<Room, Integer> {
 
-    public RoomDao(Session session) {
-        super(Room.class, session);
-        this.session = session;
-    }
+    Optional<Room> findById(Integer id);
+
+    void delete(Room room);
 }

@@ -1,16 +1,8 @@
 package ru.sbercraft.service.dao;
 
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import ru.sbercraft.service.entity.Image;
 
-@Repository
-public class ImageDao extends BaseDao<Integer, Image> {
+public interface ImageDao extends JpaRepository<Image, Integer> {
 
-    Session session;
-
-    public ImageDao(Session session) {
-        super(Image.class, session);
-        this.session = session;
-    }
 }

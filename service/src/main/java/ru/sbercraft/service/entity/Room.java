@@ -43,7 +43,7 @@ public class Room {
     private StructureDivision structureDivision;
 
     @Builder.Default
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "room", orphanRemoval = true)
     private List<User> users = new ArrayList<>();
 
     public void setUser(User user) {

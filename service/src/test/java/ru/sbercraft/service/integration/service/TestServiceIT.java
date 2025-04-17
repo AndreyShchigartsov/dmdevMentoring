@@ -1,19 +1,20 @@
 package ru.sbercraft.service.integration.service;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.sbercraft.service.config.AppProperties;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
-import ru.sbercraft.service.integration.annotation.IT;
+import ru.sbercraft.service.integration.IntegrationTestBase;
 import ru.sbercraft.service.service.TestService;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@IT
-public class TestServiceIT {
+@RequiredArgsConstructor
+public class TestServiceIT extends IntegrationTestBase {
 
     private static final Integer EVENT_ID = 1;
 

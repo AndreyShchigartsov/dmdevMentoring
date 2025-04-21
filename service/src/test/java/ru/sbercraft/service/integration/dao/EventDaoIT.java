@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor
 class EventDaoIT extends IntegrationTestBase {
 
-    private final EventRepository eventDao;
+    private final EventRepository eventRepository;
     private final EntityManager entityManager;
 
     @Test
@@ -29,14 +29,14 @@ class EventDaoIT extends IntegrationTestBase {
 
     @Test
     void checkThatReturnAllEvent() {
-        List<Event> events = eventDao.findAll();
+        List<Event> events = eventRepository.findAll();
 
         assertThat(events.size()).isEqualTo(6);
     }
 
     @Test
     void checkEventById() {
-        Optional<Event> event = eventDao.findById(1);
+        Optional<Event> event = eventRepository.findById(1);
 
         assertThat(event.get().getName()).isEqualTo("Баскетбол");
         assertThat(event.get().getCategory()).isEqualTo(CategoryEvent.SPORT);
@@ -48,7 +48,7 @@ class EventDaoIT extends IntegrationTestBase {
                 .name("Java")
                 .build();
 
-        List<Event> event = eventDao.findAllFilter(eventFilter);
+        List<Event> event = eventRepository.findAllFilter(eventFilter);
 
         assertThat(event.size()).isEqualTo(1);
         assertThat(event.get(0).getName()).isEqualTo("Java");
@@ -62,14 +62,14 @@ class EventDaoIT extends IntegrationTestBase {
                 .categoryEvent(CategoryEvent.SPORT)
                 .build();
 
-        List<Event> event = eventDao.findAllFilter(eventFilter);
+        List<Event> event = eventRepository.findAllFilter(eventFilter);
 
         assertThat(event.size()).isEqualTo(0);
     }
 
     @Test
     void checkThatWithEventReturnAndSchedule() {
-        List<Event> eventWithSchedule = eventDao.getEventWithSchedule();
+        List<Event> eventWithSchedule = eventRepository.getEventWithSchedule();
 
         Optional<Event> mayBeEvent = eventWithSchedule.stream()
                 .filter(event -> event.getName().equals("Баскетбол"))

@@ -47,8 +47,8 @@ public class EventService {
                 .map(eventRepository::saveAndFlush)
                 .map(eventReadMapper::map);
     }
-
-
+    
+    @Transactional
     public boolean delete(Integer id) {
         return eventRepository.findById(id)
                 .map(event -> {

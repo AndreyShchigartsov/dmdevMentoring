@@ -1,46 +1,50 @@
-package ru.sbercraft.service.http.controller;
+package ru.sbercraft.service.http.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import ru.sbercraft.service.dto.EventCreateEditDto;
+import ru.sbercraft.service.service.EventReadDto;
 import ru.sbercraft.service.service.EventService;
 
-@Controller
-@RequestMapping("/event")
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/events")
 @RequiredArgsConstructor
-public class EventController {
+public class EventRestController {
 
     private final EventService eventService;
 
     @GetMapping
-    public String findAll(Model model) {
-        model.addAttribute("events", eventService.findAll());
-        return "event/events";
+    public List<EventReadDto> findAll() {
+        List<EventReadDto> events = eventService.findAll();
+        return events;
     }
 
     @GetMapping("/{id}")
-    public String findAll(Model model, @PathVariable Integer id) {
+    public EventReadDto findAll(@PathVariable Integer id) {
         return eventService.findById(id)
-                .map(event -> {
-                    model.addAttribute("evens", event);
-                    return "event/event";
-                })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/create")
-    public String create(EventCreateEditDto event) {
-        return "redirect:/event/" + eventService.create(event).getId();
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventReadDto create(@RequestBody EventCreateEditDto event) {
+        return eventService.create(event);
     }
 
-    @PostMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public String delete(@PathVariable Integer id) {
         if (!eventService.delete(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -48,10 +52,9 @@ public class EventController {
         return "redirect:/event";
     }
 
-    @PostMapping("/{id}/update")
-    public String update(@PathVariable Integer id, EventCreateEditDto event) {
+    @PutMapping("/{id}")
+    public EventReadDto update(@PathVariable Integer id, @RequestBody EventCreateEditDto event) {
         return eventService.update(id, event)
-                .map(it -> "redirect:/event/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

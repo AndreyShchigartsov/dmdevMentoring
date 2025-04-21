@@ -2,6 +2,8 @@ package ru.sbercraft.service.repository.querydsl;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import ru.sbercraft.service.repository.QPredicate;
 import ru.sbercraft.service.dto.ExtraServicesFilter;
 import ru.sbercraft.service.entity.ExtraService;
@@ -12,10 +14,10 @@ import java.util.List;
 import static ru.sbercraft.service.entity.QExtraService.extraService;
 
 
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class FilterExtraServiceRepositoryImpl implements FilterExtraServiceRepository {
 
-//    private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
     /**
      * @return услугу по name

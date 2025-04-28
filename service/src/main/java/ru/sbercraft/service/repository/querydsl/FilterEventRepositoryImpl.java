@@ -2,6 +2,8 @@ package ru.sbercraft.service.repository.querydsl;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import jakarta.persistence.EntityManager;
+import lombok.RequiredArgsConstructor;
 import ru.sbercraft.service.repository.QPredicate;
 import ru.sbercraft.service.dto.EventFilter;
 import ru.sbercraft.service.entity.Event;
@@ -12,16 +14,16 @@ import java.util.List;
 import static ru.sbercraft.service.entity.QEvent.event;
 
 
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class FilterEventRepositoryImpl implements FilterEventRepository {
 
-//    private final EntityManager entityManager;
+    private final EntityManager entityManager;
 
     /**
      * @return list всех событий
      */
     public List<Event> findAllQueryDsl() {
-        return new JPAQuery<Event>()
+        return new JPAQuery<Event>(entityManager)
                 .select(event)
                 .from(event)
                 .fetch();

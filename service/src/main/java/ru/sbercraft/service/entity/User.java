@@ -4,12 +4,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
@@ -42,7 +39,7 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 )
 @Data
 @ToString(exclude = {"images", "schedules"})
-@EqualsAndHashCode(of = "login")
+@EqualsAndHashCode(of = "username")
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
@@ -70,7 +67,7 @@ public class User {
     private String lastname;
 
     @Column(unique = true)
-    private String login;
+    private String username;
 
     private String password;
 

@@ -5,7 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <div th:text="${user}">User</div>
+    <div th:fragment="header">
+        <form action="/logout" method="post">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 </body>
 </html>

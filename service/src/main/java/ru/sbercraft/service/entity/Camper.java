@@ -17,7 +17,12 @@ import java.time.Instant;
 @DiscriminatorValue("camper")
 public class Camper extends User {
 
-    private Instant checkInDate;
+    //Дата прибытия
+    private Instant arrivalDate;
 
+    //Дата выезда
     private Instant departureDate;
+
+    //Организация
+    private String organization;
 }

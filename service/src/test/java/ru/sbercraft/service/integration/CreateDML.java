@@ -171,7 +171,7 @@ public class CreateDML {
     private Camper saveCamper(EntityManager session, Room room, String login, StructureDivision structure, Role role) {
         Camper camper = Camper.builder()
                 .room(room)
-                .login(login)
+                .username(login)
                 .lastname("lastname")
                 .password("pass")
                 .registrationDate(Instant.now())
@@ -188,7 +188,7 @@ public class CreateDML {
     private Worker saveWorker(EntityManager session, Room room, String login, StructureDivision structure, Role role, JobPosition jobPosition) {
         Worker worker = Worker.builder()
                 .room(room)
-                .login(login)
+                .username(login)
                 .lastname("lastname")
                 .password("pass")
                 .registrationDate(Instant.now())

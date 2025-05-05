@@ -23,7 +23,7 @@ public class FilterEventRepositoryImpl implements FilterEventRepository {
      * @return list всех событий
      */
     public List<Event> findAllQueryDsl() {
-        return new JPAQuery<Event>(entityManager)
+        return new JPAQuery<Event>()
                 .select(event)
                 .from(event)
                 .fetch();

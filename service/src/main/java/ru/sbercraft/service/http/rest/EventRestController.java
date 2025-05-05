@@ -33,7 +33,7 @@ public class EventRestController {
     }
 
     @GetMapping("/{id}")
-    public EventReadDto findAll(@PathVariable Integer id) {
+    public EventReadDto findById(@PathVariable Integer id) {
         return eventService.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

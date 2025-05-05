@@ -2,10 +2,10 @@ package ru.sbercraft.service.integration.service;
 
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
-import ru.sbercraft.service.dto.EventCreateEditDto;
+import ru.sbercraft.service.dto.event.EventCreateEditDto;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.integration.IntegrationTestBase;
-import ru.sbercraft.service.service.EventReadDto;
+import ru.sbercraft.service.dto.event.EventReadDto;
 import ru.sbercraft.service.service.EventService;
 
 import java.util.List;

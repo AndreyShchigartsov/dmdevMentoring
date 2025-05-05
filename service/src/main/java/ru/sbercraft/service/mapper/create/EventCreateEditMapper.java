@@ -1,12 +1,12 @@
-package ru.sbercraft.service.mapper;
+package ru.sbercraft.service.mapper.create;
 
 import org.springframework.stereotype.Component;
-import ru.sbercraft.service.dto.EventCreateEditDto;
+import ru.sbercraft.service.dto.event.EventCreateEditDto;
 import ru.sbercraft.service.entity.Event;
-import ru.sbercraft.service.service.EventReadDto;
+import ru.sbercraft.service.mapper.Mapper;
 
 @Component
-public class EventCreateEditMapper implements Mapper<EventCreateEditDto, Event>{
+public class EventCreateEditMapper implements Mapper<EventCreateEditDto, Event> {
 
     @Override
     public Event map(EventCreateEditDto object) {

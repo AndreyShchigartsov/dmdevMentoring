@@ -1,4 +1,4 @@
-package ru.sbercraft.service.service;
+package ru.sbercraft.service.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

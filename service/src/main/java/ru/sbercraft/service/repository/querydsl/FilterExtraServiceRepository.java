@@ -1,6 +1,6 @@
 package ru.sbercraft.service.repository.querydsl;
 
-import ru.sbercraft.service.dto.ExtraServicesFilter;
+import ru.sbercraft.service.dto.extraServices.ExtraServicesFilter;
 import ru.sbercraft.service.entity.ExtraService;
 
 import java.util.List;

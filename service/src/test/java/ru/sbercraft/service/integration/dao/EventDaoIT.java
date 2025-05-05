@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.sbercraft.service.repository.EventRepository;
-import ru.sbercraft.service.dto.EventFilter;
+import ru.sbercraft.service.dto.event.EventFilter;
 import ru.sbercraft.service.entity.Event;
 import ru.sbercraft.service.entity.enums.CategoryEvent;
 import ru.sbercraft.service.integration.IntegrationTestBase;

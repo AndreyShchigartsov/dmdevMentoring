@@ -33,7 +33,7 @@ public class StructureDivision {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private StructureDivision parent;

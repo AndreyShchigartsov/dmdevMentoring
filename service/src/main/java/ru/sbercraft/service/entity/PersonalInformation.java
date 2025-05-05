@@ -15,6 +15,8 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 
+import static jakarta.persistence.FetchType.LAZY;
+
 @Data
 @EqualsAndHashCode(of = {"passportData", "birthCertificate"})
 @ToString(of = {"passportData", "birthCertificate"})
@@ -28,6 +30,10 @@ public class PersonalInformation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String firstname;
+
+    private String lastname;
+
     private String passportData;
 
     private String address;
@@ -36,7 +42,7 @@ public class PersonalInformation {
 
     private LocalDate birthDate;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = LAZY, optional = false)
     private User user;
 
     public void setUser(User user) {

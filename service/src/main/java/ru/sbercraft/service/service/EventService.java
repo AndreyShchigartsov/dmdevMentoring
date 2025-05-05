@@ -3,11 +3,13 @@ package ru.sbercraft.service.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.sbercraft.service.dto.EventCreateEditDto;
-import ru.sbercraft.service.mapper.EventCreateEditMapper;
-import ru.sbercraft.service.mapper.EventReadMapper;
+import ru.sbercraft.service.dto.event.EventCreateEditDto;
+import ru.sbercraft.service.dto.event.EventReadDto;
+import ru.sbercraft.service.mapper.create.EventCreateEditMapper;
+import ru.sbercraft.service.mapper.read.EventReadMapper;
 import ru.sbercraft.service.repository.EventRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

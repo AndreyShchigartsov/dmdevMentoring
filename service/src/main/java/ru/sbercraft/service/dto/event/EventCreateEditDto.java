@@ -1,4 +1,4 @@
-package ru.sbercraft.service.dto;
+package ru.sbercraft.service.dto.event;
 
 import lombok.Value;
 import lombok.experimental.FieldNameConstants;

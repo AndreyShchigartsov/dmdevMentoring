@@ -5,7 +5,7 @@
 CREATE TABLE structure_division
 (
     id SERIAL PRIMARY KEY,
-    parent_id INTEGER,
+    parent_id INTEGER REFERENCES structure_division (id),
     type_structure VARCHAR(32) NOT NULL,
     name VARCHAR(100) NOT NULL,
     UNIQUE(parent_id, name)
@@ -27,18 +27,20 @@ CREATE TABLE room
 CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL,
-    lastname VARCHAR(100) NOT NULL,
-    firstname VARCHAR(100),
+    username VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(30) NOT NULL,
-    date_registration TIMESTAMP NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    active BOOLEAN NOT NULL,
+    registration_date TIMESTAMP NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    active BOOLEAN NOT NULL DEFAULT TRUE,
     role VARCHAR(32) NOT NULL,
+    type VARCHAR(32),
+    arrival_date TIMESTAMP,
+    departure_date TIMESTAMP,
+    organization VARCHAR(128),
     salary INTEGER,
     job_position VARCHAR(32),
-    room_id INTEGER NOT NULL REFERENCES room (id),
-    structure_division_id INTEGER NOT NULL REFERENCES structure_division (id)
+    room_id INTEGER REFERENCES room (id),
+    structure_division_id INTEGER REFERENCES structure_division (id)
 );
 --rollback DROP TABLE users
 
@@ -46,9 +48,13 @@ CREATE TABLE users
 CREATE TABLE personal_information
 (
     id BIGSERIAL PRIMARY KEY,
+    lastname VARCHAR(100) NOT NULL,
+    firstname VARCHAR(100) NOT NULL,
+    patronymic VARCHAR(100),
     passport_data VARCHAR(30) NOT NULL,
     address VARCHAR(255) NOT NULL,
     birth_certificate VARCHAR(100) NOT NULL,
+    birth_date VARCHAR(100) NOT NULL,
     date TIMESTAMP NOT NULL,
     user_id BIGINT NOT NULL UNIQUE REFERENCES users (id)
 );

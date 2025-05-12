@@ -2,7 +2,7 @@ package ru.sbercraft.service.mapper.read;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.sbercraft.service.dto.structureDivision.StructureDivisionReadDto;
+import ru.sbercraft.service.dto.structure_division.StructureDivisionReadDto;
 import ru.sbercraft.service.entity.StructureDivision;
 import ru.sbercraft.service.mapper.Mapper;
 import ru.sbercraft.service.repository.StructureDivisionRepository;
@@ -18,14 +18,16 @@ public class StructureDivisionReadMapper implements Mapper<StructureDivision, St
     @Override
     public StructureDivisionReadDto map(StructureDivision entity) {
         return StructureDivisionReadDto.builder()
-                .parentId(getStructureDivision(entity.getParent().getId()))
+                .id(entity.getId())
+                .parentId(getStructureDivision(entity.getParent()))
                 .typeStructure(entity.getTypeStructure())
                 .name(entity.getName())
                 .build();
     }
 
-    private StructureDivision getStructureDivision(Integer id) {
-        return Optional.ofNullable(id)
+    private StructureDivision getStructureDivision(StructureDivision structureDivision) {
+        return Optional.ofNullable(structureDivision)
+                .map(StructureDivision::getId)
                 .flatMap(repository::findById)
                 .orElse(null);
     }

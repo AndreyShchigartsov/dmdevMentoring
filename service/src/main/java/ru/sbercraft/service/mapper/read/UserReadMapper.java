@@ -7,7 +7,6 @@ import ru.sbercraft.service.mapper.Mapper;
 
 @Component
 public class UserReadMapper implements Mapper<User, UserReadDto> {
-
     @Override
     public UserReadDto map(User entity) {
         return UserReadDto.builder()
@@ -17,6 +16,7 @@ public class UserReadMapper implements Mapper<User, UserReadDto> {
                 .email(entity.getEmail())
                 .active(entity.isActive())
                 .role(entity.getRole())
+                //todo доработать
 //                .roomId(entity.getRoom().getId())
 //                .structureDivisionId(entity.getStructureDivision().getId())
                 .build();

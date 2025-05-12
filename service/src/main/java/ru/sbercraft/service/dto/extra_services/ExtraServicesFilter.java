@@ -1,4 +1,4 @@
-package ru.sbercraft.service.dto.extraServices;
+package ru.sbercraft.service.dto.extra_services;
 
 import lombok.Builder;
 import lombok.Value;

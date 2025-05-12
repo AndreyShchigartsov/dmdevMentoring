@@ -6,7 +6,7 @@
 </head>
 <body>
     <div th:fragment="header">
-        <span th:text="${#authentication.principal.username}">Username</span>
+<!--        <span th:text="${#authentication.principal.username}">Username</span>-->
         <form th:action="@{/logout}" method="post">
             <button type="submit">Logout</button>
         </form>
@@ -14,7 +14,7 @@
     </div>
     <div th:fragment="locale">
         <form action="">
-            <select name="lang" onchange="this.form.submit()">
+            <select name="lang" onchange="this.form.submit()" >
                 <option></option>
                 <option value="en">EN</option>
                 <option value="ru">RU</option>

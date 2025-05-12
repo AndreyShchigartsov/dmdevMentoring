@@ -2,7 +2,7 @@ package ru.sbercraft.service.mapper.create;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.sbercraft.service.dto.structureDivision.StructureDivisionCreateDto;
+import ru.sbercraft.service.dto.structure_division.StructureDivisionCreateEditDto;
 import ru.sbercraft.service.entity.StructureDivision;
 import ru.sbercraft.service.mapper.Mapper;
 import ru.sbercraft.service.repository.StructureDivisionRepository;
@@ -11,17 +11,25 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class StructureDivisionCreateMapper implements Mapper<StructureDivisionCreateDto, StructureDivision> {
+public class StructureDivisionCreateMapper implements Mapper<StructureDivisionCreateEditDto, StructureDivision> {
 
     private final StructureDivisionRepository repository;
 
     @Override
-    public StructureDivision map(StructureDivisionCreateDto object) {
+    public StructureDivision map(StructureDivisionCreateEditDto object) {
         return StructureDivision.builder()
                 .parent(getParentStructureDivision(object.getParentId()))
                 .typeStructure(object.getTypeStructure())
                 .name(object.getName())
                 .build();
+    }
+
+    @Override
+    public StructureDivision map(StructureDivisionCreateEditDto fromObject, StructureDivision toObject) {
+        toObject.setParent(getParentStructureDivision(fromObject.getParentId()));
+        toObject.setTypeStructure(fromObject.getTypeStructure());
+        toObject.setName(fromObject.getName());
+        return toObject;
     }
 
     private StructureDivision getParentStructureDivision(Integer parentId) {

@@ -5,12 +5,13 @@ import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import ru.sbercraft.service.repository.QPredicate;
-import ru.sbercraft.service.dto.extraServices.ExtraServicesFilter;
+import ru.sbercraft.service.dto.extra_services.ExtraServicesFilter;
 import ru.sbercraft.service.entity.ExtraService;
 
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static ru.sbercraft.service.entity.QExtraService.extraService;
 
 
@@ -80,6 +81,6 @@ public class FilterExtraServiceRepositoryImpl implements FilterExtraServiceRepos
 //        criteria.from(ExtraService.class);
 //        criteria.where(predicate);
 //        return entityManager.createQuery(criteria).getResultList();
-        return Collections.emptyList();
+        return emptyList();
     }
 }

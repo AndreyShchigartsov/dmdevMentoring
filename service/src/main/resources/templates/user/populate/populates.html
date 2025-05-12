@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:insert="~{fragment :: header}"></div>
+    <p>Комнаты доступные для заселения</p>
+    <div th:each="room : ${rooms}">
+        <a th:href="@{'/user/rooms/' + ${room.id}}" th:text="|Корпус ${room.corps} Номер комнаты ${room.roomNumber}|">Room</a>
+    </div>
+    <div style="color: red" th:if="${param.error}">
+        Bad credentials
+    </div>
+</body>
+</html>

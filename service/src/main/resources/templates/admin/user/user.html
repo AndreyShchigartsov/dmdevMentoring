@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница пользователя</h1>
+    <p>Страница редактирования пользователя</p>
+    <p th:text="${user.username}"></p>
+    <form th:action="@{${user.id} + '/update'}" method="post">
+        <label for="username">
+            <input id="username" type="hidden" name="username" th:value="${user.username}">
+        </label><br>
+        <select name="role">
+            <option th:each="role : ${roles}"
+                    th:value="${role}"
+                    th:text="${role}">Role</option>
+        </select><br>
+        <button>Поменять роль</button>
+    </form>
+    <div style="color: red" th:if="${errors}">
+        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
+            Error message
+        </p>
+    </div>
+</body>
+</html>

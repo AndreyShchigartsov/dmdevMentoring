@@ -39,7 +39,7 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Event event;
 
-    @JoinColumn(name = "structureDivision")
+    @JoinColumn(name = "structure_division_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private StructureDivision structureDivision;
 

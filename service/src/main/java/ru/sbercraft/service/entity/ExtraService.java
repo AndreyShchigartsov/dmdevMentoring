@@ -17,8 +17,8 @@ import lombok.ToString;
 import java.time.Duration;
 
 @Data
-@EqualsAndHashCode(of = "name")
-@ToString(of = "name")
+@EqualsAndHashCode(of = "service")
+@ToString(of = "service")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -33,11 +33,11 @@ public class ExtraService {
     private StructureDivision structureDivision;
 
     @Column(unique = true)
-    private String name;
+    private String service;
 
     private Integer price;
 
-    private Duration duration;
+    private Long duration;
 
     public void setStructureDivision(StructureDivision structureDivision) {
         this.structureDivision = structureDivision;

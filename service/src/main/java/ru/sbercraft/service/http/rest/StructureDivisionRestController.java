@@ -1,12 +1,12 @@
 package ru.sbercraft.service.http.rest;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.sbercraft.service.dto.structureDivision.StructureDivisionCreateDto;
-import ru.sbercraft.service.dto.structureDivision.StructureDivisionReadDto;
+import org.springframework.web.server.ResponseStatusException;
+import ru.sbercraft.service.dto.structure.division.StructureDivisionReadDto;
 import ru.sbercraft.service.service.StructureDivisionService;
 
 import java.util.List;
@@ -19,16 +19,13 @@ public class StructureDivisionRestController {
 
     @GetMapping
     public ResponseEntity<StructureDivisionReadDto> getStructureDivision(Integer id) {
-        return ResponseEntity.ok(service.getStructureDivision(id));
+        return service.getStructureDivision(id)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping
     public ResponseEntity<List<StructureDivisionReadDto>> getListStructureDivision() {
         return ResponseEntity.ok(service.getListStructureDivision());
-    }
-
-    @PostMapping
-    public ResponseEntity<StructureDivisionReadDto> create(StructureDivisionCreateDto division) {
-        return null;
     }
 }

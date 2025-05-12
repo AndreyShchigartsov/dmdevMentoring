@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p th:text="|Заселение в ${room.corps} Номер комнаты ${room.roomNumber}|">Комната в которую заселяем</p>
+    <p>Список незаселенных сотрудников!</p>
+    <div th:each="user : ${users}">
+        <form th:action="@{'/user/rooms/populate/' + ${room.id} + '/' + ${user.id}}" method="post">
+            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>
+        </form>
+    </div>
+    <div style="color: red" th:if="${error}">
+        <p th:text="${error}">Error message</p>
+    </div>
+    <p>Список живущих в этой комнате</p>
+    <div th:each="user : ${usersInRoom}">
+        <form th:action="@{'/user/rooms/populate/' + ${roomId} + '/' + ${user.id} + '/delete'}" method="post">
+            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>
+        </form>
+    </div>
+
+    <p th:text="|Количество мест в комнате ${room.seatsValue}|">Количество мест в комнате</p>
+</body>
+</html>

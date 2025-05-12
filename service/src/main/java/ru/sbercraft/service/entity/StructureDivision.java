@@ -1,5 +1,6 @@
 package ru.sbercraft.service.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,7 +36,7 @@ public class StructureDivision {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private StructureDivision parent;
 
     @Enumerated(EnumType.STRING)
@@ -48,7 +49,7 @@ public class StructureDivision {
     private List<User> users = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "structureDivision")
+    @OneToMany(mappedBy = "structureDivision", cascade = CascadeType.REMOVE)
     private List<ExtraService> extraServices = new ArrayList<>();
 
     @Builder.Default

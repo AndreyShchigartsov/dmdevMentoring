@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <a href="/admin/structures">Назад</a>
+    <p th:text="|Список структур ${nameStructure}|">Список структур</p>
+    <div th:each="structure : ${structures}">
+        <a th:href="@{'/admin/structure/' + ${structure.name}}" th:text="|${structure.name} ${structure.typeStructure}|">Category</a>
+        <form th:action="@{'/admin/structures/' + ${structure.id} + '/delete'}" method="post">
+            <button>Удалить</button>
+        </form>
+    </div>
+    <p>Интерфейс создания структуры</p>
+    <form action="/admin/structures" method="post">
+        <label for="name">Name structure:
+            <input id="name" type="text" name="name">
+        </label><br>
+        <input name="typeStructure" type="hidden" th:value="${nameStructure.toUpperCase()}"><br>
+        <select name="parentId" th:if="${!parentStructures.isEmpty()}">
+            <option th:each="parentStructure : ${parentStructures}"
+                    th:value="${parentStructure.id}"
+                    th:text="${parentStructure.name}">Category</option>
+        </select><br>
+        <button type="submit">Добавить событие</button>
+    </form>
+    <div style="color: red" th:if="${errors}">
+        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
+            Error message
+        </p>
+    </div>
+</body>
+</html>

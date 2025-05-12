@@ -1,11 +1,12 @@
 --liquibase formatted sql
 
+--добавить ON DELETE CASCADE в extra_service
 
 --changeset ashch:create-table-structure_division
 CREATE TABLE structure_division
 (
     id SERIAL PRIMARY KEY,
-    parent_id INTEGER REFERENCES structure_division (id),
+    parent_id INTEGER REFERENCES structure_division (id) ON DELETE CASCADE,
     type_structure VARCHAR(32) NOT NULL,
     name VARCHAR(100) NOT NULL,
     UNIQUE(parent_id, name)
@@ -17,9 +18,10 @@ CREATE TABLE room
 (
     id SERIAL PRIMARY KEY,
     corps VARCHAR NOT NULL,
-    room_number INTEGER,
-    seats_value INTEGER,
-    province_id INTEGER REFERENCES structure_division (id)
+    room_number INTEGER NOT NULL,
+    seats_value INTEGER NOT NULL,
+    province_id INTEGER REFERENCES structure_division (id),
+    UNIQUE(corps, room_number)
 );
 --rollback DROP TABLE room
 
@@ -28,7 +30,7 @@ CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(30) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     registration_date TIMESTAMP NOT NULL,
     email VARCHAR(100) UNIQUE,
     active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -86,10 +88,10 @@ CREATE TABLE schedule
 CREATE TABLE extra_service
 (
     id SERIAL PRIMARY KEY,
-    structure_division_id INTEGER REFERENCES structure_division (id),
+    structure_division_id INTEGER REFERENCES structure_division (id) ON DELETE CASCADE,
     service VARCHAR(64) NOT NULL,
-    price INTEGER,
-    duration INTERVAL
+    price INTEGER NOT NULL,
+    duration BIGINT
 );
 --rollback DROP TABLE structure_division
 
@@ -101,3 +103,4 @@ CREATE TABLE image
     user_id BIGINT REFERENCES users (id)
 );
 --rollback DROP TABLE image
+

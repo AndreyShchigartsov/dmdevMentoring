@@ -4,9 +4,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -18,6 +21,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import ru.sbercraft.service.entity.enums.Role;
 
 import java.time.Instant;
@@ -40,9 +45,6 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 @Inheritance(strategy = SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Table(name = "users")
-//@OptimisticLocking(type = OptimisticLockType.VERSION)
-//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-//@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class User {
 
     @Id
@@ -53,6 +55,7 @@ public class User {
     private Room room;
 
     @ManyToOne(optional = false, fetch = LAZY)
+    @JoinColumn(name = "structure_division_id")
     private StructureDivision structureDivision;
 
     @Column(unique = true)
@@ -66,6 +69,7 @@ public class User {
 
     private boolean active;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
@@ -97,5 +101,12 @@ public class User {
     public void addSchedules(Schedule schedule) {
         schedules.add(schedule);
         schedule.setUser(this);
+    }
+
+    public void clearRoom() {
+        if (this.room != null) {
+            this.room.getUsers().remove(this);  // Удаляем пользователя из старой комнаты
+            this.room = null;                   // Обнуляем ссылку
+        }
     }
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница пользователей</h1>
+    <h2>Filter</h2>
+    <form action="/admin/users">
+        <label for="username">Name:
+            <input id="username" type="text" name="username" th:value="${filter.username}">
+        </label><br>
+        <select name="role">
+            <option value="" th:selected="${selectedRole == null}">-- Не выбрано --</option>
+            <option th:each="role : ${roles}"
+                    th:value="${filter.role}"
+                    th:text="${role}">Role</option>
+        </select><br>
+        <div>
+            <label for="page">Page:
+                <input id="page" type="number" name="page" th:value="${users.metadata.page}">
+            </label><br>
+            <label for="size">Size:
+                <input id="size" type="number" name="size" th:value="${users.metadata.size}">
+            </label><br>
+        </div>
+        <button type="submit">Filter</button>
+    </form>
+    <div th:text="|Количество пользователей ${users.metadata.totalElements}|">Общее количество польователей</div>
+    <div th:each="user : ${users.content}">
+        <a th:href="@{'/admin/users/' + ${user.id}}" th:text="|${user.username} ${user.role.name()}|">Users</a>
+    </div>
+</body>
+</html>

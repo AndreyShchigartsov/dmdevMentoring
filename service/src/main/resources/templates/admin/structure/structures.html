@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <p>Список структур</p>
+    <div th:each="structure : ${structures}">
+        <a th:href="@{'/admin/structures/' + ${structure}}" th:text="|Посмотреть ${structure}|">Structure</a>
+    </div>
+</body>
+</html>

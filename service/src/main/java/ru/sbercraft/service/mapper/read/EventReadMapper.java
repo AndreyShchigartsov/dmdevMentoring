@@ -7,7 +7,6 @@ import ru.sbercraft.service.mapper.Mapper;
 
 @Component
 public class EventReadMapper implements Mapper<Event, EventReadDto> {
-
     @Override
     public EventReadDto map(Event object) {
         return new EventReadDto(

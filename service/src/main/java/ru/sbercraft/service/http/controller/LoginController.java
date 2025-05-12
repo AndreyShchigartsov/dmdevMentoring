@@ -2,9 +2,10 @@ package ru.sbercraft.service.http.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.sbercraft.service.dto.user.UserCreateEditDto;
 import ru.sbercraft.service.service.UserService;
 
@@ -37,8 +38,13 @@ public class LoginController {
     }
 
     @PostMapping("/registration")
-    public String createUser(Model model, UserCreateEditDto user) {
-        userService.create(user);
+    public String createUser(RedirectAttributes redirectAttributes, UserCreateEditDto user, BindingResult bindingResult) {
+        try {
+            userService.create(user);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/registration";
+        }
         return "redirect:/login";
     }
 }

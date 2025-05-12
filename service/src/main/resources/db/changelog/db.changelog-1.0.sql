@@ -28,7 +28,9 @@ CREATE TABLE users
 (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(30) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+--    для TIMESTAMP нужно окончание time у полей, ибо хранить и время, а не только дату
+--    А если я хочу что бы время и дата хранились, все равно постфикс time должен быть?
     registration_date TIMESTAMP NOT NULL,
     email VARCHAR(100) UNIQUE,
     active BOOLEAN NOT NULL DEFAULT TRUE,

@@ -1,4 +1,4 @@
-package ru.sbercraft.service.dto.structureDivision;
+package ru.sbercraft.service.dto.structure_division;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import ru.sbercraft.service.entity.enums.Structure;
 
 @Getter
 @Builder
-public class StructureDivisionCreateDto {
+public class StructureDivisionCreateEditDto {
     Integer parentId;
     Structure typeStructure;
     String name;

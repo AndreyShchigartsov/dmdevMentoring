@@ -7,7 +7,6 @@ import ru.sbercraft.service.mapper.Mapper;
 
 @Component
 public class EventCreateEditMapper implements Mapper<EventCreateEditDto, Event> {
-
     @Override
     public Event map(EventCreateEditDto object) {
         return Event.builder()

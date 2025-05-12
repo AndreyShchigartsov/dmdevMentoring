@@ -11,6 +11,7 @@ import ru.sbercraft.service.entity.Event;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static ru.sbercraft.service.entity.QEvent.event;
 
 
@@ -65,6 +66,6 @@ public class FilterEventRepositoryImpl implements FilterEventRepository {
 //                .from(event)
 //                .setHint(GraphSemantic.FETCH.getJakartaHintName(), entityManager.getEntityGraph("EventSchedules"))
 //                .fetch();
-        return Collections.emptyList();
+        return emptyList();
     }
 }

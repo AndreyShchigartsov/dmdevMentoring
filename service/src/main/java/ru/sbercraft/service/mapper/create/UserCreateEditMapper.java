@@ -1,5 +1,6 @@
 package ru.sbercraft.service.mapper.create;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -12,9 +13,10 @@ import java.time.Instant;
 import java.util.Optional;
 
 @Component
-public class UserCreateMapper implements Mapper<UserCreateEditDto, User> {
+@RequiredArgsConstructor
+public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User map(UserCreateEditDto object) {
@@ -24,18 +26,17 @@ public class UserCreateMapper implements Mapper<UserCreateEditDto, User> {
                 .filter(StringUtils::hasText)
                 .map(passwordEncoder::encode)
                 .ifPresent(user::setPassword);
+        user.setUsername(object.getUsername());
+        user.setRegistrationDate(Instant.now());
+        user.setRole(Role.USER);
 
-        return user.builder()
-                .username(object.getUsername())
-                .password(object.getRawPassword())
-                .registrationDate(Instant.now())
-                .role(Role.USER)
-                .build();
+        return user;
     }
 
     @Override
     public User map(UserCreateEditDto fromObject, User toObject) {
-
-        return Mapper.super.map(fromObject, toObject);
+            toObject.setUsername(fromObject.getUsername());
+            toObject.setRole(fromObject.getRole());
+            return toObject;
     }
 }

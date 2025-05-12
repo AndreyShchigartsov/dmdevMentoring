@@ -16,8 +16,11 @@ public class UserController {
 
     @GetMapping("/home")
     public String home(Model model, UserReadDto userReadDto) {
+        // Что бы получить пользователя, как лучше сделать, отдельный запрос в БД делать?
+        // Или специальный класс Autentication использовать и от туда доставать?
+        // Или можно так и так, взависимоти от того, какие данные мне нужны? Просто мне нужен заполненый userReadDto
+        // Я думаю запрос в БД нужен, верно?
         model.addAttribute("userReadDto", userReadDto);
-        model.addAttribute("categories", Arrays.stream(CategoryEvent.values()).toList());
         return "user/home";
     }
 }

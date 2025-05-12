@@ -4,6 +4,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
@@ -40,9 +42,6 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 @Inheritance(strategy = SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Table(name = "users")
-//@OptimisticLocking(type = OptimisticLockType.VERSION)
-//@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-//@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class User {
 
     @Id
@@ -66,6 +65,7 @@ public class User {
 
     private boolean active;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)

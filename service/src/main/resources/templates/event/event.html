@@ -5,13 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Страница состязаний</h1>
-    <p>Список состязаний</p>
-    <div th:each="event : ${events}">
-        <a th:href="@{'/admin/event/' + ${event.id}}" th:text="|${event.name} ${event.category}|">Category</a>
-    </div>
-    <p>Интерфейс создания Events</p>
-    <form action="/admin/event/create" method="post">
+<a href="/admin/home">На главную</a>
+    <h1>Страница кокретного состязания</h1>
+    <p th:text="${event.name}"></p>
+    <form th:action="@{${event.id} + '/update'}" method="post">
         <label for="name">Name:
             <input id="name" type="text" name="name">
         </label><br>
@@ -20,8 +17,10 @@
                     th:value="${category}"
                     th:text="${category}">Category</option>
         </select><br>
-        <button type="submit">Добавить событие</button>
+        <button>Редактировать</button>
     </form>
-
+    <form th:action="@{${event.id} + '/delete'}" method="post">
+        <button>Удалить</button>
+    </form>
 </body>
 </html>

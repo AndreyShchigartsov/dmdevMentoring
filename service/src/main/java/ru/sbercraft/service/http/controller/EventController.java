@@ -13,7 +13,7 @@ import ru.sbercraft.service.dto.event.EventCreateEditDto;
 import ru.sbercraft.service.service.EventService;
 
 @Controller
-@RequestMapping("/event")
+@RequestMapping("/events")
 @RequiredArgsConstructor
 public class EventController {
 
@@ -22,7 +22,7 @@ public class EventController {
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute("events", eventService.findAll());
-        return "redirect:/event/events";
+        return "event/events";
     }
 
     @GetMapping("/{id}")
@@ -32,27 +32,6 @@ public class EventController {
                     model.addAttribute("evens", event);
                     return "event/event";
                 })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @PostMapping("/create")
-    public String create(EventCreateEditDto event) {
-        eventService.create(event);
-        return "redirect:/user/home";
-    }
-
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Integer id) {
-        if (!eventService.delete(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        return "redirect:/event";
-    }
-
-    @PostMapping("/{id}/update")
-    public String update(@PathVariable Integer id, EventCreateEditDto event) {
-        return eventService.update(id, event)
-                .map(it -> "redirect:/event/{id}")
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

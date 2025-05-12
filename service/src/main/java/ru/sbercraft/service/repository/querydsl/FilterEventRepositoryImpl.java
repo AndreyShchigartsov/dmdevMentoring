@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import ru.sbercraft.service.repository.QPredicate;
-import ru.sbercraft.service.dto.EventFilter;
+import ru.sbercraft.service.dto.event.EventFilter;
 import ru.sbercraft.service.entity.Event;
 
 import java.util.Collections;

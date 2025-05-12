@@ -8,8 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -30,13 +28,8 @@ import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 
-@NamedEntityGraph(
-        name = "WithImageAndStructureDivision",
-        attributeNodes = {
-                @NamedAttributeNode("images"),
-                @NamedAttributeNode("structureDivision")
-        }
-)
+
+
 @Data
 @ToString(exclude = {"images", "schedules"})
 @EqualsAndHashCode(of = "username")
@@ -45,8 +38,8 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
 @SuperBuilder
 @Entity
 @Inheritance(strategy = SINGLE_TABLE)
-@Table(name = "users")
 @DiscriminatorColumn(name = "type")
+@Table(name = "users")
 //@OptimisticLocking(type = OptimisticLockType.VERSION)
 //@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 //@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
@@ -62,12 +55,10 @@ public class User {
     @ManyToOne(optional = false, fetch = LAZY)
     private StructureDivision structureDivision;
 
-    private String firstname;
-
-    private String lastname;
-
     @Column(unique = true)
     private String username;
+
+    private String email;
 
     private String password;
 
@@ -77,7 +68,7 @@ public class User {
 
     private Role role;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = LAZY)
     private PersonalInformation personalInformation;
 
     @Builder.Default

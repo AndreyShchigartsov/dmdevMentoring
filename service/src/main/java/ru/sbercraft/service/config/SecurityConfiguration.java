@@ -21,12 +21,12 @@ public class SecurityConfiguration {
                         .requestMatchers("/admin/**").hasAuthority(Role.ADMIN.getAuthority())
                         .anyRequest().authenticated())
                 .logout(logout -> logout
-                        .logoutUrl("/logout")
+                        .logoutUrl("/logout")//Знаю что по дефолту, для наглядности оставил для себя что бы не забыть)
                         .logoutSuccessUrl("/login")
                         .deleteCookies("JSESSIONID"))
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/users")
+                        .defaultSuccessUrl("/user/home")
                         .permitAll());
 
         return http.build();

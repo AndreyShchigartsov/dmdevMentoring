@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
-import ru.sbercraft.service.dto.EventCreateEditDto;
+import ru.sbercraft.service.dto.event.EventCreateEditDto;
 import ru.sbercraft.service.service.EventService;
 
 @Controller
@@ -22,7 +22,7 @@ public class EventController {
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute("events", eventService.findAll());
-        return "event/events";
+        return "redirect:/event/events";
     }
 
     @GetMapping("/{id}")
@@ -37,7 +37,8 @@ public class EventController {
 
     @PostMapping("/create")
     public String create(EventCreateEditDto event) {
-        return "redirect:/event/" + eventService.create(event).getId();
+        eventService.create(event);
+        return "redirect:/user/home";
     }
 
     @PostMapping("/{id}/delete")

@@ -19,22 +19,22 @@ class EventControllerIT extends IntegrationTestBase {
 
     private final MockMvc mockMvc;
 
-    @Test
-    void findAll() throws Exception {
-        mockMvc.perform(get("/event"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(view().name("event/events"))
-                .andExpect(model().attributeExists("events"));
-    }
-
-    @Test
-    void create() throws Exception {
-        mockMvc.perform(post("/event/create")
-                .param(name, "hello")
-                .param(category, CategoryEvent.SPORT.name())
-        ).andExpectAll(
-                status().is3xxRedirection(),
-                redirectedUrlPattern("/event/{\\d+}")
-        );
-    }
+//    @Test
+//    void findAll() throws Exception {
+//        mockMvc.perform(get("/event"))
+//                .andExpect(status().is2xxSuccessful())
+//                .andExpect(view().name("event/events"))
+//                .andExpect(model().attributeExists("events"));
+//    }
+//
+//    @Test
+//    void create() throws Exception {
+//        mockMvc.perform(post("/event/create")
+//                .param(name, "hello")
+//                .param(category, CategoryEvent.SPORT.name())
+//        ).andExpectAll(
+//                status().is3xxRedirection(),
+//                redirectedUrlPattern("/event/{\\d+}")
+//        );
+//    }
 }

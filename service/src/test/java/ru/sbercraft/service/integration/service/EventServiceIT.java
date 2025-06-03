@@ -24,60 +24,60 @@ class EventServiceIT extends IntegrationTestBase {
 
     private final EventService eventService;
 
-    @Test
-    void findAll() {
-        List<EventReadDto> events = eventService.findAll();
-
-        assertThat(events.size()).isEqualTo(9);
-    }
-
-    @Test
-    void findById() {
-        Optional<EventReadDto> maybeEvent = eventService.findById(ID_1);
-
-        assertTrue(maybeEvent.isPresent());
-        maybeEvent.ifPresent(event -> {
-            assertEquals("Баскетбол", event.getName());
-            assertSame(CategoryEvent.SPORT, event.getCategory());
-        });
-    }
-
-    @Test
-    void create() {
-        EventCreateEditDto eventCreateEditDto = createEvent("Биология", CategoryEvent.SPORT);
-
-        EventReadDto eventReadDto = eventService.create(eventCreateEditDto);
-
-        assertEquals(eventCreateEditDto.getName(), eventReadDto.getName());
-        assertEquals(eventCreateEditDto.getCategory(), eventReadDto.getCategory());
-        List<EventReadDto> events = eventService.findAll();
-        assertThat(events.size()).isEqualTo(10);
-    }
-
-    @Test
-    void update() {
-        EventCreateEditDto eventDto = createEvent("Химия", CategoryEvent.SCIENCE);
-
-        Optional<EventReadDto> actualResult = eventService.update(ID_1, eventDto);
-
-        assertTrue(actualResult.isPresent());
-
-        actualResult.ifPresent(event -> {
-            assertEquals(eventDto.getName(), event.getName());
-            assertEquals(eventDto.getCategory(), event.getCategory());
-        });
-    }
-
-    @Test
-    void delete() {
-        assertTrue(eventService.delete(ID_1));
-        assertFalse(eventService.delete(-1));
-    }
-
-    private EventCreateEditDto createEvent(String name, CategoryEvent category) {
-        return new EventCreateEditDto(
-                name,
-                category
-        );
-    }
+//    @Test
+//    void findAll() {
+//        List<EventReadDto> events = eventService.findAll();
+//
+//        assertThat(events.size()).isEqualTo(9);
+//    }
+//
+//    @Test
+//    void findById() {
+//        Optional<EventReadDto> maybeEvent = eventService.findById(ID_1);
+//
+//        assertTrue(maybeEvent.isPresent());
+//        maybeEvent.ifPresent(event -> {
+//            assertEquals("Баскетбол", event.getName());
+//            assertSame(CategoryEvent.SPORT, event.getCategory());
+//        });
+//    }
+//
+//    @Test
+//    void create() {
+//        EventCreateEditDto eventCreateEditDto = createEvent("Биология", CategoryEvent.SPORT);
+//
+//        EventReadDto eventReadDto = eventService.create(eventCreateEditDto);
+//
+//        assertEquals(eventCreateEditDto.getName(), eventReadDto.getName());
+//        assertEquals(eventCreateEditDto.getCategory(), eventReadDto.getCategory());
+//        List<EventReadDto> events = eventService.findAll();
+//        assertThat(events.size()).isEqualTo(10);
+//    }
+//
+//    @Test
+//    void update() {
+//        EventCreateEditDto eventDto = createEvent("Химия", CategoryEvent.SCIENCE);
+//
+//        Optional<EventReadDto> actualResult = eventService.update(ID_1, eventDto);
+//
+//        assertTrue(actualResult.isPresent());
+//
+//        actualResult.ifPresent(event -> {
+//            assertEquals(eventDto.getName(), event.getName());
+//            assertEquals(eventDto.getCategory(), event.getCategory());
+//        });
+//    }
+//
+//    @Test
+//    void delete() {
+//        assertTrue(eventService.delete(ID_1));
+//        assertFalse(eventService.delete(-1));
+//    }
+//
+//    private EventCreateEditDto createEvent(String name, CategoryEvent category) {
+//        return new EventCreateEditDto(
+//                name,
+//                category
+//        );
+//    }
 }

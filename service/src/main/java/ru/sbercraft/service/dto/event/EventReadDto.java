@@ -7,7 +7,7 @@ import ru.sbercraft.service.entity.enums.CategoryEvent;
 @Data
 @AllArgsConstructor
 public class EventReadDto {
-    Integer id;
-    String name;
-    CategoryEvent category;
+    private Integer id;
+    private String name;
+    private CategoryEvent category;
 }

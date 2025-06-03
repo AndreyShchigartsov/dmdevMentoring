@@ -1,20 +1,30 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
     <div th:fragment="header">
-        <span th:text="${#authentication.principal.username}">Username</span>
+        <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>
         <form th:action="@{/logout}" method="post">
             <button type="submit">Logout</button>
         </form>
+        <!-- Для пользователей без роли ADMIN -->
+        <span th:unless="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}">
+            <a href="/user/home">Домой user</a>
+        </span>
+
+        <!-- Для пользователей с ролью ADMIN -->
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}">
+           <a href="/admin/home">Домой админ</a>
+        </span>
         <div th:insert="~{fragment :: locale}"></div>
     </div>
     <div th:fragment="locale">
         <form action="">
-            <select name="lang" onchange="this.form.submit()">
+            <select name="lang" onchange="this.form.submit()" >
                 <option></option>
                 <option value="en">EN</option>
                 <option value="ru">RU</option>

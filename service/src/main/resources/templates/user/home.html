@@ -5,26 +5,32 @@
     <title>Title</title>
 </head>
 <body>
-<!--    <div th:insert="~{fragment :: header}"></div>-->
+    <div th:insert="~{fragment :: header}"></div>
     <H1>HOME</H1>
     <div>Пользователь</div>
-    <div th:text="${userReadDto.username}">Имя пользователя</div>
+    <div th:text="|Ваше login: ${user.username} Ваша роль ${user.role.name()}|">Имя пользователя и роль</div>
+    <p th:if="${user.role.name() == 'CAMPER'}">
+        Админ вам выдал доступ отдыхающего <br>
+        <a href="/user/rooms/myRoom">Комната проживания</a><br>
+        <a th:href="@{'/user/images/' + ${user.id}}">Мои фото</a><br>
+        <a href="/user/schedule" style="color: red">Посмотреть расписание</a><br>
+        <a href="/user/excursions" style="color: red">Записаться на экскурсию</a><br>
+        <a href="/user/events" style="color: red">Спартакиада</a><br>
+    </p>
+    <p th:if="${user.role.name() == 'WORKER'}">
+        Админ вам выдал доступ рабочего <br>
+        <a href="/user/images">Добавить фото ребенку</a><br><!--Роль фотограф-->
+        <a href="/user/rooms/myRoom">Комната проживания</a><br>
+        <a href="/user/campers">Список отдыхающих</a><br>
+        <a href="/user/rooms">Посмотреть комнаты</a><br><!-- Определенная роль(не в рамках mvp)-->
+        <a href="/user/events" style="color: red">Спартакиада</a><br>
+        <a href="/user/groups" style="color: red">Привязать ребенка к отряду</a><br>
+        <a href="/user/schedule" style="color: red">Посмотреть рассписание</a><br><!-- В ней если работник можно названчить встречу-->
+    </p>
     <div>Список подразделений</div>
     <div>Список видов дисциплин</div>
     <div th:each="category : ${categories}">
         <a th:href="@{'/event/' + ${category}}" th:text="${category}">Category</a>
     </div>
-    <h5>Создать событие</h5>
-    <form action="/event/create" method="post">
-        <label for="name">Name:
-            <input id="name" type="text" name="name">
-        </label><br>
-        <select name="category">
-            <option th:each="category : ${categories}"
-                    th:value="${category}"
-                    th:text="${category}">Category</option>
-        </select><br>
-        <button type="submit">Добавить событие</button>
-    </form>
 </body>
 </html>

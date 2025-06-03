@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div th:insert="~{fragment :: locale}"></div>
+    <div class="login-box">
+        <h2>Вход в систему</h2>
+        <form action="/login" method="post">
+            <div style="color: red" th:if="${param.error}">
+                Bad credentials
+            </div>
+            <div class="user-box">
+                <input id="username" type="text" name="username" required="">
+                <label for="username"><span th:text="#{login.username}">Username</span></label>
+            </div>
+            <div class="user-box">
+                <input id="password" type="password" name="password" required="">
+                <label for="password"><span th:text="#{login.password}">Password</span></label>
+            </div>
+            <button type="submit" class="styled-button"> <!-- Кнопка вместо ссылки -->
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Submit
+            </button>
+        </form>
+        <form action="/registration">
+            <button type="submit">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Registration</button>
+        </form>
+    </div>
+</body>
+</html>

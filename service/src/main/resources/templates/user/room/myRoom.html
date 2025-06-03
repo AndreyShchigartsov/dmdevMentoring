@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p>Просмотр комнаты где вы живете</p>
+    <div th:if="${room == null}">
+        Вы не заселены!
+    </div>
+    <div th:if="${room != null}" th:text="|Название корпуса: ${room.corps}. Номер комнаты ${room.roomNumber}">Место жительства</div>
+</body>
+</html>

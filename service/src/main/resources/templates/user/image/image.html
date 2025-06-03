@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h2>Страница загрузки картинки для пользователя</h2>
+    <form action="/user/images" enctype="multipart/form-data" method="post">
+        <label for="image">Name:
+            <input id="image" type="file" name="image">
+        </label><br>
+        <label for="userId">
+            <input id="userId" type="hidden" th:value="${userId}" name="userId">
+        </label><br>
+        <button>Добавить картинку</button>
+    </form>
+    <div th:each="imageId : ${imagesId}">
+        <img th:src="@{/api/v1/images/{imageId}(imageId=${imageId})}" alt="user image" height="100px" width="100px">
+    </div>
+</body>
+</html>

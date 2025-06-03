@@ -1,6 +1,7 @@
 package ru.sbercraft.service.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.sbercraft.service.dto.event.EventCreateEditDto;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -23,12 +25,14 @@ public class EventService {
     private final EventCreateEditMapper eventCreateEditMapper;
 
     public List<EventReadDto> findAll() {
+        log.info("Делаем запрос в БД на получение всех событий");
         return eventRepository.findAll().stream()
                 .map(eventReadMapper::map)
                 .toList();
     }
 
     public Optional<EventReadDto> findById(Integer id) {
+        log.info("Делаем запрос в БД на получение события по id");
         return eventRepository.findById(id)
                 .map(eventReadMapper::map);
     }

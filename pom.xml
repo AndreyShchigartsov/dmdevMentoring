@@ -40,19 +40,24 @@
                 <version>1.8.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta-persistence.version}</version>
+            </dependency>
+
             <!-- querydsl-->
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-apt</artifactId>
                 <version>${querydsl.version}</version>
-                <classifier>jakarta</classifier>
+                <classifier>jakarta</classifier> <!-- Важно! -->
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
                 <version>${querydsl.version}</version>
-                <classifier>jakarta</classifier>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -150,6 +155,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>ru.sbercraft.service.Application</mainClass>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -181,7 +189,7 @@
                         <path>
                             <groupId>jakarta.persistence</groupId>
                             <artifactId>jakarta.persistence-api</artifactId>
-                            <version>3.2.0</version>
+                            <version>${jakarta-persistence.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

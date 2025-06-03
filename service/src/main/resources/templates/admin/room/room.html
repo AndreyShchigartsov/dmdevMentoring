@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p>Интерфейс создания комнаты</p>
+    <form action="/admin/rooms/create" method="post" th:if="${!parentStructures.isEmpty()}">
+        <label for="corps">Название корпуса:
+            <input id="corps" type="text" name="corps">
+        </label><br>
+        <label for="roomNumber">Номер комнаты:
+            <input id="roomNumber" type="text" name="roomNumber">
+        </label><br>
+        Количество мест:<select name="seatsValue">
+            <option th:each="valuesSeat : ${valuesSeats}"
+                    th:value="${valuesSeat}"
+                    th:text="${valuesSeat}">Количество мест</option>
+        </select><br>
+        Структура:<select name="provinceId">
+            <option th:each="parentStructure : ${parentStructures}"
+                    th:value="${parentStructure.id}"
+                    th:text="${parentStructure.name}">Структура к которой будет относится комната</option>
+        </select><br>
+        <button type="submit">Добавить комнату</button>
+    </form>
+    <div th:if="${parentStructures.isEmpty()}">
+        У вас нет неодной стуктуры в который вы могли бы привязать комнату. Добавить структуру можно
+        <a href="/admin/structures"> по ссылки</a>
+    </div>
+    <div style="color: red" th:if="${errors}">
+        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
+            Error message
+        </p>
+    </div>
+</body>
+</html>

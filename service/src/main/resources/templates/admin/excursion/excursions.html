@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p>Список экскурсий</p>
+    <div th:if="${excursions.isEmpty()}">
+        Список экскурсий пуст(Нужна стрктура высокого уровня для создания экускурсии)
+        Если не одной не было добавить ранее, вы можете добавить их <a href="/admin/structures/organizational">по ссылки</a>
+    </div>
+    <div th:each="excursion : ${excursions}">
+        <a th:href="@{'/admin/excursions/' + ${excursion.id}}" th:text="|Название экскурсии: ${excursion.service} Цена: ${excursion.price}|">Room</a>
+        <form th:action="@{'/admin/excursions/' + ${excursion.id} + '/delete'}" method="post">
+            <button>Удалить</button>
+        </form>
+    </div>
+    <div th:if="${not structures.isEmpty()}">
+        <a href="/admin/excursions/create">Добавить экскурсию'</a>
+    </div>
+</body>
+</html>

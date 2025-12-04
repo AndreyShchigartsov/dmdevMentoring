@@ -27,10 +27,6 @@
         </select><br>
         <button type="submit">Добавить событие</button>
     </form>
-    <div style="color: red" th:if="${errors}">
-        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
-            Error message
-        </p>
-    </div>
+    <div th:insert="~{fragment :: error}"></div>
 </body>
 </html>

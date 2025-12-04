@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <H1>HOME</H1>
+    <div>Пользователь</div>
+    <div th:text="|Ваше login: ${user.username} Ваша роль ${user.role.name()}|">Имя пользователя и роль</div>
+    <div th:with="rolePath=${'/' + user.role.name().toLowerCase()}">
+        <p th:if="${user.role.name() == 'CAMPER'}">
+            Админ вам выдал доступ отдыхающего <br>
+            <a th:href="${rolePath} + '/rooms/my-room'">Комната проживания</a><br>
+            <a th:href="${rolePath} + '/structure'">Номер города</a><br>
+            <a th:href="${rolePath} + '/images/' + ${user.id}">Мои фото</a><br>
+            <a th:href="${rolePath} + '/schedules'">Посмотреть расписание</a><br>
+            <a th:href="${rolePath} + '/excursions'">Записаться на экскурсию</a><br>
+        </p>
+        <p th:if="${user.role.name() == 'WORKER'}">
+            Админ вам выдал доступ рабочего <br>
+            <a th:href="${rolePath} + '/extra-services'">Посмотреть кто купил экскурсии</a><br><!--Роль экскурсовод-->
+            <a th:href="${rolePath} + '/images'">Добавить фото ребенку</a><br><!--Роль фотограф-->
+            <a th:href="${rolePath} + '/rooms/my-room'">Комната проживания</a><br>
+            <a th:href="${rolePath} + '/events'">Спартакиада</a><br>
+            <a th:href="${rolePath} + '/campers'">Список отдыхающих</a><br>
+            <a th:href="${rolePath} + '/rooms'">Посмотреть комнаты</a><br><!-- Определенная роль(не в рамках mvp)-->
+            <a th:href="${rolePath} + '/structures/users'">Привязать ребенка к отряду</a><br>
+            <a th:href="${rolePath} + '/schedules'">Посмотреть расписание</a><br><!-- В ней если работник можно названчить встречу-->
+        </p>
+        <p th:if="${user.role.name() == 'USER'}">
+            Админ вам выдал доступ пользователя <br>
+            <a th:href="${rolePath} + '/campers'">Список отдыхающих</a><br>
+        </p>
+    </div>
+
+</body>
+</html>

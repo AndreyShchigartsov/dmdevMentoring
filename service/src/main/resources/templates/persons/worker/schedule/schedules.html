@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница расписаний</h1>
+    <h2>Расписания</h2>
+    <form action="/worker/schedules">
+        <div>
+            <label for="date">date:
+                <input id="date" type="date" name="date">
+            </label><br>
+            <select name="status">
+                <option th:each="status : ${statuses}"
+                        th:value="${status}"
+                        th:text="${status}">Status</option>
+            </select><br>
+        </div>
+        <button type="submit">Вывести</button>
+    </form>
+    <form action="/worker/schedules/add">
+        <button type="submit">Добавить рассписание</button>
+    </form>
+    <div th:if="${schedules == null || schedules.isEmpty()}">
+        Список расписаний пуст
+    </div>
+    <div th:each="schedule : ${schedules}">
+        <p th:text="|${schedule.dateTime} ${schedule.status.name()} ${schedule.action} назначил ${schedule.createdUser.username} кому назначил ${schedule.user.username}|">Schedule</p>
+    </div>
+</body>
+</html>

@@ -31,5 +31,10 @@
             </select>
         </form>
     </div>
+    <div th:fragment="error" style="color: red" th:if="${errors}">
+        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
+            Error message
+        </p>
+    </div>
 </body>
 </html>

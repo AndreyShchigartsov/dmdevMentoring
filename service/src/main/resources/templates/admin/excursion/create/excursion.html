@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p>Интерфейс создания экскурсии</p>
+    <form action="/admin/excursions/create" method="post" th:if="${!parentStructures.isEmpty()}">
+        <label for="service">Название экскурсии:
+            <input id="service" type="text" name="service">
+        </label><br>
+        <label for="price">Цена:
+            <input id="price" type="text" name="price">
+        </label><br>
+        <label for="duration">Длительность(в минутах)
+            <input id="duration" type="number" name="duration">
+        </label><br>
+        <select name="provinceId">
+            <option th:each="parentStructure : ${parentStructures}"
+                    th:if="${parentStructure.typeStructure.name() == 'ORGANIZATIONAL'}"
+                    th:value="${parentStructure.id}"
+                    th:text="${parentStructure.name}">Структура к которая предоставляет экскурсию</option>
+        </select><br>
+        <button type="submit">Добавить экскурсию</button>
+    </form>
+    <div th:insert="~{fragment :: error}"></div>
+</body>
+</html>

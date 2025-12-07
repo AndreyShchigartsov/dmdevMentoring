@@ -33,7 +33,7 @@ public class StructureDivisionAdminController {
     public String getOrganizations(Model model, @PathVariable String structure) {
         model.addAttribute("nameStructure", structure);
         model.addAttribute("parentStructures", getParentStructure(structure));
-        model.addAttribute("structures", service.getSeparateStructure(structure));
+        model.addAttribute("structures", service.getStructureDivisions(Structure.valueOf(structure.toUpperCase())));
         return "admin/structure/structure";
     }
 
@@ -80,7 +80,7 @@ public class StructureDivisionAdminController {
         if (index < 0) {
             return emptyList();
         } else {
-            return service.getSeparateStructure(structures.get(index));
+            return service.getStructureDivisions(Structure.valueOf(structures.get(index).toUpperCase()));
         }
     }
 }

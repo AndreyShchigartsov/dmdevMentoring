@@ -19,7 +19,7 @@ public class StructureDivisionRestController {
 
     @GetMapping
     public ResponseEntity<StructureDivisionReadDto> getStructureDivision(Integer id) {
-        return service.getStructureDivision(id)
+        return service.findDyId(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

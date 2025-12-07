@@ -1,6 +1,5 @@
 package ru.vita.service.repository;
 
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -28,7 +27,6 @@ public interface UserRepository extends JpaRepository<User, Long>, FilterUserRep
     @Query("select u from User u where u.role = :role")
     List<User> findByUserRole(@Param("role") Role role);
 
-    @EntityGraph(attributePaths = {"personalInformation"})
     @Query("select u from User u")
     List<User> users();
 

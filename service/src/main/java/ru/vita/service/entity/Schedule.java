@@ -36,7 +36,7 @@ public class Schedule {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "user_created")
+    @JoinColumn(name = "user_created_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private User createdUser;
 

@@ -30,7 +30,7 @@ public class StructureController {
     @GetMapping("/users")
     public String getUsers(Model model, UserFilter filter, Pageable pageable) {
         filter.setRole(Role.CAMPER);
-        model.addAttribute("users", PageResponse.of(userService.getUsers(filter, pageable)));
+        model.addAttribute("users", PageResponse.of(userService.findAll(filter, pageable)));
         model.addAttribute("filter", filter);
         return "persons/worker/structure/users";
     }
@@ -46,7 +46,7 @@ public class StructureController {
     @PostMapping("/{userId}/{structureId}")
     public String addUserToStructure(@PathVariable Long userId, @PathVariable Integer structureId, RedirectAttributes attributes) {
         try {
-            userService.addStructureDivisionInUser(userId, structureId);
+            userService.addUserInStructureDivision(userId, structureId);
         } catch (UserNotFoundException | StructureDivisionNotFoundException e) {
             attributes.addAttribute("errors", new ObjectError("Error", e.getMessage()));
         }

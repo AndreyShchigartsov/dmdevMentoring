@@ -26,7 +26,7 @@ import static jakarta.persistence.InheritanceType.SINGLE_TABLE;
         }
 )
 @Data
-@ToString(exclude = {"images", "schedules"})
+@ToString(exclude = {"images", "schedules", "userExcursions"})
 @EqualsAndHashCode(of = "username")
 @AllArgsConstructor
 @NoArgsConstructor
@@ -73,6 +73,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Schedule> schedules = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<UserExcursion> userExcursions = new ArrayList<>();
+
     public void setStructureDivision(StructureDivision structureDivision) {
         this.structureDivision = structureDivision;
         structureDivision.getUsers().add(this);
@@ -91,6 +95,11 @@ public class User {
     public void addSchedules(Schedule schedule) {
         schedules.add(schedule);
         schedule.setUser(this);
+    }
+
+    public void addUserExcursion(UserExcursion userExcursion) {
+        this.userExcursions.add(userExcursion);
+        userExcursion.setUser(this);
     }
 
     public void clearRoom() {

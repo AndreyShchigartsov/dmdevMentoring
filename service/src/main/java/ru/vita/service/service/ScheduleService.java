@@ -54,7 +54,7 @@ public class ScheduleService {
     }
 
     /**
-     * Возвращает расписание для пользователя(Достается только те расписания, к которому пользователь имеет отношение)
+     * Возвращает расписание для пользователя(достается только те расписания, с котором пользователь связан)
      *
      * @param filter фильтр по userId, createdUserId, date, status
      * @param username пользователь кто имеет отношение в расписанию
@@ -83,11 +83,11 @@ public class ScheduleService {
      */
     @Transactional
     public ScheduleReadDto create(ScheduleCreateEditDto scheduleCreateDto) {
-        return Optional.of(scheduleCreateDto)
+        return Optional.ofNullable(scheduleCreateDto)
                 .map(createMapper::map)
                 .map(scheduleRepository::save)
                 .map(readMapper::map)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalArgumentException("Dto создания расписания не может быть null"));
     }
 
     /**

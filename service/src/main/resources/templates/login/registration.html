@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}">
 </head>
 <body>
-<div class="login-box">
+<div>
     <h2>Страница регистрации!</h2>
     <form action="/registration" method="post">
         <div style="color: red" th:if="${errors}">
@@ -14,34 +14,18 @@
                 Error message
             </p>
         </div>
-<!--        <div style="color: red" th:if="${errors}">-->
-<!--            <p th:each="error : ${errors}" th:text="${error}">-->
-<!--                Error message-->
-<!--            </p>-->
-<!--        </div>-->
-        <div class="user-box">
-            <input id="username" type="text" name="username" required="">
+        <div>
+            <input id="username" type="text" name="username">
             <label for="username"><span th:text="#{login.username}">Username</span></label>
         </div>
-        <div class="user-box">
-            <input id="password" type="password" name="rawPassword" required="">
+        <div>
+            <input id="password" type="password" name="rawPassword">
             <label for="password"><span th:text="#{login.password}">Password</span></label>
         </div>
-        <button type="submit" class="styled-button">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Register
-        </button>
+        <button type="submit">Register</button>
     </form>
     <form action="/login">
-        <button type="submit">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            Login</button>
+        <button type="submit">Login</button>
     </form>
 </div>
 </body>

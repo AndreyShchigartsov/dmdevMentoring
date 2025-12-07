@@ -1,5 +1,7 @@
 package ru.vita.service.http.controller.admin;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,13 +29,18 @@ import ru.vita.service.service.UserService;
 @Controller
 @RequestMapping("/admin/schedules")
 @RequiredArgsConstructor
-public class ScheduleController {
+@Tag(name = "Админ: Расписание", description = "UI интерфейс для управления расписанием")
+public class ScheduleAdminController {
 
     private final ScheduleService scheduleService;
     private final UserService userService;
     private final StructureDivisionService structureDivisionService;
     private final EventService eventService;
 
+    @Operation(
+            summary = "Страница с расписаниями",
+            description = "Возвращает HTML страницу со списком расписаний и пагинацией"
+    )
     @GetMapping
     public String findAll(Model model, Pageable pageable) {
         Page<ScheduleReadDto> schedules = scheduleService.listSchedules(pageable);
@@ -42,9 +48,13 @@ public class ScheduleController {
         return "admin/schedule/schedules";
     }
 
+    @Operation(
+            summary = "Страница создания расписания",
+            description = "Возвращает HTML страницу с интерфейсом создания расписания"
+    )
     @GetMapping("/create")
     public String createPage(Model model) {
-        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("users", userService.findAll());
         model.addAttribute("structureDivisions", structureDivisionService.getStructureDivisions());
         model.addAttribute("events", eventService.findAll());
         model.addAttribute("statuses", Status.values());
@@ -52,10 +62,15 @@ public class ScheduleController {
         return "admin/schedule/create/schedule";
     }
 
+    @Operation(
+            summary = "Создает новое расписание",
+            description = "Принимает данные расписания, валидирует и сохраняет. В случае ошибки или успешного сохранения " +
+                    "производит редирект на страницу с расписаниями. При ошибках валидации возвращает нам список с ошибками"
+    )
     @PostMapping("/create")
     public String create(RedirectAttributes redirectAttributes,
-                                 @Valid ScheduleCreateEditDto scheduleCreateDto,
-                                 BindingResult bindingResult) {
+                         @Valid ScheduleCreateEditDto scheduleCreateDto,
+                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/admin/schedules";
@@ -65,10 +80,15 @@ public class ScheduleController {
 
     }
 
+    @Operation(
+            summary = "Обновляет расписание",
+            description = "Принимает данные расписания, валидирует и сохраняет. В случае ошибки или успешного обновления " +
+                    "производит редирект на страницу с расписаниями. При ошибках валидации возвращает нам список с ошибками"
+    )
     @PostMapping("/{id}/update")
     public String update(RedirectAttributes redirectAttributes,
-                                 @Valid ScheduleCreateEditDto scheduleCreateDto,
-                                 BindingResult bindingResult) {
+                         @Valid ScheduleCreateEditDto scheduleCreateDto,
+                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             return "redirect:/admin/schedule";
@@ -78,9 +98,14 @@ public class ScheduleController {
 
     }
 
+    @Operation(
+            summary = "Удаляет расписание",
+            description = "Удаляет расписание по идентификатору. При успешном удалении производит редирект на страницу " +
+                    "со списком расписаний, иначе кидает исключение ResponseStatusException с кодом 404"
+    )
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        if(!scheduleService.delete(id)) {
+        if (!scheduleService.delete(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return "redirect:/admin/schedules";

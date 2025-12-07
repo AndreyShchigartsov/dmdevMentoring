@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @Builder
 public class ScheduleReadDto {
     Long id;
-    User user;
-    User createdUser;
+    User user;//todo подумать над String, такое ощущение что пользователь целиком не нужен
+    User createdUser;//todo подумать над String, такое ощущение что пользователь целиком не нужен
     StructureDivision structureDivision;
     Event event;
     LocalDateTime dateTime;

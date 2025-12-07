@@ -24,7 +24,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(of = {"id"})
-@ToString(exclude = {"schedules" , "users", "extraServices", "rooms"})
+@ToString(exclude = {"schedules" , "users", "excursion", "rooms"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -36,7 +36,7 @@ public class StructureDivision {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne(fetch = FetchType.LAZY)
     private StructureDivision parent;
 
     @Enumerated(EnumType.STRING)
@@ -50,7 +50,7 @@ public class StructureDivision {
 
     @Builder.Default
     @OneToMany(mappedBy = "structureDivision", cascade = CascadeType.REMOVE)
-    private List<ExtraService> extraServices = new ArrayList<>();
+    private List<Excursion> excursions = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "structureDivision")
@@ -65,9 +65,9 @@ public class StructureDivision {
         user.setStructureDivision(this);
     }
 
-    public void addExtraServices(ExtraService extraService) {
-        this.extraServices.add(extraService);
-        extraService.setStructureDivision(this);
+    public void addExcursion(Excursion excursion) {
+        this.excursions.add(excursion);
+        excursion.setStructureDivision(this);
     }
 
     public void addRoom(Room room) {

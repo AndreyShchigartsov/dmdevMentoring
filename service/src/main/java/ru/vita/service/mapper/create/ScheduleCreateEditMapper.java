@@ -30,7 +30,7 @@ public class ScheduleCreateEditMapper implements Mapper<ScheduleCreateEditDto, S
         return Schedule.builder()
                 .user(getUser(createDto.getUser()))
                 .createdUser(getUser(createDto.getCreatedUser()))
-                .structureDivision(getStructureDivision(createDto.getStructureDivision().isEmpty() ? null : createDto.getStructureDivision()))
+                .structureDivision(getStructureDivision(createDto.getStructureDivision()))
                 .event(getEvent(createDto.getEvent()))
                 .dateTime(LocalDateTime.parse(createDto.getDateTime()))
                 .status(createDto.getStatus())

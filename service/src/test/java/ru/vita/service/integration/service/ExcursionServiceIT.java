@@ -3,10 +3,11 @@ package ru.vita.service.integration.service;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
-import ru.vita.service.dto.extra.services.ExcursionCreateEditDto;
-import ru.vita.service.dto.extra.services.ExcursionReadDto;
+import org.springframework.web.server.ResponseStatusException;
+import ru.vita.service.dto.excursion.ExcursionCreateEditDto;
+import ru.vita.service.dto.excursion.ExcursionReadDto;
 import ru.vita.service.integration.IntegrationTestBase;
-import ru.vita.service.repository.ExtraServiceRepository;
+import ru.vita.service.repository.ExcursionRepository;
 import ru.vita.service.service.ExcursionService;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExcursionServiceIT extends IntegrationTestBase {
 
     private final ExcursionService excursionService;
-    private final ExtraServiceRepository excursionRepository;
+    private final ExcursionRepository excursionRepository;
 
     @Test
     void checkThatReturnAllListExcursion() {
@@ -29,17 +30,14 @@ class ExcursionServiceIT extends IntegrationTestBase {
 
     @Test
     void checkThatReturnExcursionById() {
-        Optional<ExcursionReadDto> excursion = excursionService.findById(1);
+        ExcursionReadDto excursion = excursionService.findById(1);
 
-        assertTrue(excursion.isPresent());
-        assertEquals("Шоколадная фабрика", excursion.get().getService());
+        assertEquals("Шоколадная фабрика", excursion.getService());
     }
 
     @Test
     void checkThatReturnEmptyExcursionById() {
-        Optional<ExcursionReadDto> excursion = excursionService.findById(99);
-
-        assertTrue(excursion.isEmpty());
+        assertThrows(ResponseStatusException.class, () -> excursionService.findById(99));
     }
 
     @Test
@@ -87,10 +85,15 @@ class ExcursionServiceIT extends IntegrationTestBase {
     void checkDeleteExcursionByIdOk() {
         int countBeforeDeleted = excursionRepository.findAll().size();
 
-        boolean isDeleted = excursionService.delete(1);
+        boolean isDeleted = excursionService.delete(6);
 
         assertTrue(isDeleted);
         assertEquals(countBeforeDeleted - 1, excursionService.findAll().size());
+    }
+
+    @Test
+    void checkThatGetExceptionIfDeleteExcursionWhichRefersTableUserExcursion() {
+        assertThrows(DataIntegrityViolationException.class, () -> excursionService.delete(1));
     }
 
     @Test

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.vita.service.dto.extra.services.ExcursionCreateEditDto;
+import ru.vita.service.dto.excursion.ExcursionCreateEditDto;
 import ru.vita.service.entity.enums.Structure;
 import ru.vita.service.service.ExcursionService;
 import ru.vita.service.service.StructureDivisionService;
@@ -30,7 +30,7 @@ public class ExcursionAdminController {
     @GetMapping
     public String findAll(Model model) {
         model.addAttribute("excursions", excursionService.findAll());
-        model.addAttribute("structures", structureDivisionService.getSeparateStructure(Structure.ORGANIZATIONAL.name()));
+        model.addAttribute("structures", structureDivisionService.getStructureDivisions(Structure.ORGANIZATIONAL));
         return "admin/excursion/excursions";
     }
 

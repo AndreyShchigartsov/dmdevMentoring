@@ -1,4 +1,4 @@
-package ru.vita.service.dto.extra.services;
+package ru.vita.service.dto.excursion;
 
 import lombok.Builder;
 import lombok.Value;

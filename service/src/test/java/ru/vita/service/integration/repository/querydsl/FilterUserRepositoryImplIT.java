@@ -26,7 +26,7 @@ public class FilterUserRepositoryImplIT extends IntegrationTestBase {
     void getAllUsers() {
         List<User> users = filterUserRepository.findAllQueryDsl();
 
-        Assertions.assertEquals(4, users.size());
+        Assertions.assertEquals(5, users.size());
     }
 
     @Test

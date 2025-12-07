@@ -28,7 +28,7 @@ public class ImageController {
     @GetMapping
     public String getUsers(Model model, UserFilter filter, Pageable pageable) {
         filter.setRole(Role.CAMPER);
-        model.addAttribute("users", PageResponse.of(userService.getUsers(filter, pageable)));
+        model.addAttribute("users", PageResponse.of(userService.findAll(filter, pageable)));
         model.addAttribute("filter", filter);
         return "persons/worker/image/users";
     }

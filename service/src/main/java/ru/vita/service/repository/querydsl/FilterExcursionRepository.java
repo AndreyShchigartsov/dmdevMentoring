@@ -1,30 +1,30 @@
 package ru.vita.service.repository.querydsl;
 
-import ru.vita.service.dto.extra.services.ExtraServicesFilter;
-import ru.vita.service.entity.ExtraService;
+import ru.vita.service.dto.excursion.ExcursionsFilter;
+import ru.vita.service.entity.Excursion;
 
 import java.util.List;
 
-public interface FilterExtraServiceRepository {
+public interface FilterExcursionRepository {
 
     /**
      * @return услугу по name
      */
-    ExtraService findByName(String name);
+    Excursion findByName(String name);
 
     /**
      * @return list всех дополнительных услуг
      */
-    List<ExtraService> findAll();
+    List<Excursion> findAll();
 
     /**
      * @return list всех доп услуг от n суммы по возрастанию
      */
-    List<ExtraService> findPrice(Integer price);
+    List<Excursion> findPrice(Integer price);
 
     /**
      * @return list доп услуг по фильтру структуры и названию услуги
      */
-    List<ExtraService> findAllQueryDslFilter(ExtraServicesFilter filter);
+    List<Excursion> findAllQueryDslFilter(ExcursionsFilter filter);
 
 }

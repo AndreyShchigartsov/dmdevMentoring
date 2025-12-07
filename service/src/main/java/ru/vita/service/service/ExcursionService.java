@@ -2,13 +2,15 @@ package ru.vita.service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ru.vita.service.dto.extra.services.ExcursionCreateEditDto;
-import ru.vita.service.dto.extra.services.ExcursionReadDto;
+import org.springframework.web.server.ResponseStatusException;
+import ru.vita.service.dto.excursion.ExcursionCreateEditDto;
+import ru.vita.service.dto.excursion.ExcursionReadDto;
 import ru.vita.service.mapper.create.ExcursionCreateEditMapper;
 import ru.vita.service.mapper.read.ExcursionReadMapper;
-import ru.vita.service.repository.ExtraServiceRepository;
+import ru.vita.service.repository.ExcursionRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ExcursionService {
 
-    private final ExtraServiceRepository repository;
+    private final ExcursionRepository repository;
 
     private final ExcursionCreateEditMapper createMapper;
 
@@ -43,12 +45,13 @@ public class ExcursionService {
      *
      * @return Optional с ExcursionReadDto, где ExcursionReadDto - полученная экскурсия
      */
-    public Optional<ExcursionReadDto> findById(Integer id) {
+    public ExcursionReadDto findById(Integer id) {
         log.info("Делаем запрос в БД для получения экскурсии по id");
 
         return Optional.ofNullable(id)
                 .flatMap(repository::findById)
-                .map(readMapper::map);
+                .map(readMapper::map)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Эскурсия с таким id не найдена!"));
     }
 
     /**

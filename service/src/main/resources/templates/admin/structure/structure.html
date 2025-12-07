@@ -10,7 +10,7 @@
     <p th:text="|Список структур ${nameStructure}|">Список структур</p>
     <div th:each="structure : ${structures}">
         <a th:href="@{'/admin/structure/' + ${structure.name}}" th:text="|${structure.name} ${structure.typeStructure}|">Category</a>
-        <form th:action="@{'/admin/structures/' + ${structure.id} + '/delete'}" method="post">
+        <form th:action="@{'/admin/structures/' + ${structure.id} + '/delete'}" method="post" style="display: inline;">
             <button>Удалить</button>
         </form>
     </div>
@@ -25,7 +25,7 @@
                     th:value="${parentStructure.id}"
                     th:text="${parentStructure.name}">Category</option>
         </select><br>
-        <button type="submit">Добавить событие</button>
+        <button type="submit">Добавить структуру</button>
     </form>
     <div th:insert="~{fragment :: error}"></div>
 </body>

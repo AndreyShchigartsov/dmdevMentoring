@@ -17,10 +17,11 @@
             <a th:href="${rolePath} + '/images/' + ${user.id}">Мои фото</a><br>
             <a th:href="${rolePath} + '/schedules'">Посмотреть расписание</a><br>
             <a th:href="${rolePath} + '/excursions'">Записаться на экскурсию</a><br>
+            <a th:href="${rolePath} + '/user-excursion/my-booking'">Посмотреть мои экскурсии</a><br>
         </p>
         <p th:if="${user.role.name() == 'WORKER'}">
             Админ вам выдал доступ рабочего <br>
-            <a th:href="${rolePath} + '/extra-services'">Посмотреть кто купил экскурсии</a><br><!--Роль экскурсовод-->
+            <a th:href="${rolePath} + '/user-excursions'">Посмотреть кто купил экскурсии</a><br><!--Роль экскурсовод-->
             <a th:href="${rolePath} + '/images'">Добавить фото ребенку</a><br><!--Роль фотограф-->
             <a th:href="${rolePath} + '/rooms/my-room'">Комната проживания</a><br>
             <a th:href="${rolePath} + '/events'">Спартакиада</a><br>

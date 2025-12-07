@@ -41,9 +41,9 @@ class EventServiceIT extends IntegrationTestBase {
 
     @Test
     void checkFindByIdWhereIdNull() {
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> eventService.findById(null));
+        Optional<EventReadDto> empty = eventService.findById(null);
 
-        assertEquals("ID события не может быть null", exception.getMessage());
+        assertTrue(empty.isEmpty());
     }
 
     @Test
@@ -60,9 +60,9 @@ class EventServiceIT extends IntegrationTestBase {
 
     @Test
     void checkWhatCreateWhereEventEqualsNull() {
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> eventService.create(null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> eventService.create(null));
 
-        assertEquals("Данные события не могут быть null", exception.getMessage());
+        assertEquals("Dto создания события не может быть null", exception.getMessage());
     }
 
     @Test
@@ -83,16 +83,16 @@ class EventServiceIT extends IntegrationTestBase {
     void checkWhereUpdateIdEventEqualsNull() {
         EventCreateEditDto eventDto = createEvent("Химия", CategoryEvent.SCIENCE);
 
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> eventService.update(null, eventDto));
+        Optional<EventReadDto> empty = eventService.update(null, eventDto);
 
-        assertEquals("ID события не может быть null", exception.getMessage());
+        assertTrue(empty.isEmpty());
     }
 
     @Test
     void checkWhereUpdateEventDtoEqualsNull() {
-        NullPointerException exception = assertThrows(NullPointerException.class, () -> eventService.update(ID_1, null));
+        Optional<EventReadDto> empty = eventService.findById(null);
 
-        assertEquals("Данные события не могут быть null", exception.getMessage());
+        assertTrue(empty.isEmpty());
     }
 
     @Test

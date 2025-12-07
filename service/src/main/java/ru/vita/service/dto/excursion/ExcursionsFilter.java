@@ -1,4 +1,4 @@
-package ru.vita.service.dto.extra.services;
+package ru.vita.service.dto.excursion;
 
 import lombok.Builder;
 import lombok.Value;
@@ -6,7 +6,7 @@ import ru.vita.service.entity.StructureDivision;
 
 @Value
 @Builder
-public class ExtraServicesFilter {
+public class ExcursionsFilter {
     StructureDivision structureDivision;
     String name;
 }

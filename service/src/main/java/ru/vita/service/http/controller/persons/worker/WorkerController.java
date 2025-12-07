@@ -31,7 +31,7 @@ public class WorkerController {
     @GetMapping("/campers")
     public String getCampers(Model model, UserFilter filter, Pageable pageable) {
         filter.setRole(Role.CAMPER);
-        Page<UserReadDto> users = service.getUsers(filter, pageable);
+        Page<UserReadDto> users = service.findAll(filter, pageable);
         model.addAttribute("users", PageResponse.of(users));
         model.addAttribute("filter", filter);
         return "persons/worker/campers";

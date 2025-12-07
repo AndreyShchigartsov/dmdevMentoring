@@ -4,9 +4,8 @@ import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 import ru.vita.service.dto.user.UserCreateEditDto;
 import ru.vita.service.dto.user.UserFilter;
 import ru.vita.service.dto.user.UserReadDto;
@@ -51,14 +51,14 @@ public class UserService implements UserDetailsService {
 
     private final UserReadMapper readMapper;
 
-    public List<UserReadDto> getUsersPage(Integer page, Integer size, Sort sort) {
-        PageRequest pageable = PageRequest.of(page, size, sort);
-        return userRepository.findAll(pageable).stream()
-                .map(readMapper::map)
-                .toList();
-    }
-
-    public Page<UserReadDto> getUsers(UserFilter filter, Pageable pageable) {
+    /**
+     * Возвращает страницу по отфильтрованным пользователем
+     *
+     * @param filter фильтр по username и role
+     * @param pageable информация о странице
+     * @return Page с UserReadDto, UserReadDto - хранит данные о пользователе
+     */
+    public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getUsername(), user.username::containsIgnoreCase)
                 .add(filter.getRole(), user.role::eq)
@@ -69,62 +69,97 @@ public class UserService implements UserDetailsService {
                 .map(readMapper::map);
     }
 
-    public List<UserReadDto> getUsers() {
+    /**
+     * Возвращает всех пользователей
+     *
+     * @return List с UserReadDto, UserReadDto - хранит данные о пользователе
+     */
+    public List<UserReadDto> findAll() {
         return userRepository.users()
                 .stream().map(readMapper::map)
                 .toList();
     }
 
+    /**
+     * Проверяет что данному id пользователя соответствует username
+     *
+     * @param userId идентификатор пользователя
+     * @param username уникальное имя пользователя
+     * @return Optional с UserReadDto, где UserReadDto хранит данные о пользователе которого проверяем с помощью username
+     *         Если пользователь по username не найден, возвращается Optional.empty()
+     * @throws AccessDeniedException если userId не соответствует username
+     */
     public Optional<UserReadDto> getUserByIdWithCheckUsername(Long userId, String username) {
         userRepository.findByUsername(username)
                 .filter(user -> user.getId().equals(userId))
                 .orElseThrow(() -> {
                             log.warn("Доступ запрещен: {} → userId={}", username, userId);
-                            return new AccessDeniedException("Доступ запрещен");
+                            return new AccessDeniedException("Доступ запрещен!");
                         }
                 );
 
         return getUserById(userId);
     }
 
+    /**
+     * Возвращает пользователя по id
+     *
+     * @param id идентификатор пользователя
+     * @return Optional с UserReadDto, где UserReadDto хранит данные о пользователе
+     *         Если пользователь по id не найден, возвращается Optional.empty()
+     */
     public Optional<UserReadDto> getUserById(Long id) {
         return userRepository.findById(id)
                 .map(readMapper::map);
     }
 
-    public Optional<UserReadDto> getUser(UserReadDto user) {
-        return userRepository.findByUsername(user.getUsername())
-                .map(readMapper::map);
-    }
-
+    /**
+     * Возвращает пользователя по username
+     *
+     * @param username уникальное имя пользователя
+     * @return UserReadDto - хранит данные о пользователе
+     */
     public UserReadDto getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(readMapper::map)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Пользователь не найден!"));
     }
 
+    /**
+     * Возвращает список пользователей живущих в комнате
+     *
+     * @param roomId идентификатор комнаты
+     * @return List с UserReadDto, где UserReadDto - хранит данные о пользователе
+     * @throws ResponseStatusException если комната не найдена
+     */
     public List<UserReadDto> getUsersInRoom(Integer roomId) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Комната не найдена!"));
 
         return userRepository.findUsersInRoom(room).stream()
                 .map(readMapper::map)
                 .toList();
     }
 
+    /**
+     * Возвращает всех незаселенных пользователей
+     *
+     * @return List с UserReadDto, где UserReadDto - хранит данные о пользователе
+     */
     public List<UserReadDto> getUsersNotInRoom() {
         return userRepository.findUsersNotInRoom().stream()
                 .map(readMapper::map)
                 .toList();
     }
 
-    public List<UserReadDto> getUsersCamper() {
-        return userRepository.findByUserRole(Role.CAMPER).stream()
-                .map(readMapper::map)
-                .toList();
-    }
-
-
+    /**
+     * Обновляет пользователя
+     *
+     * @param id идентификатор пользователя которого хотим обновить
+     * @param userDto новые данные о пользователе
+     * @return Optional с UserReadDto, где UserReadDto хранит данные об обновленном пользователе
+     *         Если пользователь по id не найден, возвращается Optional.empty()
+     */
     @Transactional
     public Optional<UserReadDto> update(Long id, UserCreateEditDto userDto) {
         return userRepository.findById(id)
@@ -133,24 +168,38 @@ public class UserService implements UserDetailsService {
                 .map(readMapper::map);
     }
 
+    /**
+     * Создает пользователя
+     *
+     * @param userDto dto хранящий данные о пользователе
+     * @return UserReadDto хранит данные созданного пользователя
+     */
     @Transactional
-    public UserReadDto create(UserCreateEditDto user) /*throws ValidationException*/ {
-        return Optional.of(user)
+    public UserReadDto create(UserCreateEditDto userDto) {
+        return Optional.of(userDto)
                 .map(createMapper::map)
                 .map(userRepository::save)
                 .map(readMapper::map)
-                .orElseThrow();
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "userDto не должно быть пустым!"));
     }
 
+    /**
+     * Добавляет пользователя в структуру
+     *
+     * @param userId идентификатор пользователя
+     * @param structureId идентификатор структуры
+     * @throws UserNotFoundException когда пользователь не найден
+     * @throws StructureDivisionNotFoundException когда структура не найдена
+     */
     @Transactional
-    public void addStructureDivisionInUser(Long userId, Integer structureId) throws UserNotFoundException, StructureDivisionNotFoundException {
+    public void addUserInStructureDivision(Long userId, Integer structureId) throws UserNotFoundException, StructureDivisionNotFoundException {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
 
         StructureDivision structure = structureRepository.findById(structureId)
                 .orElseThrow(() -> new StructureDivisionNotFoundException(structureId));
 
-        user.setStructureDivision(structure);
+        structure.addUser(user);
     }
 
     @Override
@@ -161,6 +210,6 @@ public class UserService implements UserDetailsService {
                         user.getPassword(),
                         singleton(user.getRole())
                 ))
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден!"));
     }
 }

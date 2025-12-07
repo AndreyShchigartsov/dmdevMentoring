@@ -45,7 +45,7 @@ public class ScheduleController {
     public String getPage(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        List<UserReadDto> users = userService.getUsers().stream()
+        List<UserReadDto> users = userService.findAll().stream()
                 .filter(user -> !user.getUsername().equals(username))
                 .toList();
 

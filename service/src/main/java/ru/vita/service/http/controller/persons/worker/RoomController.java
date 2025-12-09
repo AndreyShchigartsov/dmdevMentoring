@@ -27,7 +27,7 @@ public class RoomController {
     @GetMapping("/my-room")
     public String getMyRoom(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("room", roomService.getRoomByUser(userDetails.getUsername()));
-        return "persons/common/room/myRoom";
+        return "persons/worker/room/myRoom";
     }
 
     @GetMapping

@@ -2,27 +2,947 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка фотографий</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .photos-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #27ae60;
+            background: #d5f4e6;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .photos-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Форма загрузки */
+        .upload-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border-top: 5px solid #f39c12;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #2ecc71;
+        }
+
+        .section-description {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+
+        .upload-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 3px dashed #cbd5e0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            border-color: #2ecc71;
+            background: linear-gradient(135deg, #edf2ff 0%, #e6eeff 100%);
+        }
+
+        .file-input-label i {
+            font-size: 3rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .file-input-label span {
+            display: block;
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .file-input-label small {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .selected-file {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e6fffa;
+            border-radius: 8px;
+            border: 2px solid #81e6d9;
+            display: none;
+        }
+
+        .selected-file.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-selection {
+            margin-top: 25px;
+        }
+
+        .selection-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .user-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-select:focus {
+            outline: none;
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(46, 204, 113, 0.3);
+        }
+
+        .submit-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Ошибки */
+        .error-alert {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error-alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-title {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: #9b2c2c;
+            font-size: 0.95rem;
+            margin: 5px 0;
+        }
+
+        /* Галерея фотографий */
+        .gallery-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .photos-count {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .photo-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid #e2e8f0;
+            position: relative;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-color: #2ecc71;
+        }
+
+        .photo-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:hover .photo-img {
+            transform: scale(1.05);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 15px;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .photo-card:hover .photo-overlay {
+            transform: translateY(0);
+        }
+
+        .photo-number {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .photo-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .photo-card:hover .photo-actions {
+            opacity: 1;
+        }
+
+        .photo-btn {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2d3748;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .photo-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .empty-gallery {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .photos-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .photos-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .upload-section, .gallery-section {
+                padding: 30px 20px;
+            }
+
+            .photos-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 15px;
+            }
+
+            .photo-img {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .file-input-label {
+                padding: 30px 20px;
+            }
+
+            .photos-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <h2>Страница загрузки картинки для пользователя</h2>
-    <form action="/worker/images" enctype="multipart/form-data" method="post">
-        <label for="image">Name:
-            <input id="image" type="file" name="image">
-        </label><br>
-        <label for="userId">
-            <input id="userId" type="hidden" th:value="${userId}" name="userId">
-        </label><br>
-        <button>Добавить картинку</button>
-    </form>
-    <div style="color: red" th:if="${errors}">
-        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
-            Error message
+<!-- Header -->
+<div class="photos-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person-gear"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+                <a href="/worker/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="photos-container">
+    <div class="page-header">
+        <h1 class="page-title">Загрузка фотографий</h1>
+        <p class="page-subtitle">Страница загрузки картинки для пользователя</p>
+    </div>
+
+    <!-- Форма загрузки -->
+    <div class="upload-section">
+        <h2 class="section-title">
+            <i class="bi bi-cloud-arrow-up"></i>
+            Загрузка фотографий
+        </h2>
+
+        <p class="section-description">
+            Загрузите фотографии для выбранного пользователя. Поддерживаются форматы JPG, PNG, GIF.
+            Максимальный размер файла: 10MB.
         </p>
+
+        <form class="upload-form" action="/worker/images" enctype="multipart/form-data" method="post">
+            <input id="userId" type="hidden" th:value="${userId}" name="userId">
+
+            <div class="form-group">
+                <div class="file-input-wrapper">
+                    <label for="image" class="file-input-label">
+                        <i class="bi bi-camera"></i>
+                        <span>Выберите фотографию</span>
+                        <small>Нажмите или перетащите файл сюда</small>
+                    </label>
+                    <input id="image" class="file-input" type="file" name="image" accept="image/*" required>
+                </div>
+                <div id="selectedFileInfo" class="selected-file">
+                    <i class="bi bi-file-earmark-image"></i>
+                    <span id="fileName">Файл не выбран</span>
+                </div>
+            </div>
+
+            <!-- Если нужно выбирать пользователя (комментируйте/раскомментируйте по необходимости) -->
+            <!--
+            <div class="form-group user-selection">
+                <label class="selection-label">
+                    <i class="bi bi-person"></i>
+                    Выберите пользователя
+                </label>
+                <select class="user-select" name="userId" required>
+                    <option value="">Выберите пользователя...</option>
+                    <option th:each="user : ${users}"
+                            th:value="${user.id}"
+                            th:text="${user.username}">
+                        Пользователь
+                    </option>
+                </select>
+            </div>
+            -->
+
+            <button type="submit" class="submit-btn">
+                <i class="bi bi-upload"></i>
+                Загрузить фотографию
+            </button>
+        </form>
+
+        <!-- Ошибки -->
+        <div id="errorAlert" class="error-alert" th:classappend="${errors} ? 'show' : ''" th:if="${errors}">
+            <div class="error-title">
+                <i class="bi bi-exclamation-triangle"></i>
+                Ошибки при загрузке:
+            </div>
+            <div th:each="error : ${errors}">
+                <div class="error-message" th:text="${error.defaultMessage}">
+                    Error message
+                </div>
+            </div>
+        </div>
     </div>
-    <div th:each="imageId : ${imagesId}">
-        <img th:src="@{/api/v1/images/{imageId}(imageId=${imageId})}" alt="user image" height="100px" width="100px">
+
+    <!-- Галерея фотографий -->
+    <div class="gallery-section">
+        <div class="gallery-header">
+            <h2 class="section-title">
+                <i class="bi bi-images"></i>
+                Галерея фотографий
+            </h2>
+            <div class="photos-count" th:text="'Фотографий: ' + ${imagesId.size()}">
+                Фотографий: 0
+            </div>
+        </div>
+
+        <div th:if="${imagesId.isEmpty()}" class="empty-gallery">
+            <div class="empty-icon">
+                <i class="bi bi-image"></i>
+            </div>
+            <h3 style="color: #475569; margin-bottom: 10px;">Галерея пуста</h3>
+            <p class="empty-text">Нет загруженных фотографий. Загрузите первую фотографию с помощью формы выше.</p>
+        </div>
+
+        <div class="photos-grid" th:unless="${imagesId.isEmpty()}">
+            <div th:each="imageId, stat : ${imagesId}" class="photo-card">
+                <img th:src="@{/api/v1/images/{imageId}(imageId=${imageId})}"
+                     alt="Фотография пользователя"
+                     class="photo-img"
+                     loading="lazy">
+                <div class="photo-overlay">
+                    <div class="photo-number" th:text="'Фото #' + ${stat.count}">
+                        Фото #1
+                    </div>
+                </div>
+                <div class="photo-actions">
+                    <button class="photo-btn" onclick="downloadImage(this)" th:data-id="${imageId}">
+                        <i class="bi bi-download"></i>
+                    </button>
+                    <button class="photo-btn" onclick="shareImage(this)" th:data-id="${imageId}">
+                        <i class="bi bi-share"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+<script>
+    // Обработка выбора файла
+    document.getElementById('image').addEventListener('change', function(e) {
+        const fileInfo = document.getElementById('selectedFileInfo');
+        const fileName = document.getElementById('fileName');
+
+        if (this.files.length > 0) {
+            const file = this.files[0];
+            fileName.textContent = file.name + ' (' + formatBytes(file.size) + ')';
+            fileInfo.classList.add('show');
+
+            // Предпросмотр изображения
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Можно добавить предпросмотр здесь при необходимости
+            };
+            reader.readAsDataURL(file);
+        } else {
+            fileInfo.classList.remove('show');
+        }
+    });
+
+    // Форматирование размера файла
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    // Drag and drop для загрузки
+    const dropArea = document.querySelector('.file-input-label');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        dropArea.style.borderColor = '#2ecc71';
+        dropArea.style.backgroundColor = '#edf2ff';
+    }
+
+    function unhighlight() {
+        dropArea.style.borderColor = '#cbd5e0';
+        dropArea.style.backgroundColor = '#f8fafc';
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        const input = document.getElementById('image');
+
+        input.files = files;
+
+        // Триггерим событие change
+        const event = new Event('change');
+        input.dispatchEvent(event);
+    }
+
+    // Плавная анимация загрузки фотографий
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoCards = document.querySelectorAll('.photo-card');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        photoCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    });
+
+    // Функции для кнопок действий
+    function downloadImage(button) {
+        const imageId = button.getAttribute('data-id');
+        const imageUrl = `/api/v1/images/${imageId}`;
+
+        // Создаем временную ссылку для скачивания
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.download = `photo_${imageId}.jpg`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Показать уведомление о скачивании
+        showNotification('Фотография загружается...', 'info');
+    }
+
+    function shareImage(button) {
+        const imageId = button.getAttribute('data-id');
+        const imageUrl = `${window.location.origin}/api/v1/images/${imageId}`;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Фотография из лагеря',
+                text: 'Посмотрите эту фотографию!',
+                url: imageUrl,
+            })
+                .then(() => console.log('Успешный шаринг'))
+                .catch((error) => console.log('Ошибка шаринга:', error));
+        } else {
+            // Копирование ссылки в буфер обмена
+            navigator.clipboard.writeText(imageUrl)
+                .then(() => showNotification('Ссылка скопирована в буфер обмена', 'success'))
+                .catch(err => showNotification('Не удалось скопировать ссылку', 'error'));
+        }
+    }
+
+    function showNotification(message, type = 'info') {
+        // Создаем элемент уведомления
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                border-radius: 10px;
+                color: white;
+                font-weight: 500;
+                z-index: 1000;
+                animation: slideInRight 0.3s ease;
+            `;
+
+        if (type === 'success') {
+            notification.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+        } else if (type === 'error') {
+            notification.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+        } else {
+            notification.style.background = 'linear-gradient(135deg, #3498db 0%, #2980b9 100%)';
+        }
+
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Удаляем уведомление через 3 секунды
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Добавляем стили для анимации уведомлений
+    const style = document.createElement('style');
+    style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+    document.head.appendChild(style);
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--    <h2>Страница загрузки картинки для пользователя</h2>-->
+<!--    <form action="/worker/images" enctype="multipart/form-data" method="post">-->
+<!--        <label for="image">Name:-->
+<!--            <input id="image" type="file" name="image">-->
+<!--        </label><br>-->
+<!--        <label for="userId">-->
+<!--            <input id="userId" type="hidden" th:value="${userId}" name="userId">-->
+<!--        </label><br>-->
+<!--        <button>Добавить картинку</button>-->
+<!--    </form>-->
+<!--    <div style="color: red" th:if="${errors}">-->
+<!--        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">-->
+<!--            Error message-->
+<!--        </p>-->
+<!--    </div>-->
+<!--    <div th:each="imageId : ${imagesId}">-->
+<!--        <img th:src="@{/api/v1/images/{imageId}(imageId=${imageId})}" alt="user image" height="100px" width="100px">-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

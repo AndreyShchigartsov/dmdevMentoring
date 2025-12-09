@@ -2,23 +2,1345 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавление ребенка в отряд</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .sports-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #f39c12;
+            background: #fef3c7;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.2);
+            border-color: #f39c12;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .sports-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Информация о ребенке */
+        .child-info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            border-left: 4px solid #f39c12;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .child-info-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .child-info-title i {
+            color: #f39c12;
+        }
+
+        .child-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .detail-item {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.1);
+            border-color: #f39c12;
+        }
+
+        .detail-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f39c12;
+            font-size: 20px;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Статус отряда */
+        .current-structure {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            border: 2px solid #2ecc71;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .current-structure-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #27ae60;
+            font-size: 24px;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .current-structure-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #22543d;
+            margin-bottom: 10px;
+        }
+
+        .current-structure-text {
+            color: #38a169;
+            font-size: 1.1rem;
+        }
+
+        /* Карточки отрядов */
+        .structures-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #f39c12;
+        }
+
+        .structures-count {
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .structures-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .structure-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .structure-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(243, 156, 18, 0.15);
+            border-color: #f39c12;
+        }
+
+        .structure-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f39c12, #d35400, #a35400);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .structure-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .structure-type {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .type-squad {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+        }
+
+        .type-group {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            color: #2a4365;
+        }
+
+        .type-team {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #742a2a;
+        }
+
+        .type-club {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .type-department {
+            background: linear-gradient(135deg, #e9d8fd 0%, #d6bcfa 100%);
+            color: #553c9a;
+        }
+
+        .structure-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .structure-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .structure-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #f39c12;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f39c12;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .item-content {
+            flex-grow: 1;
+        }
+
+        .item-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .item-value {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .structure-actions {
+            margin-top: 20px;
+        }
+
+        .action-form {
+            display: flex;
+        }
+
+        .add-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(243, 156, 18, 0.3);
+        }
+
+        .add-btn i {
+            font-size: 18px;
+        }
+
+        /* Ошибки */
+        .error-alert {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-title {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: #9b2c2c;
+            font-size: 0.95rem;
+            margin: 5px 0;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sports-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .sports-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .structures-section {
+                padding: 30px 20px;
+            }
+
+            .structures-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .structure-card {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .child-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .structure-name {
+                font-size: 1.3rem;
+            }
+
+            .current-structure-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div><!--Страница выбора пользователя для добавления фото-->
-    <h1>Страница добавления ребенка в отряд!</h1>
-    <div th:each="structure : ${structures}">
-        <form th:action="@{'/worker/structures/' + ${userId} + '/' + ${structure.id}}" method="post">
-            <button th:text="|Добавить ребенка в ${structure.name} ${structure.typeStructure.name()}|">User</button>
+<!-- Header -->
+<div class="sports-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role">
+                <span th:text="${#authentication.principal.authorities}">Роль пользователя</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+            <a href="/worker/home" class="nav-link">
+                <i class="bi bi-house-door"></i>
+                Домой
+            </a>
+        </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
         </form>
     </div>
-    <div style="color: red" th:if="${errors}">
-        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
-            Error message
+</div>
+
+<!-- Основной контент -->
+<div class="sports-container">
+    <div class="page-header">
+        <h1 class="page-title">Добавление ребенка в отряд</h1>
+        <p class="page-subtitle">Выберите отряд для зачисления ребенка</p>
+    </div>
+
+    <!-- Ошибки валидации -->
+    <div th:if="${errors}" class="error-alert">
+        <div class="error-title">
+            <i class="bi bi-exclamation-triangle"></i>
+            Обнаружены ошибки
+        </div>
+        <div th:each="error : ${errors}">
+            <div class="error-message" th:text="${error.defaultMessage}">
+                Error message
+            </div>
+        </div>
+    </div>
+
+    <!-- Информация о ребенке -->
+    <div class="child-info-card">
+        <h3 class="child-info-title">
+            <i class="bi bi-person-circle"></i>
+            Информация о ребенке
+        </h3>
+        <div class="child-details">
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <div class="detail-label">ID ребенка</div>
+                <div class="detail-value" th:text="${userId}">
+                    12345
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="bi bi-calendar"></i>
+                </div>
+                <div class="detail-label">Доступно отрядов</div>
+                <div class="detail-value" th:text="${structures.size()}">
+                    5
+                </div>
+            </div>
+
+            <div class="detail-item">
+                <div class="detail-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="detail-label">Статус</div>
+                <div class="detail-value" th:if="${!userHaveStructure.isEmpty()}">
+                    Зачислен
+                </div>
+                <div class="detail-value" th:if="${userHaveStructure.isEmpty()}">
+                    Не зачислен
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Текущий отряд ребенка -->
+    <div th:if="${!userHaveStructure.isEmpty()}" class="current-structure">
+        <div class="current-structure-icon">
+            <i class="bi bi-flag-fill"></i>
+        </div>
+        <h3 class="current-structure-title">Текущий отряд ребенка</h3>
+        <p class="current-structure-text" th:text="|Ребенок находится в отряде: ${userHaveStructure.get().name}|">
+            Отряд "Солнышко"
         </p>
     </div>
-    <div th:if="${!userHaveStructure.isEmpty()}">
-        <p th:text="|Ребенка находится в ${userHaveStructure.get().name}е|" >User</p>
+
+    <!-- Список доступных отрядов -->
+    <div class="structures-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-building"></i>
+                Доступные отряды
+            </h2>
+            <div class="structures-count" th:if="${!structures.isEmpty()}">
+                Всего: <span th:text="${structures.size()}">0</span>
+            </div>
+        </div>
+
+        <div th:if="${structures.isEmpty()}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-building-x"></i>
+            </div>
+            <h3 class="empty-title">Нет доступных отрядов</h3>
+            <p class="empty-text">
+                В данный момент нет отрядов для зачисления ребенка.
+                Обратитесь к администратору для создания новых отрядов.
+            </p>
+        </div>
+
+        <div class="structures-grid" th:unless="${structures.isEmpty()}">
+            <div th:each="structure : ${structures}" class="structure-card">
+                <div class="structure-header">
+                    <div th:classappend="'structure-type ' +
+                            (${structure.typeStructure.name() == 'SQUAD'} ? 'type-squad' :
+                            (${structure.typeStructure.name() == 'GROUP'} ? 'type-group' :
+                            (${structure.typeStructure.name() == 'TEAM'} ? 'type-team' :
+                            (${structure.typeStructure.name() == 'CLUB'} ? 'type-club' :
+                            (${structure.typeStructure.name() == 'DEPARTMENT'} ? 'type-department' : 'type-squad')))))"
+                         th:text="${structure.typeStructure.name()}">
+                        SQUAD
+                    </div>
+                </div>
+
+                <h3 class="structure-name" th:text="${structure.name}">
+                    Название отряда
+                </h3>
+
+                <div class="structure-details">
+                    <div class="structure-item">
+                        <div class="item-icon">
+                            <i class="bi bi-tag"></i>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-label">Тип отряда</div>
+                            <div class="item-value" th:text="${structure.typeStructure.name()}">
+                                SQUAD
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="structure-item">
+                        <div class="item-icon">
+                            <i class="bi bi-info-circle"></i>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-label">Описание</div>
+                                Описание отсутствует
+                        </div>
+                    </div>
+
+                    <div class="structure-item">
+                        <div class="item-icon">
+                            <i class="bi bi-person-arms-up"></i>
+                        </div>
+                        <div class="item-content">
+                            <div class="item-label">Возрастные ограничения</div>
+                            <div class="item-value">
+                                -
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="structure-actions">
+                    <form th:action="@{'/worker/structures/' + ${userId} + '/' + ${structure.id}}" method="post" class="action-form">
+                        <button type="submit" class="add-btn">
+                            <i class="bi bi-person-plus"></i>
+                            Добавить в этот отряд
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Информационный блок -->
+    <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border-left: 4px solid #f39c12;">
+        <h4 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <i class="bi bi-info-circle"></i>
+            Важная информация
+        </h4>
+        <ul style="color: #718096; margin: 0; padding-left: 20px;">
+            <li>Ребенок может быть зачислен только в один отряд</li>
+            <li>При выборе нового отряда, ребенок автоматически будет переведен из старого</li>
+            <li>Тип отряда определяет его специфику и направление деятельности</li>
+            <li>Возрастные ограничения должны соответствовать возрасту ребенка</li>
+            <li>Для перевода ребенка в другой отряд, выберите нужный отряд из списка</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация для карточек отрядов
+        const structureCards = document.querySelectorAll('.structure-card');
+        structureCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + (index * 100));
+        });
+
+        // Анимация для информационной карточки ребенка
+        const childInfoCard = document.querySelector('.child-info-card');
+        if (childInfoCard) {
+            childInfoCard.style.opacity = '0';
+            childInfoCard.style.transform = 'translateX(-30px)';
+            childInfoCard.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+            setTimeout(() => {
+                childInfoCard.style.opacity = '1';
+                childInfoCard.style.transform = 'translateX(0)';
+            }, 100);
+        }
+
+        // Анимация для текущего отряда
+        const currentStructure = document.querySelector('.current-structure');
+        if (currentStructure) {
+            currentStructure.style.opacity = '0';
+            currentStructure.style.transform = 'translateY(20px)';
+            currentStructure.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+
+            setTimeout(() => {
+                currentStructure.style.opacity = '1';
+                currentStructure.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // Подсветка типов отрядов
+        const typeBadges = document.querySelectorAll('.structure-type');
+        typeBadges.forEach(badge => {
+            const type = badge.textContent.trim();
+            badge.addEventListener('mouseenter', function() {
+                if (type === 'SQUAD') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(34, 197, 94, 0.3)';
+                } else if (type === 'GROUP') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(59, 130, 246, 0.3)';
+                } else if (type === 'TEAM') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(239, 68, 68, 0.3)';
+                } else if (type === 'CLUB') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.3)';
+                } else if (type === 'DEPARTMENT') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(139, 92, 246, 0.3)';
+                }
+            });
+
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Анимация для кнопок добавления
+        const addButtons = document.querySelectorAll('.add-btn');
+        addButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 12px 25px rgba(243, 156, 18, 0.25)';
+            });
+
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 8px 20px rgba(243, 156, 18, 0.3)';
+            });
+        });
+
+        // Подсветка элементов деталей
+        const detailItems = document.querySelectorAll('.detail-item');
+        detailItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+                this.style.boxShadow = '0 15px 35px rgba(243, 156, 18, 0.15)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+            });
+        });
+
+        // Подсветка элементов отряда
+        const structureItems = document.querySelectorAll('.structure-item');
+        structureItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Фильтрация по типу отряда (дополнительная функциональность)
+        const filterContainer = document.createElement('div');
+        filterContainer.className = 'mb-4';
+
+        // Получаем уникальные типы отрядов
+        const typeSet = new Set();
+        document.querySelectorAll('.structure-type').forEach(badge => {
+            const typeText = badge.textContent.trim();
+            typeSet.add(typeText);
+        });
+
+        const uniqueTypes = Array.from(typeSet);
+
+        if (uniqueTypes.length > 1) {
+            let filterButtons = `
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-weight: 500; color: #4a5568;">Фильтровать по типу:</span>
+                    <button class="type-filter active" data-type="all">Все типы</button>`;
+
+            uniqueTypes.forEach(type => {
+                filterButtons += `<button class="type-filter" data-type="${type}">${type}</button>`;
+            });
+
+            filterButtons += `</div>`;
+            filterContainer.innerHTML = filterButtons;
+
+            const structuresGrid = document.querySelector('.structures-grid');
+            if (structuresGrid && structuresGrid.previousElementSibling) {
+                structuresGrid.parentNode.insertBefore(filterContainer, structuresGrid);
+
+                // Стили для кнопок фильтра
+                const style = document.createElement('style');
+                style.textContent = `
+                    .type-filter {
+                        padding: 8px 16px;
+                        border: 2px solid #e2e8f0;
+                        background: white;
+                        border-radius: 20px;
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #4a5568;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .type-filter:hover {
+                        background: #f1f5f9;
+                        transform: translateY(-2px);
+                    }
+                    .type-filter.active {
+                        background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+                        color: white;
+                        border-color: #f39c12;
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Логика фильтрации
+                const filterBtns = filterContainer.querySelectorAll('.type-filter');
+                filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+            // Убрать активный класс у всех кнопок
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Добавить активный класс текущей кнопке
+            this.classList.add('active');
+
+            const selectedType = this.dataset.type;
+            const structureCards = document.querySelectorAll('.structure-card');
+
+            structureCards.forEach(card => {
+                const cardType = card.querySelector('.structure-type').textContent.trim();
+
+                if (selectedType === 'all' || cardType === selectedType) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+                    // Обновить счетчик отрядов
+                    const countElement = document.querySelector('.structures-count span');
+                    if (countElement) {
+                        const visibleCards = Array.from(structureCards).filter(card =>
+                        card.style.display !== 'none'
+                        ).length;
+
+                        // Анимация изменения числа
+                        animateCount(countElement, visibleCards);
+                    }
+                });
+                });
+            }
+        }
+
+        // Функция анимации счетчика
+        function animateCount(element, targetValue) {
+            const currentValue = parseInt(element.textContent) || 0;
+            if (currentValue === targetValue) return;
+
+            const duration = 500;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = (targetValue - currentValue) / steps;
+            let current = currentValue;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= targetValue) ||
+                (increment < 0 && current <= targetValue)) {
+                    clearInterval(timer);
+                    current = targetValue;
+                }
+                element.textContent = Math.round(current);
+            }, stepTime);
+        }
+
+        // Подтверждение при добавлении в отряд
+        const addForms = document.querySelectorAll('.action-form');
+        addForms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                // Если ребенок уже в отряде, показываем предупреждение
+                const isInStructure = ${!userHaveStructure.isEmpty()};
+                const currentStructureName = ${userHaveStructure.isEmpty()} ? '' : '${userHaveStructure.get().name}';
+
+            if (isInStructure) {
+                const confirmAdd = confirm(`Ребенок уже находится в отряде: ${currentStructureName}\n\nХотите перевести ребенка в новый отряд?`);
+                if (!confirmAdd) {
+                    event.preventDefault();
+                    return;
+                }
+            }
+
+            // Анимация кнопки при отправке
+            const submitBtn = this.querySelector('.add-btn');
+            const originalText = submitBtn.innerHTML;
+            const structureName = this.closest('.structure-card').querySelector('.structure-name').textContent;
+
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Добавление...';
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.7';
+
+            // Плавное затемнение других карточек
+            structureCards.forEach(card => {
+                if (card !== this.closest('.structure-card')) {
+                    card.style.opacity = '0.5';
+                    card.style.transform = 'scale(0.98)';
+                    card.style.transition = 'all 0.3s ease';
+                }
+            });
+
+            // Плавное выделение выбранной карточки
+            const selectedCard = this.closest('.structure-card');
+            selectedCard.style.transform = 'scale(1.02)';
+            selectedCard.style.boxShadow = '0 20px 40px rgba(243, 156, 18, 0.25)';
+            selectedCard.style.borderColor = '#f39c12';
+
+            // Индикация успешного добавления
+            setTimeout(() => {
+                if (!event.defaultPrevented) {
+                    submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Добавлено!';
+                    submitBtn.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+
+                    // Плавный переход к верху страницы
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }, 800);
+                }
+            }, 1000);
+        });
+    });
+
+    // Эффект параллакса при прокрутке
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const speed = 0.5;
+
+        document.querySelector('.page-header').style.transform = `translateY(${scrollTop * speed * 0.1}px)`;
+
+        // Плавное появление карточек при прокрутке
+        structureCards.forEach((card, index) => {
+            const cardTop = card.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+
+            if (cardTop < windowHeight - 100 && card.style.opacity === '0') {
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            }
+        });
+
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+
+    // Анимация иконок в деталях отряда
+    const itemIcons = document.querySelectorAll('.item-icon');
+    itemIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', function() {
+            this.style.transform = 'rotate(15deg) scale(1.1)';
+            this.style.color = '#d35400';
+        });
+
+        icon.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.color = '#f39c12';
+        });
+    });
+
+    // Подсветка названий отрядов
+    const structureNames = document.querySelectorAll('.structure-name');
+    structureNames.forEach(name => {
+        name.addEventListener('mouseenter', function() {
+            this.style.color = '#d35400';
+            this.style.transform = 'scale(1.05)';
+            this.style.transition = 'all 0.3s ease';
+        });
+
+        name.addEventListener('mouseleave', function() {
+            this.style.color = '#2d3748';
+            this.style.transform = '';
+        });
+    });
+
+    // Интерактивные детали ребенка
+    const childDetails = document.querySelectorAll('.detail-item');
+    childDetails.forEach(detail => {
+        detail.addEventListener('click', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.boxShadow = '0 10px 25px rgba(243, 156, 18, 0.2)';
+
+            setTimeout(() => {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
+            }, 300);
+        });
+    });
+
+    // Показ дополнительной информации при наведении на тип отряда
+    typeBadges.forEach(badge => {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'type-tooltip';
+        tooltip.style.cssText = `
+                position: absolute;
+                background: #2d3748;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                z-index: 1000;
+                transform: translateY(10px);
+            `;
+
+        // Добавляем описание для каждого типа
+        const type = badge.textContent.trim();
+        switch(type) {
+            case 'SQUAD':
+                tooltip.textContent = 'Отряд - основная единица организации';
+                break;
+            case 'GROUP':
+                tooltip.textContent = 'Группа - учебное или возрастное объединение';
+                break;
+            case 'TEAM':
+                tooltip.textContent = 'Команда - спортивное или творческое объединение';
+                break;
+            case 'CLUB':
+                tooltip.textContent = 'Клуб - объединение по интересам';
+                break;
+            case 'DEPARTMENT':
+                tooltip.textContent = 'Отделение - административная единица';
+                break;
+            default:
+                tooltip.textContent = 'Структурное подразделение';
+        }
+
+        badge.style.position = 'relative';
+        badge.appendChild(tooltip);
+
+        badge.addEventListener('mouseenter', function() {
+            tooltip.style.opacity = '1';
+            tooltip.style.transform = 'translateY(0)';
+        });
+
+        badge.addEventListener('mouseleave', function() {
+            tooltip.style.opacity = '0';
+            tooltip.style.transform = 'translateY(10px)';
+        });
+    });
+
+    // Анимация при загрузке страницы
+    setTimeout(() => {
+        document.body.style.opacity = '1';
+        document.body.style.transition = 'opacity 0.5s ease';
+    }, 100);
+
+    // Обработка ошибок
+    const errorAlert = document.querySelector('.error-alert');
+    if (errorAlert) {
+        errorAlert.style.opacity = '0';
+        errorAlert.style.transform = 'translateY(-20px)';
+        errorAlert.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+        setTimeout(() => {
+            errorAlert.style.opacity = '1';
+            errorAlert.style.transform = 'translateY(0)';
+
+            // Автоматическое скрытие ошибок через 5 секунд
+            setTimeout(() => {
+                errorAlert.style.opacity = '0';
+                errorAlert.style.transform = 'translateY(-20px)';
+                setTimeout(() => {
+                    errorAlert.style.display = 'none';
+                }, 500);
+            }, 5000);
+        }, 500);
+    }
+
+    // Анимация пустого состояния
+    const emptyState = document.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.style.opacity = '0';
+        emptyState.style.transform = 'scale(0.9)';
+        emptyState.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+        setTimeout(() => {
+            emptyState.style.opacity = '1';
+            emptyState.style.transform = 'scale(1)';
+        }, 200);
+    }
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Для пользователей с роли WORKER &ndash;&gt;-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">-->
+<!--        <a href="/worker/home">Домой worker</a>-->
+<!--    </span>-->
+<!--    <h1>Страница добавления ребенка в отряд!</h1>-->
+<!--    <div th:each="structure : ${structures}">-->
+<!--        <form th:action="@{'/worker/structures/' + ${userId} + '/' + ${structure.id}}" method="post">-->
+<!--            <button th:text="|Добавить ребенка в ${structure.name} ${structure.typeStructure.name()}|">User</button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div style="color: red" th:if="${errors}">-->
+<!--        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">-->
+<!--            Error message-->
+<!--        </p>-->
+<!--    </div>-->
+<!--    <div th:if="${!userHaveStructure.isEmpty()}">-->
+<!--        <p th:text="|Ребенка находится в ${userHaveStructure.get().name}е|" >User</p>-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

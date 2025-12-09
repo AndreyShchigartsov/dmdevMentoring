@@ -2,29 +2,1632 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отдыхающие</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .sports-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #e74c3c;
+            background: #fed7d7;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .sports-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Панель фильтров */
+        .filters-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .filters-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filters-title i {
+            color: #e74c3c;
+        }
+
+        .filters-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label i {
+            color: #e74c3c;
+            font-size: 14px;
+        }
+
+        .filter-control {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .filter-control:focus {
+            border-color: #e74c3c;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .filter-control:hover {
+            border-color: #cbd5e0;
+            background: #f1f5f9;
+        }
+
+        .pagination-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-3px);
+        }
+
+        /* Статистика отдыхающих */
+        .campers-stats {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #e74c3c;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .stat-icon.page {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .stat-icon.pages {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .stat-icon.size {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Список отдыхающих */
+        .campers-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #e74c3c;
+        }
+
+        .campers-count {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Карточки отдыхающих */
+        .campers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .camper-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camper-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(231, 76, 60, 0.15);
+            border-color: #e74c3c;
+        }
+
+        .camper-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #e74c3c, #c0392b, #a93226);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .camper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .camper-id {
+            background: linear-gradient(135deg, #e9d8fd 0%, #d6bcfa 100%);
+            color: #553c9a;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .camper-content {
+            margin-top: 15px;
+        }
+
+        .camper-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .camper-username {
+            font-size: 1.1rem;
+            color: #e74c3c;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .camper-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #e74c3c;
+        }
+
+        .detail-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #e74c3c;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .detail-content {
+            flex-grow: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .camper-actions {
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .action-btn i {
+            font-size: 18px;
+        }
+
+        /* Пагинация */
+        .pagination-container {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .pagination-info {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+            min-width: 40px;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .page-btn:not(.active) {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .page-btn:not(.active):hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sports-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .sports-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filters-form {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-direction: column;
+            }
+
+            .pagination-group {
+                grid-template-columns: 1fr;
+            }
+
+            .campers-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .campers-section {
+                padding: 30px 20px;
+            }
+
+            .campers-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .camper-card {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pagination-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .campers-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .camper-name {
+                font-size: 1.3rem;
+            }
+
+            .page-btn {
+                padding: 8px 12px;
+                min-width: 35px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <h1>Страница пользователей</h1>
-    <h2>Filter</h2>
-    <form action="/worker/campers">
-        <label for="username">Name:
-            <input id="username" type="text" name="username" th:value="${filter.username}">
-        </label><br>
-        <div>
-            <label for="page">Page:
-                <input id="page" type="number" name="page" th:value="${users.metadata.page}">
-            </label><br>
-            <label for="size">Size:
-                <input id="size" type="number" name="size" th:value="${users.metadata.size}">
-            </label><br>
+<!-- Header -->
+<div class="sports-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-people-fill"></i>
         </div>
-        <button type="submit">Filter</button>
-    </form>
-    <div th:text="|Количество пользователей ${users.metadata.totalElements}|">Общее количество пользователей</div>
-    <div th:each="user : ${users.content}">
-        <a th:href="@{'/user/camper/' + ${user.id}}" th:text="${user.username}">Campers</a>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role">
+                <span th:text="${#authentication.principal.authorities}">Роль пользователя</span>
+            </div>
+        </div>
     </div>
+
+    <div class="nav-links">
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+            <a href="/worker/home" class="nav-link">
+                <i class="bi bi-house-door"></i>
+                Домой
+            </a>
+        </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="sports-container">
+    <div class="page-header">
+        <h1 class="page-title">Отдыхающие</h1>
+        <p class="page-subtitle">Список всех отдыхающих в лагере</p>
+    </div>
+
+    <!-- Панель фильтров -->
+    <div class="filters-panel">
+        <h3 class="filters-title">
+            <i class="bi bi-funnel"></i>
+            Поиск отдыхающих
+        </h3>
+        <form th:action="@{/worker/campers}" method="get" class="filters-form">
+            <div class="filter-group">
+                <label for="username" class="filter-label">
+                    <i class="bi bi-person"></i>
+                    Имя пользователя
+                </label>
+                <input type="text"
+                       id="username"
+                       name="username"
+                       class="filter-control"
+                       th:value="${param.username}"
+                       placeholder="Введите имя для поиска...">
+            </div>
+
+            <div class="filter-group pagination-group">
+                <div>
+                    <label for="page" class="filter-label">
+                        <i class="bi bi-123"></i>
+                        Страница
+                    </label>
+                    <input type="number"
+                           id="page"
+                           name="page"
+                           class="filter-control"
+                           th:value="${users.metadata.page}"
+                           min="0">
+                </div>
+                <div>
+                    <label for="size" class="filter-label">
+                        <i class="bi bi-list-columns"></i>
+                        Размер страницы
+                    </label>
+                    <input type="number"
+                           id="size"
+                           name="size"
+                           class="filter-control"
+                           th:value="${users.metadata.size}"
+                           min="1"
+                           max="100">
+                </div>
+            </div>
+
+            <div class="filter-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                    Применить фильтры
+                </button>
+                <a th:href="@{/worker/campers}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Сбросить
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Статистика отдыхающих -->
+    <div class="campers-stats" th:if="${!users.content.isEmpty()}">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-value" th:text="${users.metadata.totalElements}">0</div>
+            <div class="stat-label">Всего отдыхающих</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon page">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <div class="stat-value" th:text="${users.content.size()}">0</div>
+            <div class="stat-label">На странице</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon pages">
+                <i class="bi bi-files"></i>
+            </div>
+            <div class="stat-value" th:text="${users.metadata.totalElements}">0</div>
+            <div class="stat-label">Страниц</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon size">
+                <i class="bi bi-123"></i>
+            </div>
+            <div class="stat-value" th:text="${users.metadata.size}">0</div>
+            <div class="stat-label">Размер страницы</div>
+        </div>
+    </div>
+
+    <!-- Список отдыхающих -->
+    <div class="campers-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-list-task"></i>
+                Список отдыхающих
+            </h2>
+            <div class="campers-count" th:if="${!users.content.isEmpty()}">
+                Найдено: <span th:text="${users.metadata.totalElements}">0</span>
+            </div>
+        </div>
+
+        <div th:if="${users.content.isEmpty()}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-person-x"></i>
+            </div>
+            <h3 class="empty-title">Отдыхающие не найдены</h3>
+            <p class="empty-text">
+                По вашему запросу не найдено отдыхающих.
+                Попробуйте изменить параметры поиска или проверьте список пользователей.
+            </p>
+        </div>
+
+        <div class="campers-grid" th:unless="${users.content.isEmpty()}">
+            <div th:each="user : ${users.content}" class="camper-card">
+                <div class="camper-header">
+                    <div class="camper-id" th:text="'ID: ' + ${user.id}">
+                        ID: 123
+                    </div>
+                </div>
+
+                <div class="camper-content">
+                    Имя Фамилия
+                    <p class="camper-username" th:text="'@' + ${user.username}">
+                        @username
+                    </p>
+
+                    <div class="camper-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Роль</div>
+                                <div class="detail-value" th:text="${user.role.name()}">
+                                    ROLE
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-envelope"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value" th:text="${user.email}">
+                                    email@example.com
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item" >
+                            <div class="detail-icon">
+                                <i class="bi bi-calendar"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Возраст</div>
+                                <div class="detail-value">
+                                    <span th:text="10">10</span> лет
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item" >
+                            <div class="detail-icon">
+                                <i class="bi bi-telephone"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Телефон</div>
+                                <div class="detail-value" text="+7 999 123-45-67">
+                                    +7 999 123-45-67
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="camper-actions">
+                        <a th:href="@{'/user/camper/' + ${user.id}}" class="action-btn">
+                            <i class="bi bi-eye"></i>
+                            Просмотреть профиль
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    <div th:if="${!users.content.isEmpty()}" class="pagination-container">
+        <div class="pagination-info">
+            Страница <span th:text="${users.metadata.page + 1}">1</span> из
+            <span th:text="${users.metadata.totalElements}">1</span> •
+            Показано <span th:text="${users.content.size()}">10</span> из
+            <span th:text="${users.metadata.totalElements}">100</span> отдыхающих
+        </div>
+
+        <div class="pagination-buttons">
+            <!-- Первая страница -->
+            <a th:href="@{/worker/campers(page=0, size=${users.metadata.size}, username=${param.username})}"
+               th:classappend="${users.metadata.page == 0} ? 'disabled' : ''"
+               class="page-btn">
+                <i class="bi bi-chevron-double-left"></i>
+            </a>
+
+            <!-- Предыдущая страница -->
+            <a th:href="@{/worker/campers(page=${users.metadata.page - 1}, size=${users.metadata.size}, username=${param.username})}"
+               th:classappend="${users.metadata.page == 0} ? 'disabled' : ''"
+               class="page-btn">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+
+            <!-- Номера страниц -->
+            <div th:each="i : ${#numbers.sequence(0, users.metadata.totalElements - 1)}">
+                <a th:if="${i >= users.metadata.page - 2 and i <= users.metadata.page + 2}"
+                   th:href="@{/worker/campers(page=${i}, size=${users.metadata.size}, username=${param.username})}"
+                   th:classappend="${users.metadata.page == i} ? 'active' : ''"
+                   class="page-btn"
+                   th:text="${i + 1}">
+                    1
+                </a>
+                <span th:if="${i == users.metadata.page + 3 and i < users.metadata.totalElements - 1}"
+                      class="page-btn disabled">...</span>
+            </div>
+
+            <!-- Следующая страница -->
+            <a th:href="@{/worker/campers(page=${users.metadata.page + 1}, size=${users.metadata.size}, username=${param.username})}"
+               th:classappend="${users.metadata.page == users.metadata.totalElements - 1} ? 'disabled' : ''"
+               class="page-btn">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+
+            <!-- Последняя страница -->
+            <a th:href="@{/worker/campers(page=${users.metadata.totalElements - 1}, size=${users.metadata.size}, username=${param.username})}"
+               th:classappend="${users.metadata.page == users.metadata.totalElements - 1} ? 'disabled' : ''"
+               class="page-btn">
+                <i class="bi bi-chevron-double-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Информационный блок -->
+    <div style="background: #f8fafc; padding: 25px; border-radius: 12px; margin-top: 30px; border-left: 4px solid #e74c3c;">
+        <h4 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <i class="bi bi-info-circle"></i>
+            Управление отдыхающими
+        </h4>
+        <ul style="color: #718096; margin: 0; padding-left: 20px;">
+            <li>Для просмотра подробной информации об отдыхающем нажмите "Просмотреть профиль"</li>
+            <li>Используйте фильтры для поиска конкретных отдыхающих по имени</li>
+            <li>Измените размер страницы, если нужно показать больше или меньше записей</li>
+            <li>Переходите между страницами с помощью пагинации внизу списка</li>
+            <li>Для сброса фильтров нажмите кнопку "Сбросить"</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация для карточек отдыхающих
+        const camperCards = document.querySelectorAll('.camper-card');
+        camperCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100 + (index * 100));
+        });
+
+        // Анимация для статистических карточек
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(20px)';
+            }, 200 + (index * 100));
+        });
+
+        // Анимация для панели фильтров
+        const filtersPanel = document.querySelector('.filters-panel');
+        filtersPanel.style.opacity = '0';
+        filtersPanel.style.transform = 'translateY(-20px)';
+        filtersPanel.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+        setTimeout(() => {
+            filtersPanel.style.opacity = '1';
+            filtersPanel.style.transform = 'translateY(0)';
+        }, 100);
+
+        // Анимация для пустого состояния
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.style.opacity = '0';
+            emptyState.style.transform = 'scale(0.9)';
+            emptyState.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+
+            setTimeout(() => {
+                emptyState.style.opacity = '1';
+                emptyState.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Подсветка ID отдыхающих
+        const idBadges = document.querySelectorAll('.camper-id');
+        idBadges.forEach(badge => {
+            badge.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.boxShadow = '0 4px 15px rgba(139, 92, 246, 0.3)';
+            });
+
+            badge.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Анимация для кнопок просмотра профиля
+        const actionButtons = document.querySelectorAll('.action-btn');
+        actionButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.boxShadow = '0 12px 25px rgba(231, 76, 60, 0.25)';
+            });
+
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(-3px)';
+                this.style.boxShadow = '0 8px 20px rgba(231, 76, 60, 0.3)';
+            });
+        });
+
+        // Подсветка элементов деталей
+        const detailItems = document.querySelectorAll('.detail-item');
+        detailItems.forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateX(5px)';
+                this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Анимация иконок в деталях
+        const detailIcons = document.querySelectorAll('.detail-icon');
+        detailIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', function() {
+                this.style.transform = 'rotate(15deg) scale(1.1)';
+                this.style.color = '#c0392b';
+            });
+
+            icon.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.color = '#e74c3c';
+            });
+        });
+
+        // Подсветка имен отдыхающих
+        const camperNames = document.querySelectorAll('.camper-name');
+        camperNames.forEach(name => {
+            name.addEventListener('mouseenter', function() {
+                this.style.color = '#c0392b';
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'all 0.3s ease';
+            });
+
+            name.addEventListener('mouseleave', function() {
+                this.style.color = '#2d3748';
+                this.style.transform = '';
+            });
+        });
+
+        // Подсветка имен пользователей
+        const usernames = document.querySelectorAll('.camper-username');
+        usernames.forEach(username => {
+            username.addEventListener('mouseenter', function() {
+                this.style.color = '#c0392b';
+                this.style.transform = 'scale(1.05)';
+                this.style.fontWeight = '600';
+            });
+
+            username.addEventListener('mouseleave', function() {
+                this.style.color = '#e74c3c';
+                this.style.transform = '';
+                this.style.fontWeight = '500';
+            });
+        });
+
+        // Фильтрация по ролям (дополнительная функциональность)
+        const filterContainer = document.createElement('div');
+        filterContainer.className = 'mb-4';
+
+        // Получаем уникальные роли отдыхающих
+        const roleSet = new Set();
+        document.querySelectorAll('.detail-value:first-child').forEach(element => {
+            const roleText = element.textContent.trim();
+            if (roleText) roleSet.add(roleText);
+        });
+
+        const uniqueRoles = Array.from(roleSet);
+
+        if (uniqueRoles.length > 1) {
+            let filterButtons = `
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 15px;">
+                    <span style="font-weight: 500; color: #4a5568;">Фильтровать по роли:</span>
+                    <button class="role-filter active" data-role="all">Все роли</button>`;
+
+            uniqueRoles.forEach(role => {
+                filterButtons += `<button class="role-filter" data-role="${role}">${role}</button>`;
+            });
+
+            filterButtons += `</div>`;
+            filterContainer.innerHTML = filterButtons;
+
+            const campersGrid = document.querySelector('.campers-grid');
+            if (campersGrid && campersGrid.previousElementSibling) {
+                campersGrid.parentNode.insertBefore(filterContainer, campersGrid);
+
+                // Стили для кнопок фильтра
+                const style = document.createElement('style');
+                style.textContent = `
+                    .role-filter {
+                        padding: 8px 16px;
+                        border: 2px solid #e2e8f0;
+                        background: white;
+                        border-radius: 20px;
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #4a5568;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .role-filter:hover {
+                        background: #f1f5f9;
+                        transform: translateY(-2px);
+                    }
+                    .role-filter.active {
+                        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                        color: white;
+                        border-color: #e74c3c;
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Логика фильтрации
+                const filterBtns = filterContainer.querySelectorAll('.role-filter');
+                filterBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Убрать активный класс у всех кнопок
+                        filterBtns.forEach(b => b.classList.remove('active'));
+                        // Добавить активный класс текущей кнопке
+                        this.classList.add('active');
+
+                        const selectedRole = this.dataset.role;
+                        const camperCards = document.querySelectorAll('.camper-card');
+
+                        camperCards.forEach(card => {
+                            const cardRole = card.querySelector('.detail-value:first-child').textContent.trim();
+
+                            if (selectedRole === 'all' || cardRole === selectedRole) {
+                                card.style.display = 'block';
+                                setTimeout(() => {
+                                    card.style.opacity = '1';
+                                    card.style.transform = 'translateY(0)';
+                                }, 100);
+                            } else {
+                                card.style.opacity = '0';
+                                card.style.transform = 'translateY(20px)';
+                                setTimeout(() => {
+                                    card.style.display = 'none';
+                                }, 300);
+                            }
+                        });
+
+                        // Обновить счетчик
+                        const countElement = document.querySelector('.campers-count span');
+                        if (countElement) {
+                            const visibleCards = Array.from(camperCards).filter(card =>
+                            card.style.display !== 'none'
+                            ).length;
+                            animateCount(countElement, visibleCards);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Функция анимации счетчика
+        function animateCount(element, targetValue) {
+            const currentValue = parseInt(element.textContent) || 0;
+            if (currentValue === targetValue) return;
+
+            const duration = 500;
+            const stepTime = 20;
+            const steps = duration / stepTime;
+            const increment = (targetValue - currentValue) / steps;
+            let current = currentValue;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= targetValue) ||
+                (increment < 0 && current <= targetValue)) {
+                    clearInterval(timer);
+                    current = targetValue;
+                }
+                element.textContent = Math.round(current);
+            }, stepTime);
+        }
+
+        // Обновление статистики при фильтрации
+        const updateStats = () => {
+            const totalElement = document.querySelector('.stat-card:nth-child(1) .stat-value');
+            const pageElement = document.querySelector('.stat-card:nth-child(2) .stat-value');
+
+            if (totalElement && camperCards.length > 0) {
+                // Подсчет видимых карточек после фильтрации
+                const visibleCards = Array.from(camperCards).filter(card =>
+                card.style.display !== 'none'
+                ).length;
+
+                // Анимация обновления чисел
+                animateCount(totalElement, visibleCards);
+                if (pageElement) animateCount(pageElement, visibleCards);
+            }
+        };
+
+        // Интерактивность для форм фильтрации
+        const filterForm = document.querySelector('.filters-form');
+        if (filterForm) {
+            const filterControls = filterForm.querySelectorAll('.filter-control');
+
+            filterControls.forEach(control => {
+                control.addEventListener('focus', function() {
+                    this.parentNode.style.transform = 'translateY(-2px)';
+                    this.parentNode.style.transition = 'transform 0.3s ease';
+                });
+
+                control.addEventListener('blur', function() {
+                    this.parentNode.style.transform = '';
+                });
+
+                control.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.style.borderColor = '#e74c3c';
+                        this.style.background = 'white';
+                    } else {
+                        this.style.borderColor = '#e2e8f0';
+                        this.style.background = '#f8fafc';
+                    }
+                });
+            });
+
+            // Анимация при отправке формы
+            filterForm.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Поиск...';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.7';
+
+                // Плавное затемнение страницы
+                document.body.style.opacity = '0.9';
+                document.body.style.transition = 'opacity 0.3s ease';
+
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    document.body.style.opacity = '1';
+                }, 1000);
+            });
+        }
+
+        // Анимация для кнопок пагинации
+        const pageButtons = document.querySelectorAll('.page-btn:not(.disabled)');
+        pageButtons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('active')) {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                }
+            });
+
+            button.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('active')) {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                }
+            });
+
+            button.addEventListener('click', function(e) {
+                if (!this.classList.contains('disabled')) {
+                    // Анимация перехода
+                    document.body.style.opacity = '0.8';
+                    document.body.style.transition = 'opacity 0.3s ease';
+
+                    setTimeout(() => {
+                        document.body.style.opacity = '1';
+                    }, 300);
+                }
+            });
+        });
+
+        // Эффект параллакса при прокрутке
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const speed = 0.5;
+
+            document.querySelector('.page-header').style.transform = `translateY(${scrollTop * speed * 0.1}px)`;
+
+            // Плавное появление карточек при прокрутке
+            camperCards.forEach((card, index) => {
+                const cardTop = card.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (cardTop < windowHeight - 100 && card.style.opacity === '0') {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+        });
+
+        // Сортировка по имени или возрасту (дополнительная функциональность)
+        const sortContainer = document.createElement('div');
+        sortContainer.className = 'mb-4';
+        sortContainer.innerHTML = `
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 15px;">
+                <span style="font-weight: 500; color: #4a5568;">Сортировать по:</span>
+                <button class="sort-btn active" data-sort="default">По умолчанию</button>
+                <button class="sort-btn" data-sort="name-asc">Имени А-Я</button>
+                <button class="sort-btn" data-sort="name-desc">Имени Я-А</button>
+                <button class="sort-btn" data-sort="age-asc">Возрасту (младшие)</button>
+                <button class="sort-btn" data-sort="age-desc">Возрасту (старшие)</button>
+            </div>
+        `;
+
+        if (camperCards.length > 1) {
+            const campersGrid = document.querySelector('.campers-grid');
+            if (campersGrid && campersGrid.previousElementSibling) {
+                campersGrid.parentNode.insertBefore(sortContainer, campersGrid);
+
+                // Стили для кнопок сортировки
+                const style = document.createElement('style');
+                style.textContent += `
+                    .sort-btn {
+                        padding: 8px 16px;
+                        border: 2px solid #e2e8f0;
+                        background: white;
+                        border-radius: 20px;
+                        font-size: 0.9rem;
+                        font-weight: 500;
+                        color: #4a5568;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .sort-btn:hover {
+                        background: #f1f5f9;
+                        transform: translateY(-2px);
+                    }
+                    .sort-btn.active {
+                        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+                        color: white;
+                        border-color: #e74c3c;
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Логика сортировки
+                const sortBtns = sortContainer.querySelectorAll('.sort-btn');
+                sortBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Убрать активный класс у всех кнопок
+                        sortBtns.forEach(b => b.classList.remove('active'));
+                        // Добавить активный класс текущей кнопке
+                        this.classList.add('active');
+
+                        const sortType = this.dataset.sort;
+                        const cardsArray = Array.from(camperCards);
+                        const campersGrid = document.querySelector('.campers-grid');
+
+                        // Сортировка массива карточек
+                        cardsArray.sort((a, b) => {
+                            const nameA = a.querySelector('.camper-name').textContent.toLowerCase();
+                            const nameB = b.querySelector('.camper-name').textContent.toLowerCase();
+                            const ageA = parseInt(a.querySelector('.detail-value:nth-child(3)')?.textContent) || 0;
+                            const ageB = parseInt(b.querySelector('.detail-value:nth-child(3)')?.textContent) || 0;
+
+                            switch(sortType) {
+                                case 'name-asc':
+                                    return nameA.localeCompare(nameB);
+                                case 'name-desc':
+                                    return nameB.localeCompare(nameA);
+                                case 'age-asc':
+                                    return ageA - ageB;
+                                case 'age-desc':
+                                    return ageB - ageA;
+                                default:
+                                    return 0; // По умолчанию - порядок из базы данных
+                            }
+                        });
+
+                        // Удаляем все карточки из сетки
+                        while (campersGrid.firstChild) {
+                            campersGrid.removeChild(campersGrid.firstChild);
+                        }
+
+                        // Добавляем отсортированные карточки
+                        cardsArray.forEach((card, index) => {
+                            card.style.opacity = '0';
+                            card.style.transform = 'translateY(20px)';
+                            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                            card.style.transitionDelay = (index * 0.1) + 's';
+
+                            campersGrid.appendChild(card);
+
+                            setTimeout(() => {
+                                card.style.opacity = '1';
+                                card.style.transform = 'translateY(0)';
+                            }, 100 + (index * 100));
+                        });
+                    });
+                });
+            }
+        }
+
+        // Быстрый поиск по мере ввода (дополнительная функциональность)
+        const searchInput = document.getElementById('username');
+        if (searchInput) {
+            let searchTimeout;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = this.value.toLowerCase().trim();
+
+                    if (searchTerm.length >= 2) {
+                        // Подсветка совпадений
+                        camperCards.forEach(card => {
+                            const name = card.querySelector('.camper-name').textContent.toLowerCase();
+                            const username = card.querySelector('.camper-username').textContent.toLowerCase();
+
+                            if (name.includes(searchTerm) || username.includes(searchTerm)) {
+                                card.style.borderColor = '#e74c3c';
+                                card.style.boxShadow = '0 0 0 2px rgba(231, 76, 60, 0.2)';
+                                card.querySelector('.camper-name').style.color = '#e74c3c';
+                                card.querySelector('.camper-username').style.color = '#c0392b';
+                                card.querySelector('.camper-username').style.fontWeight = '600';
+                            } else {
+                                card.style.borderColor = '';
+                                card.style.boxShadow = '';
+                                card.querySelector('.camper-name').style.color = '';
+                                card.querySelector('.camper-username').style.color = '';
+                                card.querySelector('.camper-username').style.fontWeight = '';
+                            }
+                        });
+                    } else {
+                        // Сброс подсветки
+                        camperCards.forEach(card => {
+                            card.style.borderColor = '';
+                            card.style.boxShadow = '';
+                            card.querySelector('.camper-name').style.color = '';
+                            card.querySelector('.camper-username').style.color = '';
+                            card.querySelector('.camper-username').style.fontWeight = '';
+                        });
+                    }
+                }, 300); // Задержка 300ms
+            });
+        }
+
+        // Анимация при загрузке страницы
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+            document.body.style.transition = 'opacity 0.5s ease';
+        }, 100);
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+
+<!--    &lt;!&ndash; Для пользователей с роли WORKER &ndash;&gt;-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">-->
+<!--        <a href="/worker/home">Домой worker</a>-->
+<!--    </span>-->
+<!--    <h1>Страница отдыхающих, тут мы видим всех отдыхающих</h1>-->
+<!--    <h2>Filter</h2>-->
+<!--    <form action="/worker/campers">-->
+<!--        <label for="username">Name:-->
+<!--            <input id="username" type="text" name="username" th:value="${filter.username}">-->
+<!--        </label><br>-->
+<!--        <div>-->
+<!--            <label for="page">Page:-->
+<!--                <input id="page" type="number" name="page" th:value="${users.metadata.page}">-->
+<!--            </label><br>-->
+<!--            <label for="size">Size:-->
+<!--                <input id="size" type="number" name="size" th:value="${users.metadata.size}">-->
+<!--            </label><br>-->
+<!--        </div>-->
+<!--        <button type="submit">Filter</button>-->
+<!--    </form>-->
+<!--    <div th:text="|Количество пользователей ${users.metadata.totalElements}|">Общее количество пользователей</div>-->
+<!--    <div th:each="user : ${users.content}">-->
+<!--        <a th:href="@{'/user/camper/' + ${user.id}}" th:text="${user.username}">Campers</a>-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

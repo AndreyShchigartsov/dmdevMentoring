@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет отдыхающего</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .camper-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .camper-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .welcome-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .welcome-header h1 {
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .user-details-info {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+        }
+
+        .access-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2d3748;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .service-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .service-content {
+            flex-grow: 1;
+        }
+
+        .service-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .service-content p {
+            color: #718096;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Цвета для иконок */
+        .icon-room { background: #e0f2fe; color: #0369a1; }
+        .icon-city { background: #dcfce7; color: #059669; }
+        .icon-photos { background: #fef3c7; color: #d97706; }
+        .icon-schedule { background: #f3e8ff; color: #7c3aed; }
+        .icon-excursion { background: #ffe4e6; color: #e11d48; }
+        .icon-my-excursions { background: #f1f5f9; color: #475569; }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .camper-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .camper-container {
+                padding: 15px;
+            }
+
+            .welcome-header {
+                padding: 30px 20px;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .service-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-header h1 {
+                font-size: 1.7rem;
+            }
+
+            .info-card, .access-section {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Header -->
+<div class="camper-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">
+                <a href="/camper/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="camper-container">
+    <div class="welcome-header">
+        <h1>Главная страница отдыхающего</h1>
+        <p>Страница отдыхающего. Тут вы найдете все для отдыха</p>
+    </div>
+
+    <div class="info-card">
+        <h3>Информация о вашем аккаунте</h3>
+        <div class="user-details-info" th:text="|Ваш логин: ${user.username} Ваша роль: ${user.role.name()}|">
+            Имя пользователя и роль
+        </div>
+    </div>
+
+    <div class="access-section">
+        <h3 class="section-title">
+            <i class="bi bi-stars"></i>
+            Доступ отдыхающего
+        </h3>
+        <div th:with="rolePath=${'/' + user.role.name().toLowerCase()}" th:if="${user.role.name() == 'CAMPER'}">
+            <div class="services-grid">
+                <a th:href="${rolePath} + '/rooms/my-room'" class="service-card">
+                    <div class="service-icon icon-room">
+                        <i class="bi bi-door-closed"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Комната проживания</h4>
+                        <p>Посмотреть информацию о вашей комнате</p>
+                    </div>
+                </a>
+
+                <a th:href="${rolePath} + '/structure'" class="service-card">
+                    <div class="service-icon icon-city">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Номер города</h4>
+                        <p>Информация о вашем отряде и городе</p>
+                    </div>
+                </a>
+
+                <a th:href="${rolePath} + '/images/' + ${user.id}" class="service-card">
+                    <div class="service-icon icon-photos">
+                        <i class="bi bi-images"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Мои фото</h4>
+                        <p>Просмотр ваших фотографий</p>
+                    </div>
+                </a>
+
+                <a th:href="${rolePath} + '/schedules'" class="service-card">
+                    <div class="service-icon icon-schedule">
+                        <i class="bi bi-calendar-week"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Посмотреть расписание</h4>
+                        <p>Расписание активностей и мероприятий</p>
+                    </div>
+                </a>
+
+                <a th:href="${rolePath} + '/excursions'" class="service-card">
+                    <div class="service-icon icon-excursion">
+                        <i class="bi bi-binoculars"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Записаться на экскурсию</h4>
+                        <p>Выбор и бронирование экскурсий</p>
+                    </div>
+                </a>
+
+                <a th:href="${rolePath} + '/user-excursion/my-booking'" class="service-card">
+                    <div class="service-icon icon-my-excursions">
+                        <i class="bi bi-ticket-perforated"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Посмотреть мои экскурсии</h4>
+                        <p>Просмотр забронированных экскурсий</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Анимация для header
+    document.addEventListener('DOMContentLoaded', function() {
+        const header = document.querySelector('.welcome-header');
+        let opacity = 0.1;
+        let direction = 1;
+
+        function animateShine() {
+            opacity += 0.02 * direction;
+            if (opacity >= 0.2 || opacity <= 0.1) {
+                direction *= -1;
+            }
+            header.style.boxShadow = `0 10px 30px rgba(102, 126, 234, ${opacity})`;
+            requestAnimationFrame(animateShine);
+        }
+
+        animateShine();
+    });
+</script>
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">-->
+<!--            <a href="/camper/home">Домой camper</a>-->
+<!--    </span>-->
+<!--    <H1>Главная страница</H1>-->
+<!--    <div>Страница отдыхающего. Тут вы найденте все для отдыха</div>-->
+<!--    <div th:text="|Ваше login: ${user.username} Ваша роль ${user.role.name()}|">Имя пользователя и роль</div>-->
+<!--    <div th:with="rolePath=${'/' + user.role.name().toLowerCase()}">-->
+<!--        <p th:if="${user.role.name() == 'CAMPER'}">-->
+<!--            Админ вам выдал доступ отдыхающего <br>-->
+<!--            <a th:href="${rolePath} + '/rooms/my-room'">Комната проживания</a><br>-->
+<!--            <a th:href="${rolePath} + '/structure'">Номер города</a><br>-->
+<!--            <a th:href="${rolePath} + '/images/' + ${user.id}">Мои фото</a><br>-->
+<!--            <a th:href="${rolePath} + '/schedules'">Посмотреть расписание</a><br>-->
+<!--            <a th:href="${rolePath} + '/excursions'">Записаться на экскурсию</a><br>-->
+<!--            <a th:href="${rolePath} + '/user-excursion/my-booking'">Посмотреть мои экскурсии</a><br>-->
+<!--        </p>-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

@@ -2,27 +2,1042 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Заселение в комнату</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .populate-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #27ae60;
+            background: #d5f4e6;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .populate-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Информация о комнате */
+        .room-info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border-top: 5px solid #3498db;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #2ecc71;
+        }
+
+        .room-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .detail-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .detail-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .detail-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .icon-corps {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .icon-room {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .icon-seats {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+
+        .icon-occupied {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            line-height: 1.2;
+        }
+
+        /* Статистика заселения */
+        .occupancy-stats {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .stats-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stats-label {
+            font-size: 1rem;
+            color: #4a5568;
+            font-weight: 500;
+            min-width: 200px;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            height: 25px;
+            background: #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 12px;
+            transition: width 1s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stats-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        /* Секции с пользователями */
+        .users-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1100px) {
+            .users-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .users-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .users-card.available {
+            border-top: 5px solid #2ecc71;
+        }
+
+        .users-card.occupied {
+            border-top: 5px solid #e74c3c;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            color: #2ecc71;
+        }
+
+        .users-count {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .occupied .users-count {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .users-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #2ecc71;
+            transition: all 0.3s ease;
+        }
+
+        .occupied .user-item {
+            border-left-color: #e74c3c;
+        }
+
+        .user-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+        }
+
+        .user-avatar-small {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .occupied .user-avatar-small {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .user-info-small {
+            flex-grow: 1;
+        }
+
+        .user-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .user-role-small {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .role-camper {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            color: #0369a1;
+        }
+
+        .role-worker {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #059669;
+        }
+
+        .role-user {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .user-action {
+            flex-shrink: 0;
+        }
+
+        .populate-btn {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .populate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .remove-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .empty-list {
+            text-align: center;
+            padding: 40px 20px;
+            color: #718096;
+        }
+
+        .empty-list i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+            color: #cbd5e0;
+        }
+
+        /* Ошибки */
+        .error-alert {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 40px;
+            display: none;
+        }
+
+        .error-alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-title {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: #9b2c2c;
+            font-size: 0.95rem;
+            margin: 5px 0;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .populate-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .populate-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .room-info-section, .users-card {
+                padding: 25px 20px;
+            }
+
+            .user-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .user-info-small {
+                text-align: center;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .stats-label {
+                min-width: auto;
+            }
+
+            .stats-value {
+                text-align: left;
+                min-width: auto;
+            }
+
+            .room-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .room-details {
+                grid-template-columns: 1fr;
+            }
+
+            .users-section {
+                gap: 20px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .populate-btn, .remove-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <p th:text="|Заселение в ${room.corps} Номер комнаты ${room.roomNumber}|">Комната в которую заселяем</p>
-    <p>Список незаселенных сотрудников!</p>
-    <div th:each="user : ${users}">
-        <form th:action="@{'/worker/rooms/populate/' + ${room.id} + '/' + ${user.id}}" method="post">
-            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>
-        </form>
-    </div>
-    <div style="color: red" th:if="${error}">
-        <p th:text="${error}">Error message</p>
-    </div>
-    <p>Список живущих в этой комнате</p>
-    <div th:each="user : ${usersInRoom}">
-        <form th:action="@{'/worker/rooms/populate/' + ${roomId} + '/' + ${user.id} + '/delete'}" method="post">
-            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>
-        </form>
+<!-- Header -->
+<div class="populate-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person-gear"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
     </div>
 
-    <p th:text="|Количество мест в комнате ${room.seatsValue}|">Количество мест в комнате</p>
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+                <a href="/worker/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="populate-container">
+    <div class="page-header">
+        <h1 class="page-title">Заселение в комнату</h1>
+        <p class="page-subtitle">Управление размещением сотрудников в комнате</p>
+    </div>
+
+    <!-- Ошибки -->
+    <div id="errorAlert" class="error-alert" th:classappend="${error} ? 'show' : ''" th:if="${error}">
+        <div class="error-title">
+            <i class="bi bi-exclamation-triangle"></i>
+            Ошибка:
+        </div>
+        <div class="error-message" th:text="${error}">
+            Error message
+        </div>
+    </div>
+
+    <!-- Информация о комнате -->
+    <div class="room-info-section">
+        <h2 class="section-title">
+            <i class="bi bi-info-circle"></i>
+            Информация о комнате
+        </h2>
+
+        <div class="room-details">
+            <div class="detail-card">
+                <div class="detail-icon icon-corps">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="detail-label">Корпус</div>
+                <div class="detail-value" th:text="${room.corps}">
+                    Название корпуса
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon icon-room">
+                    <i class="bi bi-door-closed"></i>
+                </div>
+                <div class="detail-label">Номер комнаты</div>
+                <div class="detail-value" th:text="${room.roomNumber}">
+                    Номер комнаты
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon icon-seats">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="detail-label">Всего мест</div>
+                <div class="detail-value" th:text="${room.seatsValue}">
+                    Количество мест
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="detail-icon icon-occupied">
+                    <i class="bi bi-person-check"></i>
+                </div>
+                <div class="detail-label">Занято мест</div>
+                <div class="detail-value" th:text="${usersInRoom.size()}">
+                    0
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика заселения -->
+        <div class="occupancy-stats">
+            <div class="stats-bar">
+                <div class="stats-label">Заполненность комнаты</div>
+                <div class="progress-container">
+                    <div class="progress-bar" th:style="'width: ' + ${(usersInRoom.size() / room.seatsValue) * 100} + '%;'"></div>
+                </div>
+                <div class="stats-value" th:text="${usersInRoom.size()} + '/' + ${room.seatsValue}">
+                    0/0
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пользователи для заселения -->
+    <div class="users-section">
+        <!-- Незаселенные сотрудники -->
+        <div class="users-card available">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="bi bi-person-plus"></i>
+                    Незаселенные сотрудники
+                </h2>
+                <div class="users-count" th:text="'Доступно: ' + ${users.size()}">
+                    Доступно: 0
+                </div>
+            </div>
+
+            <div th:if="${users.isEmpty()}" class="empty-list">
+                <i class="bi bi-person-check"></i>
+                <p>Все сотрудники уже заселены в комнаты</p>
+            </div>
+
+            <div class="users-list" th:unless="${users.isEmpty()}">
+                <div th:each="user : ${users}" class="user-item">
+                    <div class="user-avatar-small">
+                        <span th:text="${user.username.substring(0, 1).toUpperCase()}">U</span>
+                    </div>
+
+                    <div class="user-info-small">
+                        <div class="user-name" th:text="${user.username}">
+                            Имя пользователя
+                        </div>
+                        <div th:classappend="'user-role-small ' +
+                                (${user.role.name() == 'CAMPER'} ? 'role-camper' :
+                                (${user.role.name() == 'WORKER'} ? 'role-worker' :
+                                (${user.role.name() == 'USER'} ? 'role-user' : '')))"
+                             th:text="${user.role.name()}">
+                            Роль
+                        </div>
+                    </div>
+
+                    <div class="user-action">
+                        <form th:action="@{'/worker/rooms/populate/' + ${room.id} + '/' + ${user.id}}" method="post">
+                            <button type="submit" class="populate-btn">
+                                <i class="bi bi-door-open"></i>
+                                Заселить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Живущие в комнате -->
+        <div class="users-card occupied">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="bi bi-people-fill"></i>
+                    Живущие в комнате
+                </h2>
+                <div class="users-count" th:text="'Проживает: ' + ${usersInRoom.size()}">
+                    Проживает: 0
+                </div>
+            </div>
+
+            <div th:if="${usersInRoom.isEmpty()}" class="empty-list">
+                <i class="bi bi-person-x"></i>
+                <p>В комнате пока никто не проживает</p>
+            </div>
+
+            <div class="users-list" th:unless="${usersInRoom.isEmpty()}">
+                <div th:each="user : ${usersInRoom}" class="user-item">
+                    <div class="user-avatar-small">
+                        <span th:text="${user.username.substring(0, 1).toUpperCase()}">U</span>
+                    </div>
+
+                    <div class="user-info-small">
+                        <div class="user-name" th:text="${user.username}">
+                            Имя пользователя
+                        </div>
+                        <div th:classappend="'user-role-small ' +
+                                (${user.role.name() == 'CAMPER'} ? 'role-camper' :
+                                (${user.role.name() == 'WORKER'} ? 'role-worker' :
+                                (${user.role.name() == 'USER'} ? 'role-user' : '')))"
+                             th:text="${user.role.name()}">
+                            Роль
+                        </div>
+                    </div>
+
+                    <div class="user-action">
+                        <form th:action="@{'/worker/rooms/populate/' + ${roomId} + '/' + ${user.id} + '/delete'}" method="post"
+                              onsubmit="return confirmRemove('${user.username}')">
+                            <button type="submit" class="remove-btn">
+                                <i class="bi bi-door-closed"></i>
+                                Выселить
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Подтверждение выселения
+    function confirmRemove(username) {
+        return confirm(`Вы уверены, что хотите выселить пользователя "${username}" из комнаты?`);
+    }
+
+    // Анимация для элементов
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация для карточек деталей
+        const detailCards = document.querySelectorAll('.detail-card');
+        const userItems = document.querySelectorAll('.user-item');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Анимация для деталей комнаты
+        detailCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(card);
+        });
+
+        // Анимация для элементов пользователей
+        userItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            item.style.transitionDelay = (index * 0.05) + 's';
+            observer.observe(item);
+        });
+
+        // Анимация прогресс-бара
+        const progressBar = document.querySelector('.progress-bar');
+        if (progressBar) {
+            setTimeout(() => {
+                progressBar.style.width = progressBar.style.width;
+            }, 100);
+        }
+
+        // Подсветка кнопок действий
+        const populateBtns = document.querySelectorAll('.populate-btn');
+        const removeBtns = document.querySelectorAll('.remove-btn');
+
+        populateBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+                this.style.boxShadow = '0 8px 20px rgba(46, 204, 113, 0.4)';
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        removeBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+                this.style.boxShadow = '0 8px 20px rgba(231, 76, 60, 0.4)';
+            });
+
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+
+        // Показ уведомлений при действиях
+        const forms = document.querySelectorAll('form[method="post"]');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const button = this.querySelector('button[type="submit"]');
+                const originalText = button.innerHTML;
+
+                // Показать индикатор загрузки
+                button.innerHTML = '<i class="bi bi-hourglass-split"></i> Обработка...';
+                button.disabled = true;
+
+                // В реальном приложении это будет после ответа сервера
+                // Здесь просто имитация задержки
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 1500);
+            });
+        });
+
+        // Динамическое обновление статистики
+        const occupiedCount = parseInt('<span th:text="${usersInRoom.size()}">0</span>');
+        const totalSeats = parseInt('<span th:text="${room.seatsValue}">0</span>');
+
+        if (occupiedCount >= totalSeats) {
+            // Комната полностью заполнена
+            const availableSection = document.querySelector('.users-card.available');
+            if (availableSection) {
+                const header = availableSection.querySelector('.card-header');
+                const warning = document.createElement('div');
+                warning.style.cssText = `
+                        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+                        border: 2px solid #fbbf24;
+                        border-radius: 8px;
+                        padding: 10px 15px;
+                        color: #92400e;
+                        font-weight: 500;
+                        margin-top: 10px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    `;
+                warning.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Комната полностью заполнена. Освободите места для заселения новых сотрудников.';
+
+                header.parentNode.insertBefore(warning, header.nextSibling);
+            }
+        }
+
+        // Автоматическое скрытие ошибок через 5 секунд
+        const errorAlert = document.getElementById('errorAlert');
+        if (errorAlert && errorAlert.classList.contains('show')) {
+            setTimeout(() => {
+                errorAlert.classList.remove('show');
+            }, 5000);
+        }
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">-->
+<!--        <a href="/worker/home">Домой worker</a>-->
+<!--    </span>-->
+<!--    <p th:text="|Заселение в ${room.corps} Номер комнаты ${room.roomNumber}|">Комната в которую заселяем</p>-->
+<!--    <h1>Страница заселения!</h1>-->
+<!--    <p>Список незаселенных сотрудников!</p>-->
+<!--    <div th:each="user : ${users}">-->
+<!--        <form th:action="@{'/worker/rooms/populate/' + ${room.id} + '/' + ${user.id}}" method="post">-->
+<!--            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--    <div style="color: red" th:if="${error}">-->
+<!--        <p th:text="${error}">Error message</p>-->
+<!--    </div>-->
+<!--    <p>Список живущих в этой комнате</p>-->
+<!--    <div th:each="user : ${usersInRoom}">-->
+<!--        <form th:action="@{'/worker/rooms/populate/' + ${roomId} + '/' + ${user.id} + '/delete'}" method="post">-->
+<!--            <button type="submit" th:text="|Имя ${user.username} Роль ${user.role.name()}|"></button>-->
+<!--        </form>-->
+<!--    </div>-->
+
+<!--    <p th:text="|Количество мест в комнате ${room.seatsValue}|">Количество мест в комнате</p>-->
+<!--</body>-->
+<!--</html>-->

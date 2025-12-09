@@ -1,5 +1,7 @@
 --liquibase formatted sql
 
+--добавить в Schedule на event ON DELETE CASCADE
+
 --changeset ashch:create-table-structure_division
 CREATE TABLE structure_division(
     id SERIAL PRIMARY KEY,

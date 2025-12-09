@@ -2,17 +2,824 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои экскурсии</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .bookings-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .bookings-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Статистика */
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Результаты */
+        .bookings-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .bookings-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Карточки экскурсий */
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .booking-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .booking-price {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(56, 161, 105, 0.2);
+        }
+
+        .booking-price::before {
+            content: '₽';
+            font-size: 0.9rem;
+            margin-right: 4px;
+        }
+
+        .booking-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #742a2a;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            color: #2a4365;
+        }
+
+        .booking-content {
+            margin-top: 15px;
+        }
+
+        .booking-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .booking-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .detail-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .detail-content {
+            flex-grow: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        /* Кнопка записи */
+        .action-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        .action-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .bookings-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .bookings-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .bookings-section {
+                padding: 30px 20px;
+            }
+
+            .bookings-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .booking-card {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .booking-title {
+                font-size: 1.1rem;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <p>Список забронированных экскурсий</p>
-    <div th:if="${bookings.isEmpty()}">
-        Вы не забронировали не одной экскурсии!
+<!-- Header -->
+<div class="bookings-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
     </div>
-    <div th:each="booking : ${bookings}">
-        <p th:text="|Название экскурсии: ${booking.excursion} Цена: ${booking.purchasePrice} Статус: ${booking.paymentStatus}|">Excursion</p>
+
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">
+                <a href="/camper/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
     </div>
-    <a href="/camper/excursions">Записаться на экскурсию</a><br>
+</div>
+
+<!-- Основной контент -->
+<div class="bookings-container">
+    <div class="page-header">
+        <h1 class="page-title">Мои экскурсии</h1>
+        <p class="page-subtitle">Список забронированных экскурсий</p>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-section" th:if="${!bookings.isEmpty()}">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-ticket-perforated"></i>
+            </div>
+            <div class="stat-value" th:text="${bookings.size()}">0</div>
+            <div class="stat-label">Всего экскурсий</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+            <div class="stat-value">
+                <!-- Простой расчет суммы через th:with -->
+                <span th:with="total=${#lists.size(bookings.?[paymentStatus == 'CONFIRMED' or paymentStatus == 'COMPLETED'])}">
+                        <span th:text="${total * 1000}">0</span>
+                    </span>
+            </div>
+            <div class="stat-label">Общая стоимость</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-value" th:text="${bookings.?[paymentStatus == 'CONFIRMED' or paymentStatus == 'COMPLETED'].size()}">0</div>
+            <div class="stat-label">Подтверждено</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="bi bi-clock-history"></i>
+            </div>
+            <div class="stat-value" th:text="${bookings.?[paymentStatus == 'PENDING'].size()}">0</div>
+            <div class="stat-label">Ожидание</div>
+        </div>
+    </div>
+
+    <!-- Бронирования -->
+    <div class="bookings-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-list-check"></i>
+                Мои бронирования
+            </h2>
+            <div class="bookings-count" th:if="${!bookings.isEmpty()}">
+                Всего: <span th:text="${bookings.size()}">0</span>
+            </div>
+        </div>
+
+        <div th:if="${bookings.isEmpty()}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-binoculars"></i>
+            </div>
+            <h3 class="empty-title">Вы не забронировали ни одной экскурсии!</h3>
+            <p class="empty-text">
+                У вас пока нет забронированных экскурсий.
+                Посмотрите доступные экскурсии и выберите подходящую для вас.
+            </p>
+        </div>
+
+        <div class="bookings-grid" th:unless="${bookings.isEmpty()}">
+            <div th:each="booking : ${bookings}" class="booking-card">
+                <div class="booking-header">
+                    <div class="booking-price" th:text="${booking.purchasePrice}">
+                        Цена
+                    </div>
+                    <div th:classappend="'booking-status ' +
+                            (${booking.paymentStatus == 'PENDING'} ? 'status-pending' :
+                            (${booking.paymentStatus == 'CONFIRMED'} ? 'status-confirmed' :
+                            (${booking.paymentStatus == 'CANCELLED'} ? 'status-cancelled' :
+                            (${booking.paymentStatus == 'COMPLETED'} ? 'status-completed' : ''))))"
+                         th:text="${booking.paymentStatus}">
+                        Статус
+                    </div>
+                </div>
+
+                <div class="booking-content">
+                    <h3 class="booking-title" th:text="${booking.excursion}">
+                        Название экскурсии
+                    </h3>
+
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Экскурсия</div>
+                                <div class="detail-value" th:text="${booking.excursion}">
+                                    Название
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-cash"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Стоимость</div>
+                                <div class="detail-value" th:text="|${booking.purchasePrice} ₽|">
+                                    Цена
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-flag"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Статус оплаты</div>
+                                <div class="detail-value" th:text="${booking.paymentStatus}">
+                                    Статус
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка записи -->
+    <div class="action-section">
+        <a href="/camper/excursions" class="action-btn">
+            <i class="bi bi-plus-circle"></i>
+            Записаться на экскурсию
+        </a>
+    </div>
+</div>
+
+<script>
+    // Анимация для карточек
+    document.addEventListener('DOMContentLoaded', function() {
+        const bookingCards = document.querySelectorAll('.booking-card');
+        const statCards = document.querySelectorAll('.stat-card');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Анимация для статистических карточек
+        statCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(card);
+        });
+
+        // Анимация для карточек бронирований
+        bookingCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(card);
+        });
+
+        // Анимация для пустого состояния
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.style.opacity = '0';
+            emptyState.style.transform = 'translateY(20px)';
+            emptyState.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+            setTimeout(() => {
+                emptyState.style.opacity = '1';
+                emptyState.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // Подсветка статусов
+        const statusElements = document.querySelectorAll('.booking-status');
+        statusElements.forEach(status => {
+            const statusText = status.textContent.trim();
+            status.addEventListener('mouseenter', function() {
+                if (statusText === 'PENDING') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(245, 158, 11, 0.3)';
+                } else if (statusText === 'CONFIRMED') {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.3)';
+                }
+            });
+
+            status.addEventListener('mouseleave', function() {
+                this.style.transform = '';
+                this.style.boxShadow = '';
+            });
+        });
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--    <p>Список забронированных экскурсий</p>-->
+<!--    <div th:if="${bookings.isEmpty()}">-->
+<!--        Вы не забронировали не одной экскурсии!-->
+<!--    </div>-->
+<!--    <div th:each="booking : ${bookings}">-->
+<!--        <p th:text="|Название экскурсии: ${booking.excursion} Цена: ${booking.purchasePrice} Статус: ${booking.paymentStatus}|">Excursion</p>-->
+<!--    </div>-->
+<!--    <a href="/camper/excursions">Записаться на экскурсию</a><br>-->
+<!--</body>-->
+<!--</html>-->

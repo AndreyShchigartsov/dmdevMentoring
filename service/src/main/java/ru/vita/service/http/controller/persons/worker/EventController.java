@@ -27,8 +27,8 @@ public class EventController {
     public String findAll(Model model, @PathVariable Integer id) {
         return eventService.findById(id)
                 .map(event -> {
-                    model.addAttribute("events", event);
-                    return "user/event/event";
+                    model.addAttribute("event", event);
+                    return "persons/worker/event/event";
                 })
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }

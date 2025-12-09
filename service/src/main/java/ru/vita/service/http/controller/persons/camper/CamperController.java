@@ -19,6 +19,6 @@ public class CamperController {
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("user", service.getUserByUsername(userDetails.getUsername()));
-        return "persons/common/home";
+        return "persons/camper/home";
     }
 }

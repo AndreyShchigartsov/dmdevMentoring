@@ -40,7 +40,7 @@ public class RoomService {
     public List<RoomReadDto> findAll() {
         log.info("Делаем запрос в БД для получения всех комнат");
 
-        return roomRepository.findAll().stream()
+        return roomRepository.findAllWithStructure().stream()
                 .map(readMapper::map)
                 .toList();
     }

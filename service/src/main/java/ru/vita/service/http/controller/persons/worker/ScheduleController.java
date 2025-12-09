@@ -33,9 +33,7 @@ public class ScheduleController {
 
         List<ScheduleReadDto> schedules = scheduleService.findByFilter(filter, username);
 
-        if (!schedules.isEmpty()) {
-            model.addAttribute("schedules", schedules);
-        }
+        model.addAttribute("schedules", schedules);
         model.addAttribute("statuses", Status.values());
 
         return "persons/worker/schedule/schedules";

@@ -2,35 +2,923 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание расписания</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .sports-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #9b59b6;
+            background: #f3e8ff;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.2);
+            border-color: #9b59b6;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .sports-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Карточка формы */
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            animation: cardAppear 0.8s ease-out;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad, #6c3483);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-title i {
+            color: #9b59b6;
+        }
+
+        /* Стили формы */
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #9b59b6;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #9b59b6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.1);
+        }
+
+        .form-control:hover {
+            border-color: #cbd5e0;
+            background: #f1f5f9;
+        }
+
+        .form-control.select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .form-control.datetime {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 8h12M4 12h12M4 16h12'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-top: 6px;
+            margin-left: 5px;
+        }
+
+        /* Статистика */
+        .stats-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #9b59b6;
+            margin-bottom: 5px;
+        }
+
+        .stat-text {
+            font-size: 0.85rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Кнопки */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(155, 89, 182, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-3px);
+        }
+
+        /* Опции в селектах */
+        .select-option {
+            padding: 12px;
+            font-size: 1rem;
+            color: #2d3748;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .select-option:hover {
+            background: #f1f5f9;
+        }
+
+        /* Ошибки валидации */
+        .error-message {
+            color: #e53e3e;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            margin-left: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .input-error {
+            border-color: #fc8181 !important;
+            background: #fff5f5 !important;
+        }
+
+        /* Хинты */
+        .input-hint {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #9b59b6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: help;
+            transition: all 0.3s ease;
+        }
+
+        .input-hint:hover {
+            background: #8e44ad;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .hint-text {
+            position: absolute;
+            top: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d3748;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .input-hint:hover .hint-text {
+            opacity: 1;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sports-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .sports-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .form-card {
+                padding: 25px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats-info {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .form-title {
+                font-size: 1.5rem;
+            }
+
+            .stats-info {
+                grid-template-columns: 1fr;
+            }
+
+            .form-control {
+                padding: 12px 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <h1>Страница создания рассписания</h1>
-    <form action="/worker/schedules/create" method="post">
-        <label for="createdUser">
-            <input id="createdUser" type="hidden" name="createdUser" th:value="${createdUser}">
-        </label><br>
-        <select name="user">
-            <option th:each="user : ${users}"
-                    th:value="${user.username}"
-                    th:text="${user.username}">User</option>
-        </select><br>
-        <select name="structureDivision">
-            <option th:each="structureDivision : ${structureDivisions}"
-                    th:value="${structureDivision.name}"
-                    th:text="${structureDivision.name}">StructureDivision</option>
-        </select><br>
-        <label for="dateTime">
-            <input id="dateTime" type="datetime-local" name="dateTime" th:value="${dateTime}">
-        </label><br>
-        <label for="status">
-            <input id="status" type="hidden" name="status" value="CREATED">
-        </label><br>
-        <label for="action">
-            <input id="action" type="text" name="action" th:value="${action}">
-        </label><br>
-        <button>Добавить рассписание</button>
-    </form>
+<!-- Header -->
+<div class="sports-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-calendar-plus"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role">
+                <span th:text="${#authentication.principal.authorities}">Роль пользователя</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+            <a href="/worker/home" class="nav-link">
+                <i class="bi bi-house-door"></i>
+                Домой
+            </a>
+        </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Основной контент -->
+<div class="sports-container">
+    <div class="page-header">
+        <h1 class="page-title">Создание расписания</h1>
+        <p class="page-subtitle">Добавление нового события в расписание</p>
+    </div>
+
+    <!-- Статистика -->
+    <div class="stats-info">
+        <div class="stat-item">
+            <div class="stat-number" th:text="${users.size()}">0</div>
+            <div class="stat-text">Пользователей</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" th:text="${structureDivisions.size()}">0</div>
+            <div class="stat-text">Подразделений</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">CREATED</div>
+            <div class="stat-text">Статус по умолчанию</div>
+        </div>
+    </div>
+
+    <!-- Форма создания -->
+    <div class="form-card">
+        <h2 class="form-title">
+            <i class="bi bi-calendar-event"></i>
+            Новое событие расписания
+        </h2>
+
+        <form th:action="@{/worker/schedules/create}" method="post" id="scheduleForm">
+            <!-- Скрытые поля -->
+            <input type="hidden" id="createdUser" name="createdUser" th:value="${createdUser}">
+            <input type="hidden" id="status" name="status" value="CREATED">
+
+            <!-- Пользователь -->
+            <div class="form-group">
+                <label for="user" class="form-label">
+                    <i class="bi bi-person-circle"></i>
+                    Пользователь
+                </label>
+                <select id="user" name="user" class="form-control select" required>
+                    <option value="" disabled selected>Выберите пользователя</option>
+                    <option th:each="user : ${users}"
+                            th:value="${user.username}"
+                            th:text="${user.username}"
+                            class="select-option">
+                        User
+                    </option>
+                </select>
+                <div class="form-text">Выберите пользователя для расписания</div>
+            </div>
+
+            <!-- Подразделение -->
+            <div class="form-group">
+                <label for="structureDivision" class="form-label">
+                    <i class="bi bi-building"></i>
+                    Подразделение
+                </label>
+                <select id="structureDivision" name="structureDivision" class="form-control select">
+                    <option value="" disabled selected>Выберите подразделение</option>
+                    <option th:each="structureDivision : ${structureDivisions}"
+                            th:value="${structureDivision.name}"
+                            th:text="${structureDivision.name}"
+                            class="select-option">
+                        StructureDivision
+                    </option>
+                </select>
+                <div class="form-text">Выберите структурное подразделение</div>
+            </div>
+
+            <!-- Дата и время -->
+            <div class="form-group">
+                <label for="dateTime" class="form-label">
+                    <i class="bi bi-clock"></i>
+                    Дата и время события
+                </label>
+                <input type="datetime-local"
+                       id="dateTime"
+                       name="dateTime"
+                       class="form-control datetime"
+                       th:value="${dateTime}"
+                       required>
+                <div class="form-text">Укажите дату и время события</div>
+            </div>
+
+            <!-- Действие -->
+            <div class="form-group">
+                <label for="action" class="form-label">
+                    <i class="bi bi-card-text"></i>
+                    Описание действия
+                </label>
+                <input type="text"
+                       id="action"
+                       name="action"
+                       class="form-control"
+                       th:value="${action}"
+                       placeholder="Например: Встреча, Заселение, Консультация..."
+                       required>
+                <div class="form-text">Опишите действие или событие</div>
+            </div>
+
+            <!-- Кнопки формы -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Создать расписание
+                </button>
+                <a href="/worker/home" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i>
+                    Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Подсказки -->
+    <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #9b59b6;">
+        <h4 style="color: #4a5568; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <i class="bi bi-lightbulb"></i>
+            Подсказки
+        </h4>
+        <ul style="color: #718096; margin: 0; padding-left: 20px;">
+            <li>Статус события автоматически устанавливается как "CREATED"</li>
+            <li>Вы можете изменить статус позже в управлении расписанием</li>
+            <li>Пользователь получит уведомление о новом событии</li>
+            <li>Расписание можно редактировать в любое время</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация появления формы
+        const formCard = document.querySelector('.form-card');
+        formCard.style.opacity = '0';
+        formCard.style.transform = 'translateY(30px)';
+        formCard.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+
+        setTimeout(() => {
+            formCard.style.opacity = '1';
+            formCard.style.transform = 'translateY(0)';
+        }, 100);
+
+        // Анимация для статистики
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach((number, index) => {
+            number.style.opacity = '0';
+            number.style.transform = 'scale(0.8)';
+            number.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            number.style.transitionDelay = (index * 0.2) + 's';
+
+            setTimeout(() => {
+                number.style.opacity = '1';
+                number.style.transform = 'scale(1)';
+            }, 300 + (index * 200));
+        });
+
+        // Валидация формы
+        const form = document.getElementById('scheduleForm');
+        const inputs = form.querySelectorAll('input, select');
+
+        // Устанавливаем текущую дату и время по умолчанию
+        const dateTimeInput = document.getElementById('dateTime');
+        if (!dateTimeInput.value) {
+            const now = new Date();
+            // Форматируем дату в нужный формат для datetime-local
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            dateTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Добавляем хинты для полей
+        const addHints = () => {
+            const userSelect = document.getElementById('user');
+            const divisionSelect = document.getElementById('structureDivision');
+
+            // Хинт для пользователя
+            const userHint = document.createElement('div');
+            userHint.className = 'input-hint';
+            userHint.innerHTML = '?<div class="hint-text">Выберите пользователя из списка</div>';
+            userSelect.parentNode.appendChild(userHint);
+
+            // Хинт для подразделения
+            const divisionHint = document.createElement('div');
+            divisionHint.className = 'input-hint';
+            divisionHint.innerHTML = '?<div class="hint-text">Выберите структурное подразделение</div>';
+            divisionSelect.parentNode.appendChild(divisionHint);
+        };
+
+        addHints();
+
+        // Валидация при отправке
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+            const errors = [];
+
+            // Сбрасываем ошибки
+            inputs.forEach(input => {
+                input.classList.remove('input-error');
+                const errorElement = input.nextElementSibling?.classList?.contains('error-message')
+                ? input.nextElementSibling
+                : null;
+                if (errorElement) {
+                    errorElement.remove();
+                }
+            });
+
+            // Проверка каждого поля
+            inputs.forEach(input => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    isValid = false;
+                    input.classList.add('input-error');
+
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.innerHTML = `<i class="bi bi-exclamation-circle"></i> Это поле обязательно для заполнения`;
+
+                    input.parentNode.appendChild(errorDiv);
+                }
+            });
+
+            // Проверка даты (нельзя выбрать прошедшую дату)
+            if (dateTimeInput.value) {
+                const selectedDate = new Date(dateTimeInput.value);
+                const now = new Date();
+
+                if (selectedDate < now) {
+                    isValid = false;
+                    dateTimeInput.classList.add('input-error');
+
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.innerHTML = `<i class="bi bi-exclamation-circle"></i> Нельзя выбрать прошедшую дату`;
+
+                    dateTimeInput.parentNode.appendChild(errorDiv);
+                }
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+
+                // Анимация ошибки
+                form.style.transform = 'translateX(5px)';
+                form.style.transition = 'transform 0.1s ease';
+
+                setTimeout(() => {
+                    form.style.transform = 'translateX(-5px)';
+                }, 100);
+
+                setTimeout(() => {
+                    form.style.transform = 'translateX(0)';
+                }, 200);
+            } else {
+                // Анимация успешной отправки
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+
+                submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Создание...';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.7';
+
+                // Плавное исчезновение формы
+                setTimeout(() => {
+                    formCard.style.opacity = '0';
+                    formCard.style.transform = 'translateY(-20px)';
+                }, 500);
+            }
+        });
+
+        // Интерактивность для выпадающих списков
+        const selects = form.querySelectorAll('select');
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                if (this.value) {
+                    this.style.borderColor = '#9b59b6';
+                    this.style.background = 'white';
+                }
+            });
+
+            select.addEventListener('focus', function() {
+                this.style.boxShadow = '0 0 0 3px rgba(155, 89, 182, 0.1)';
+            });
+
+            select.addEventListener('blur', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // Анимация при фокусе на инпуты
+        const textInputs = form.querySelectorAll('input[type="text"]');
+        textInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentNode.style.transform = 'translateY(-2px)';
+                this.parentNode.style.transition = 'transform 0.3s ease';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentNode.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Подсветка выбранных опций
+        selects.forEach(select => {
+            const options = select.querySelectorAll('option');
+            options.forEach(option => {
+                if (option.value) {
+                    option.addEventListener('mouseover', function() {
+                        this.style.background = '#f1f5f9';
+                    });
+
+                    option.addEventListener('mouseout', function() {
+                        this.style.background = '';
+                    });
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>&ndash;&gt;-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">-->
+<!--        <a href="/worker/home">Домой worker</a>-->
+<!--    </span>-->
+<!--    <h1>Страница создания расписания</h1>-->
+<!--    <form action="/worker/schedules/create" method="post">-->
+<!--        <label for="createdUser">-->
+<!--            <input id="createdUser" type="hidden" name="createdUser" th:value="${createdUser}">-->
+<!--        </label><br>-->
+<!--        <select name="user">-->
+<!--            <option th:each="user : ${users}"-->
+<!--                    th:value="${user.username}"-->
+<!--                    th:text="${user.username}">User</option>-->
+<!--        </select><br>-->
+<!--        <select name="structureDivision">-->
+<!--            <option th:each="structureDivision : ${structureDivisions}"-->
+<!--                    th:value="${structureDivision.name}"-->
+<!--                    th:text="${structureDivision.name}">StructureDivision</option>-->
+<!--        </select><br>-->
+<!--        <label for="dateTime">-->
+<!--            <input id="dateTime" type="datetime-local" name="dateTime" th:value="${dateTime}">-->
+<!--        </label><br>-->
+<!--        <label for="status">-->
+<!--            <input id="status" type="hidden" name="status" value="CREATED">-->
+<!--        </label><br>-->
+<!--        <label for="action">-->
+<!--            <input id="action" type="text" name="action" th:value="${action}">-->
+<!--        </label><br>-->
+<!--        <button>Добавить рассписание</button>-->
+<!--    </form>-->
+<!--</body>-->
+<!--</html>-->

@@ -2,29 +2,743 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание экскурсии</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        /* Стили для header */
+        .admin-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: #4f46e5;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.2);
+            border-color: #4f46e5;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основные стили страницы */
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+        }
+
+        .create-container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        /* Заголовок страницы */
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #2d3748;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f6d365, #fda085);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Форма создания */
+        .create-form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #d97706;
+            font-size: 24px;
+        }
+
+        .form-title {
+            flex: 1;
+        }
+
+        .form-title h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .form-title p {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        /* Группы формы */
+        .form-section {
+            margin-bottom: 35px;
+        }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-label i {
+            color: #f6d365;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .form-label i {
+            color: #f6d365;
+            width: 20px;
+            text-align: center;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #f6d365;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(246, 211, 101, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23718096' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #f6d365;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(246, 211, 101, 0.1);
+        }
+
+        /* Информация о структуре */
+        .structure-info {
+            background: #f0f9ff;
+            border: 2px solid #bae6fd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .structure-info i {
+            color: #0369a1;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .structure-info p {
+            color: #0369a1;
+            margin: 0;
+            font-size: 15px;
+        }
+
+        /* Кнопки формы */
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .submit-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            color: #2d3748;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(253, 160, 133, 0.3);
+            color: #2d3748;
+        }
+
+        .cancel-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            color: #4a5568;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .cancel-btn:hover {
+            background: white;
+            border-color: #cbd5e0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: #4a5568;
+        }
+
+        /* Состояние без доступных структур */
+        .no-structures-message {
+            background: white;
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 40px;
+        }
+
+        .no-structures-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #718096;
+            font-size: 32px;
+        }
+
+        .no-structures-message h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .no-structures-message p {
+            color: #718096;
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Стили для ошибок */
+        .error-container {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-item {
+            background: white;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            color: #c53030;
+            font-size: 14px;
+            border-left: 4px solid #fc8181;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-item i {
+            color: #fc8181;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .admin-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .create-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .create-form-card {
+                padding: 25px;
+            }
+
+            .form-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <p>Интерфейс создания экскурсии</p>
-    <form action="/admin/excursions/create" method="post" th:if="${!parentStructures.isEmpty()}">
-        <label for="service">Название экскурсии:
-            <input id="service" type="text" name="service">
-        </label><br>
-        <label for="price">Цена:
-            <input id="price" type="text" name="price">
-        </label><br>
-        <label for="duration">Длительность(в минутах)
-            <input id="duration" type="number" name="duration">
-        </label><br>
-        <select name="provinceId">
-            <option th:each="parentStructure : ${parentStructures}"
-                    th:if="${parentStructure.typeStructure.name() == 'ORGANIZATIONAL'}"
-                    th:value="${parentStructure.id}"
-                    th:text="${parentStructure.name}">Структура к которая предоставляет экскурсию</option>
-        </select><br>
-        <button type="submit">Добавить экскурсию</button>
+<!-- Header -->
+<div class="admin-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person-fill"></i>
+        </div>
+        <div class="user-details">
+            <div class="username" th:text="${#authentication.principal.username}">Username</div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <!-- Для пользователей с роли USER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'USER')}"
+           href="/user/home" class="nav-link">
+            <i class="bi bi-house-door"></i>
+            Панель пользователя
+        </a>
+
+        <!-- Для пользователей с роли WORKER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}"
+           href="/worker/home" class="nav-link">
+            <i class="bi bi-briefcase"></i>
+            Панель сотрудника
+        </a>
+
+        <!-- Для пользователей с роли CAMPER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}"
+           href="/camper/home" class="nav-link">
+            <i class="bi bi-tent"></i>
+            Панель кемпера
+        </a>
+
+        <!-- Для пользователей с ролью ADMIN -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}"
+           href="/admin/home" class="nav-link">
+            <i class="bi bi-shield-check"></i>
+            Админ панель
+        </a>
+    </div>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            Выйти
+        </button>
     </form>
-    <div th:insert="~{fragment :: error}"></div>
+</div>
+
+<!-- Основной контент -->
+<div class="create-container">
+    <div class="page-header">
+        <h1>Создание новой экскурсии</h1>
+        <p>Заполните информацию о новой экскурсии для вашего кемпинга</p>
+    </div>
+
+    <!-- Форма создания -->
+    <div th:if="${!parentStructures.isEmpty()}">
+        <div class="create-form-card">
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="bi bi-plus-circle"></i>
+                </div>
+                <div class="form-title">
+                    <h2>Информация об экскурсии</h2>
+                    <p>Заполните все необходимые поля для создания новой экскурсии</p>
+                </div>
+            </div>
+
+            <form action="/admin/excursions/create" method="post">
+                <!-- Основная информация -->
+                <div class="form-section">
+                    <div class="section-label">
+                        <i class="bi bi-info-circle"></i>
+                        Основная информация
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="service">
+                            <i class="bi bi-card-heading"></i>
+                            Название экскурсии
+                        </label>
+                        <input id="service"
+                               type="text"
+                               name="service"
+                               class="form-control"
+                               placeholder="Введите название экскурсии"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="price">
+                            <i class="bi bi-currency-exchange"></i>
+                            Цена (в рублях)
+                        </label>
+                        <input id="price"
+                               type="number"
+                               name="price"
+                               class="form-control"
+                               placeholder="Введите цену экскурсии"
+                               min="0"
+                               step="0.01"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="duration">
+                            <i class="bi bi-clock"></i>
+                            Длительность (в минутах)
+                        </label>
+                        <input id="duration"
+                               type="number"
+                               name="duration"
+                               class="form-control"
+                               placeholder="Введите длительность экскурсии"
+                               min="1"
+                               required>
+                    </div>
+                </div>
+
+                <!-- Выбор структуры -->
+                <div class="form-section">
+                    <div class="section-label">
+                        <i class="bi bi-building"></i>
+                        Выбор организации
+                    </div>
+
+                    <div class="structure-info">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <p>Выберите организацию, которая будет предоставлять эту экскурсию</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="bi bi-diagram-3"></i>
+                            Организация-провайдер
+                        </label>
+                        <select name="provinceId" class="form-select" required>
+                            <option value="" disabled selected>Выберите организацию</option>
+                            <option th:each="parentStructure : ${parentStructures}"
+                                    th:if="${parentStructure.typeStructure.name() == 'ORGANIZATIONAL'}"
+                                    th:value="${parentStructure.id}"
+                                    th:text="${parentStructure.name}">
+                                Структура, которая предоставляет экскурсию
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-plus-lg"></i>
+                        Создать экскурсию
+                    </button>
+
+                    <a href="/admin/excursions" class="cancel-btn">
+                        <i class="bi bi-x-circle"></i>
+                        Отмена
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Сообщение об отсутствии структур -->
+    <div th:if="${parentStructures.isEmpty()}" class="no-structures-message">
+        <div class="no-structures-icon">
+            <i class="bi bi-building-slash"></i>
+        </div>
+        <h3>Нет доступных организаций</h3>
+        <p>Для создания экскурсии необходимо сначала добавить организационную структуру.</p>
+        <p>Пожалуйста, создайте организацию перед добавлением экскурсий.</p>
+        <a href="/admin/structures/organizational" class="submit-btn" style="text-decoration: none; display: inline-block; width: auto;">
+            <i class="bi bi-building"></i>
+            Создать организацию
+        </a>
+    </div>
+
+    <!-- Отображение ошибок -->
+    <div th:fragment="error" class="error-container" th:if="${errors}">
+        <div class="error-title">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            Обнаружены ошибки
+        </div>
+        <ul class="error-list">
+            <li th:each="error : ${errors}" class="error-item">
+                <i class="bi bi-x-circle-fill"></i>
+                <span th:text="${error.defaultMessage}">Error message</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--    <p>Интерфейс создания экскурсии</p>-->
+<!--    <form action="/admin/excursions/create" method="post" th:if="${!parentStructures.isEmpty()}">-->
+<!--        <label for="service">Название экскурсии:-->
+<!--            <input id="service" type="text" name="service">-->
+<!--        </label><br>-->
+<!--        <label for="price">Цена:-->
+<!--            <input id="price" type="text" name="price">-->
+<!--        </label><br>-->
+<!--        <label for="duration">Длительность(в минутах)-->
+<!--            <input id="duration" type="number" name="duration">-->
+<!--        </label><br>-->
+<!--        <select name="provinceId">-->
+<!--            <option th:each="parentStructure : ${parentStructures}"-->
+<!--                    th:if="${parentStructure.typeStructure.name() == 'ORGANIZATIONAL'}"-->
+<!--                    th:value="${parentStructure.id}"-->
+<!--                    th:text="${parentStructure.name}">Структура к которая предоставляет экскурсию</option>-->
+<!--        </select><br>-->
+<!--        <button type="submit">Добавить экскурсию</button>-->
+<!--    </form>-->
+<!--    <div th:insert="~{fragment :: error}"></div>-->
+<!--</body>-->
+<!--</html>-->

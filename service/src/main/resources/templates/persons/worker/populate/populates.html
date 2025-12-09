@@ -2,16 +2,891 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система расселения</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .sports-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #3498db;
+            background: #e1f0fa;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+            border-color: #3498db;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .sports-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Статистика комнат */
+        .rooms-stats {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .stat-icon.seats {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        .stat-icon.available {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Список комнат */
+        .rooms-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #3498db;
+        }
+
+        .rooms-count {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Карточки комнат */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .room-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .room-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(52, 152, 219, 0.15);
+            border-color: #3498db;
+        }
+
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2980b9, #1f618d);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .room-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .room-corps {
+            background: linear-gradient(135deg, #e9d8fd 0%, #d6bcfa 100%);
+            color: #553c9a;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .room-corps:empty {
+            display: none;
+        }
+
+        .room-content {
+            margin-top: 15px;
+        }
+
+        .room-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #3498db;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .room-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #3498db;
+        }
+
+        .detail-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3498db;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .detail-content {
+            flex-grow: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        .room-actions {
+            margin-top: 25px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Пустое состояние */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 15px;
+            border: 2px dashed #cbd5e0;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Сообщения об ошибках */
+        .error-alert {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-title {
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message {
+            color: #9b2c2c;
+            font-size: 0.95rem;
+            margin: 5px 0;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .sports-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .sports-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .rooms-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .rooms-section {
+                padding: 30px 20px;
+            }
+
+            .rooms-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .room-card {
+                padding: 25px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .room-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .rooms-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .room-number {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<div th:insert="~{fragment :: header}"></div>
-    <p>Комнаты доступные для заселения</p>
-    <div th:each="room : ${rooms}">
-        <a th:href="@{'/worker/rooms/' + ${room.id}}" th:text="|Корпус ${room.corps} Номер комнаты ${room.roomNumber}|">Room</a>
+<!-- Header -->
+<div class="sports-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person-badge"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role">
+                <span th:text="${#authentication.principal.authorities}">Роль пользователя</span>
+            </div>
+        </div>
     </div>
-    <div style="color: red" th:if="${param.error}">
-        Bad credentials
+
+    <div class="nav-links">
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+            <a href="/worker/home" class="nav-link">
+                <i class="bi bi-house-door"></i>
+                Домой
+            </a>
+        </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
     </div>
+</div>
+
+<!-- Основной контент -->
+<div class="sports-container">
+    <div class="page-header">
+        <h1 class="page-title">Система расселения</h1>
+        <p class="page-subtitle">Комнаты доступные для заселения</p>
+    </div>
+
+    <!-- Сообщения об ошибках -->
+    <div th:if="${param.error}" class="error-alert">
+        <div class="error-title">
+            <i class="bi bi-exclamation-triangle"></i>
+            Ошибка аутентификации
+        </div>
+        <div class="error-message">
+            Неверные учетные данные. Пожалуйста, проверьте логин и пароль.
+        </div>
+    </div>
+
+    <!-- Статистика комнат -->
+    <div class="rooms-stats" th:if="${!rooms.isEmpty()}">
+        <div class="stat-card">
+            <div class="stat-icon total">
+                <i class="bi bi-building"></i>
+            </div>
+            <div class="stat-value" th:text="${rooms.size()}">0</div>
+            <div class="stat-label">Всего комнат</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon seats">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-value">
+                <!-- Сумма всех мест -->
+                <span th:text="${#aggregates.sum(rooms.![seatsValue])}">0</span>
+            </div>
+            <div class="stat-label">Всего мест</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon available">
+                <i class="bi bi-door-open"></i>
+            </div>
+            <div class="stat-value" th:text="${rooms.size()}">0</div>
+            <div class="stat-label">Доступно</div>
+        </div>
+    </div>
+
+    <!-- Список комнат -->
+    <div class="rooms-section">
+        <div class="section-header">
+            <h2 class="section-title">
+                <i class="bi bi-door-open"></i>
+                Комнаты для заселения
+            </h2>
+            <div class="rooms-count" th:if="${!rooms.isEmpty()}">
+                Всего: <span th:text="${rooms.size()}">0</span>
+            </div>
+        </div>
+
+        <div th:if="${rooms.isEmpty()}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-building-x"></i>
+            </div>
+            <h3 class="empty-title">Нет доступных комнат</h3>
+            <p class="empty-text">
+                В данный момент нет свободных комнат для заселения.
+                Обратитесь к администратору для получения дополнительной информации.
+            </p>
+        </div>
+
+        <!-- ВАЖНО: Используем простой цикл без сложных выражений -->
+        <div class="rooms-grid" th:if="${!rooms.isEmpty()}">
+            <!-- Простой цикл как в оригинале -->
+            <div th:each="room : ${rooms}" class="room-card">
+                <div class="room-header">
+                    <!-- Корпус показывается только если он есть -->
+                    <span th:if="${room.corps != null and room.corps != ''}"
+                          class="room-corps"
+                          th:text="'Корпус ' + ${room.corps}">
+                    </span>
+                </div>
+
+                <div class="room-content">
+                    <div class="room-number" th:text="${room.roomNumber}">
+                        101
+                    </div>
+
+                    <div class="room-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-hash"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Номер комнаты</div>
+                                <div class="detail-value" th:text="${room.roomNumber}">
+                                    Номер
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Корпус в деталях -->
+                        <div class="detail-item" th:if="${room.corps != null and room.corps != ''}">
+                            <div class="detail-icon">
+                                <i class="bi bi-building"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Корпус</div>
+                                <div class="detail-value" th:text="${room.corps}">
+                                    Корпус
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Вместимость (seatsValue) -->
+                        <div class="detail-item" th:if="${room.seatsValue != null}">
+                            <div class="detail-icon">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Вместимость</div>
+                                <div class="detail-value">
+                                    <span th:text="${room.seatsValue}">2</span> человека
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ссылка для перехода -->
+                    <div class="room-actions">
+                        <a th:href="@{'/worker/rooms/' + ${room.id}}" class="action-btn">
+                            <i class="bi bi-pencil-square"></i>
+                            Управление комнатой
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Альтернативный вариант - простой список как в оригинале -->
+        <div th:if="${!rooms.isEmpty()}" style="margin-top: 30px; display: none;" id="simple-view">
+            <div style="background: #f8fafc; padding: 20px; border-radius: 10px;">
+                <h4 style="color: #4a5568; margin-bottom: 15px;">
+                    <i class="bi bi-list"></i> Простой список
+                </h4>
+                <div th:each="room : ${rooms}" style="padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                    <a th:href="@{'/worker/rooms/' + ${room.id}}"
+                       style="text-decoration: none; color: #3498db; font-weight: 500;">
+                        <i class="bi bi-door-open"></i>
+                        Корпус <span th:text="${room.corps}">-</span>
+                        Номер комнаты <span th:text="${room.roomNumber}">-</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем, сколько карточек комнат отображается
+        const roomCards = document.querySelectorAll('.room-card');
+        console.log('Найдено карточек комнат:', roomCards.length);
+
+        // Если карточек мало или нет, показываем простой список
+        if (roomCards.length === 0 || roomCards.length < ${rooms.size()}) {
+        const simpleView = document.getElementById('simple-view');
+        if (simpleView) {
+            simpleView.style.display = 'block';
+        }
+
+        // Показываем простой список ссылок как в оригинале
+        const roomsSection = document.querySelector('.rooms-section');
+        const simpleList = document.createElement('div');
+        simpleList.innerHTML = `
+                <div style="margin-top: 30px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">
+                        <i class="bi bi-list"></i> Список комнат:
+                    </h4>
+                    <div style="background: #f8fafc; padding: 20px; border-radius: 10px;">
+                        ${Array.from(roomCards).map((card, index) => {
+            const roomNumber = card.querySelector('.room-number')?.textContent || 'Нет данных';
+            const corpsElement = card.querySelector('.room-corps');
+            const corps = corpsElement ? corpsElement.textContent.replace('Корпус ', '') : 'Без корпуса';
+            const link = card.querySelector('.action-btn')?.href || '#';
+
+            return `
+                                <div style="padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                    <a href="${link}" style="text-decoration: none; color: #3498db; font-weight: 500;">
+                                        <i class="bi bi-door-open"></i>
+                                        Корпус ${corps} Номер комнаты ${roomNumber}
+                                    </a>
+                                </div>
+                            `;
+        }).join('')}
+                    </div>
+                </div>
+            `;
+
+        // Если нет карточек, создаем ссылки напрямую из данных Thymeleaf
+        if (roomCards.length === 0) {
+            simpleList.innerHTML = `
+                    <div style="margin-top: 30px;">
+                        <h4 style="color: #4a5568; margin-bottom: 15px;">
+                            <i class="bi bi-list"></i> Список комнат:
+                        </h4>
+                        <div style="background: #f8fafc; padding: 20px; border-radius: 10px;">
+                            <!-- Thymeleaf цикл для простых ссылок -->
+                            <div th:each="room : ${rooms}" style="padding: 10px 0; border-bottom: 1px solid #e2e8f0;">
+                                <a th:href="@{'/worker/rooms/' + ${room.id}}"
+                                   style="text-decoration: none; color: #3498db; font-weight: 500;">
+                                    <i class="bi bi-door-open"></i>
+                                    Корпус <span th:text="${room.corps}">-</span>
+                                    Номер комнаты <span th:text="${room.roomNumber}">-</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        roomsSection.appendChild(simpleList);
+    }
+
+    // Анимация для статистических карточек
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        card.style.transitionDelay = (index * 0.1) + 's';
+
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100 + (index * 100));
+    });
+
+    // Анимация для карточек комнат
+    roomCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        card.style.transitionDelay = (index * 0.1) + 's';
+
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 300 + (index * 100));
+    });
+
+    // Анимация для пустого состояния
+    const emptyState = document.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.style.opacity = '0';
+        emptyState.style.transform = 'translateY(20px)';
+        emptyState.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+        setTimeout(() => {
+            emptyState.style.opacity = '1';
+            emptyState.style.transform = 'translateY(0)';
+        }, 100);
+    }
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--<span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>&ndash;&gt;-->
+<!--    <form th:action="@{/logout}" method="post">-->
+<!--        <button type="submit">Logout</button>-->
+<!--    </form>-->
+<!--    <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">-->
+<!--        <a href="/worker/home">Домой worker</a>-->
+<!--    </span>-->
+<!--    <p>Комнаты доступные для заселения</p>-->
+<!--    <div th:each="room : ${rooms}">-->
+<!--        <a th:href="@{'/worker/rooms/' + ${room.id}}" th:text="|Корпус ${room.corps} Номер комнаты ${room.roomNumber}|">Room</a>-->
+<!--    </div>-->
+<!--    <div style="color: red" th:if="${param.error}">-->
+<!--        Bad credentials-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

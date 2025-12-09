@@ -2,17 +2,321 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Административная панель</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+        }
+
+        /* Стили для header */
+        .admin-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: #4f46e5;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.2);
+            border-color: #4f46e5;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .admin-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .welcome-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .welcome-header h1 {
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .welcome-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            display: block;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            border-color: #4f46e5;
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .card-icon.events { background: #e0f2fe; color: #0369a1; }
+        .card-icon.excursions { background: #fef3c7; color: #d97706; }
+        .card-icon.rooms { background: #dcfce7; color: #059669; }
+        .card-icon.structures { background: #f3e8ff; color: #7c3aed; }
+        .card-icon.users { background: #ffe4e6; color: #e11d48; }
+        .card-icon.schedules { background: #f1f5f9; color: #475569; }
+
+        .dashboard-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .dashboard-card p {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .admin-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .admin-container {
+                padding: 15px;
+            }
+
+            .welcome-header {
+                padding: 30px 20px;
+            }
+
+            .welcome-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-<!--    <div th:text="${user}">User</div>-->
-    <H1>HOME_ADMIN</H1>
-    <a href="/admin/events">Events</a><br>
-    <a href="/admin/excursions">Excursion</a><br>
-    <a href="/admin/rooms">Rooms</a><br>
-    <a href="/admin/structures">Structure Division</a><br>
-    <a href="/admin/users">Users</a><br>
-    <a href="/admin/schedules">Schedules</a>
+<!-- Header -->
+<div th:insert="~{fragment :: header}"></div>
+
+<!-- Основной контент -->
+<div class="admin-container">
+    <div class="welcome-header">
+        <h1>Панель администратора</h1>
+        <p>Добро пожаловать в систему управления кемпингом. Здесь вы можете управлять всеми аспектами системы.</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <a href="/admin/events" class="dashboard-card">
+            <div class="card-icon events">
+                <i class="bi bi-calendar-event"></i>
+            </div>
+            <h3>Мероприятия</h3>
+            <p>Управление событиями и активностями</p>
+        </a>
+
+        <a href="/admin/excursions" class="dashboard-card">
+            <div class="card-icon excursions">
+                <i class="bi bi-binoculars"></i>
+            </div>
+            <h3>Экскурсии</h3>
+            <p>Управление экскурсиями и бронированиями</p>
+        </a>
+
+        <a href="/admin/rooms" class="dashboard-card">
+            <div class="card-icon rooms">
+                <i class="bi bi-door-closed"></i>
+            </div>
+            <h3>Комнаты</h3>
+            <p>Управление номерами и бронированиями</p>
+        </a>
+
+        <a href="/admin/structures" class="dashboard-card">
+            <div class="card-icon structures">
+                <i class="bi bi-building"></i>
+            </div>
+            <h3>Структуры</h3>
+            <p>Управление структурными подразделениями</p>
+        </a>
+
+        <a href="/admin/users" class="dashboard-card">
+            <div class="card-icon users">
+                <i class="bi bi-people"></i>
+            </div>
+            <h3>Пользователи</h3>
+            <p>Управление учетными записями пользователей</p>
+        </a>
+
+        <a href="/admin/schedules" class="dashboard-card">
+            <div class="card-icon schedules">
+                <i class="bi bi-calendar-week"></i>
+            </div>
+            <h3>Расписания</h3>
+            <p>Управление расписаниями и активностями</p>
+        </a>
+    </div>
+</div>
+
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--&lt;!&ndash;    <div th:text="${user}">User</div>&ndash;&gt;-->
+<!--    <H1>HOME_ADMIN</H1>-->
+<!--    <a href="/admin/events">Events</a><br>-->
+<!--    <a href="/admin/excursions">Excursion</a><br>-->
+<!--    <a href="/admin/rooms">Rooms</a><br>-->
+<!--    <a href="/admin/structures">Structure Division</a><br>-->
+<!--    <a href="/admin/users">Users</a><br>-->
+<!--    <a href="/admin/schedules">Schedules</a>-->
+<!--</body>-->
+<!--</html>-->

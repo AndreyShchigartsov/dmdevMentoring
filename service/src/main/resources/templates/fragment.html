@@ -6,7 +6,54 @@
     <title>Title</title>
 </head>
 <body>
-    <div th:fragment="header">
+<div th:fragment="header" class="admin-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person-fill"></i>
+        </div>
+        <div class="user-details">
+            <div class="username" th:text="${#authentication.principal.username}">Username</div>
+        </div>
+    </div>
+
+    <div class="nav-links">
+        <!-- Для пользователей с роли USER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'USER')}"
+           href="/user/home" class="nav-link">
+            <i class="bi bi-house-door"></i>
+            Панель пользователя
+        </a>
+
+        <!-- Для пользователей с роли WORKER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}"
+           href="/worker/home" class="nav-link">
+            <i class="bi bi-briefcase"></i>
+            Панель сотрудника
+        </a>
+
+        <!-- Для пользователей с роли CAMPER -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}"
+           href="/camper/home" class="nav-link">
+            <i class="bi bi-tent"></i>
+            Панель кемпера
+        </a>
+
+        <!-- Для пользователей с ролью ADMIN -->
+        <a th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}"
+           href="/admin/home" class="nav-link">
+            <i class="bi bi-shield-check"></i>
+            Админ панель
+        </a>
+    </div>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="logout-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            Выйти
+        </button>
+    </form>
+</div>
+    <div>
         <span th:text="|username: ${#authentication.principal.username} \n роль: ${#authentication.principal.authorities}|">Username</span>
         <form th:action="@{/logout}" method="post">
             <button type="submit">Logout</button>
@@ -30,7 +77,6 @@
         <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}">
            <a href="/admin/home">Домой админ</a>
         </span>
-        <div th:insert="~{fragment :: locale}"></div>
     </div>
     <div th:fragment="locale">
         <form action="">

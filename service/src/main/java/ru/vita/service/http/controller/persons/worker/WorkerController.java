@@ -25,7 +25,7 @@ public class WorkerController {
     @GetMapping("/home")
     public String home(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         model.addAttribute("user", service.getUserByUsername(userDetails.getUsername()));
-        return "persons/common/home";
+        return "persons/worker/home";
     }
 
     @GetMapping("/campers")

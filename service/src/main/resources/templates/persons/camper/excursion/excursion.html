@@ -2,27 +2,590 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бронирование экскурсии</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .excursion-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .excursion-container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .excursion-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            border-top: 5px solid;
+            border-top-color: #667eea;
+        }
+
+        .excursion-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .excursion-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .excursion-price {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(56, 161, 105, 0.3);
+        }
+
+        .excursion-price::before {
+            content: '₽';
+            font-size: 1rem;
+            margin-right: 5px;
+        }
+
+        .excursion-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .excursion-description::before {
+            content: '📝 ';
+            font-size: 1.2rem;
+        }
+
+        .booking-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .booking-form {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .submit-btn i {
+            font-size: 1.2rem;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method-option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .payment-method-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .payment-method-option.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f8fafc 0%, #edf2ff 100%);
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #667eea;
+        }
+
+        .payment-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .excursion-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .excursion-container {
+                padding: 15px;
+            }
+
+            .excursion-card {
+                padding: 25px;
+            }
+
+            .excursion-title {
+                font-size: 1.8rem;
+            }
+
+            .excursion-price {
+                position: static;
+                display: inline-block;
+                margin-bottom: 20px;
+            }
+
+            .booking-section {
+                padding: 20px;
+            }
+
+            .booking-form {
+                padding: 20px;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .excursion-title {
+                font-size: 1.5rem;
+            }
+
+            .excursion-description {
+                padding: 15px;
+            }
+
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <p th:text="|Вы на странице экскурсии ${excursion.service}!|">Страница экскурсии</p>
-    Красивое описание экскурсии!
-    <form action="/camper/user-excursion/book" method="post" style="display: inline;">
+<!-- Header -->
+<div class="excursion-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
+    </div>
 
-        <input type="hidden" name="excursionId" th:value="${excursion.id}">
-        <input type="hidden" name="purchasePrice" th:value="${excursion.price}">
-        <input type="hidden" name="paymentStatus" value="PENDING">
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">
+                <a href="/camper/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
 
-        <select name="paymentMethod" style="margin: 0 10px; padding: 5px;">
-            <option th:each="paymentMethod : ${paymentMethods}"
-                    th:value="${paymentMethod}"
-                    th:text="${paymentMethod}">paymentMethod</option>
-        </select>
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
+    </div>
+</div>
 
-        <input type="text" name="notes">
-        <button>Забронировать экскурсию</button>
-    </form>
+<!-- Основной контент -->
+<div class="excursion-container">
+    <div class="excursion-card">
+        <div class="excursion-price" th:text="${excursion.price}">Цена</div>
 
+        <h1 class="excursion-title">
+            Экскурсия: <span th:text="${excursion.service}">Название экскурсии</span>
+        </h1>
+
+        <div class="excursion-description">
+            Красивое описание экскурсии! Здесь вы можете найти подробную информацию о маршруте,
+            интересных местах, которые вы посетите, и что вас ожидает во время этой увлекательной поездки.
+        </div>
+
+        <div class="booking-section">
+            <h3 class="section-title">
+                <i class="bi bi-ticket-perforated"></i>
+                Бронирование экскурсии
+            </h3>
+
+            <form action="/camper/user-excursion/book" method="post" class="booking-form">
+                <input type="hidden" name="excursionId" th:value="${excursion.id}">
+                <input type="hidden" name="purchasePrice" th:value="${excursion.price}">
+                <input type="hidden" name="paymentStatus" value="PENDING">
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-credit-card"></i>
+                        Способ оплаты
+                    </label>
+                    <div class="payment-methods">
+                        <div th:each="paymentMethod : ${paymentMethods}"
+                             class="payment-method-option"
+                             th:data-value="${paymentMethod}"
+                             onclick="selectPaymentMethod(this)">
+                            <div class="payment-icon">
+                                <i th:if="${paymentMethod == 'CARD'}" class="bi bi-credit-card-2-front"></i>
+                                <i th:if="${paymentMethod == 'CASH'}" class="bi bi-cash"></i>
+                                <i th:if="${paymentMethod == 'ONLINE'}" class="bi bi-globe"></i>
+                            </div>
+                            <div class="payment-name" th:text="${paymentMethod}">paymentMethod</div>
+                        </div>
+                    </div>
+                    <select name="paymentMethod" class="form-select d-none" required>
+                        <option th:each="paymentMethod : ${paymentMethods}"
+                                th:value="${paymentMethod}"
+                                th:text="${paymentMethod}">paymentMethod</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-chat-left-text"></i>
+                        Дополнительные пожелания (необязательно)
+                    </label>
+                    <input type="text"
+                           name="notes"
+                           class="form-input"
+                           placeholder="Например: предпочтения по времени, особые требования...">
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="bi bi-check-circle"></i>
+                    Забронировать экскурсию
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript для выбора способа оплаты
+    function selectPaymentMethod(element) {
+        // Удаляем активный класс у всех элементов
+        document.querySelectorAll('.payment-method-option').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // Добавляем активный класс выбранному элементу
+        element.classList.add('active');
+
+        // Устанавливаем значение в скрытом поле
+        const paymentMethod = element.getAttribute('data-value');
+        document.getElementById('selectedPaymentMethod').value = paymentMethod;
+
+        // Также устанавливаем значение в обычном select (для совместимости)
+        document.querySelector('select[name="paymentMethod"]').value = paymentMethod;
+    }
+
+    // Автоматически выбираем первый способ оплаты при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        const firstPaymentMethod = document.querySelector('.payment-method-option');
+        if (firstPaymentMethod) {
+            selectPaymentMethod(firstPaymentMethod);
+        }
+    });
+
+    // Обработка формы
+    document.querySelector('.booking-form').addEventListener('submit', function(e) {
+        const paymentMethod = document.getElementById('selectedPaymentMethod').value;
+        if (!paymentMethod) {
+            e.preventDefault();
+            alert('Пожалуйста, выберите способ оплаты');
+            return false;
+        }
+
+        // Можно добавить дополнительную валидацию здесь
+        console.log('Бронирование экскурсии:', {
+            excursionId: document.querySelector('input[name="excursionId"]').value,
+            price: document.querySelector('input[name="purchasePrice"]').value,
+            paymentMethod: paymentMethod
+        });
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--    <p th:text="|Вы на странице экскурсии ${excursion.service}!|">Страница экскурсии</p>-->
+<!--    Красивое описание экскурсии!-->
+<!--    <form action="/camper/user-excursion/book" method="post" style="display: inline;">-->
+
+<!--        <input type="hidden" name="excursionId" th:value="${excursion.id}">-->
+<!--        <input type="hidden" name="purchasePrice" th:value="${excursion.price}">-->
+<!--        <input type="hidden" name="paymentStatus" value="PENDING">-->
+
+<!--        <select name="paymentMethod" style="margin: 0 10px; padding: 5px;">-->
+<!--            <option th:each="paymentMethod : ${paymentMethods}"-->
+<!--                    th:value="${paymentMethod}"-->
+<!--                    th:text="${paymentMethod}">paymentMethod</option>-->
+<!--        </select>-->
+
+<!--        <input type="text" name="notes">-->
+<!--        <button>Забронировать экскурсию</button>-->
+<!--    </form>-->
+
+<!--</body>-->
+<!--</html>-->

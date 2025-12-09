@@ -2,30 +2,834 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding-bottom: 50px;
+        }
+
+        /* Стили для header */
+        .schedule-header-bar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 13px;
+            color: #718096;
+            background: #f1f5f9;
+            padding: 3px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
+        }
+
+        /* Основной контент */
+        .schedule-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Фильтры */
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border-top: 5px solid #48bb78;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .filter-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+
+        .form-label i {
+            color: #667eea;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Результаты */
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .results-count {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #94a3b8;
+            font-size: 32px;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .empty-text {
+            color: #64748b;
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Карточки расписаний */
+        .schedules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .schedule-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+            border-color: #667eea;
+        }
+
+        .schedule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #9f7aea);
+            animation: gradient-shift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .schedule-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .schedule-date {
+            font-size: 0.9rem;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .schedule-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            color: #742a2a;
+        }
+
+        .status-completed {
+            background: linear-gradient(135deg, #bee3f8 0%, #90cdf4 100%);
+            color: #2a4365;
+        }
+
+        .schedule-content {
+            margin-top: 15px;
+        }
+
+        .schedule-action {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .schedule-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+
+        .detail-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .detail-content {
+            flex-grow: 1;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .schedule-header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .nav-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .schedule-container {
+                padding: 15px;
+            }
+
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .filter-section, .results-section {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .schedules-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .schedule-card {
+                padding: 25px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-title {
+                font-size: 1.7rem;
+            }
+
+            .schedule-action {
+                font-size: 1.1rem;
+            }
+
+            .detail-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div th:insert="~{fragment :: header}"></div>
-    <h1>Страница расписаний</h1>
-    <h2>Расписания</h2>
-    <form action="/camper/schedules">
-        <div>
-            <label for="date">date:
-                <input id="date" type="date" name="date">
-            </label><br>
-            <select name="status">
-                <option th:each="status : ${statuses}"
-                        th:value="${status}"
-                        th:text="${status}">Status</option>
-            </select><br>
+<!-- Header -->
+<div class="schedule-header-bar">
+    <div class="user-info">
+        <div class="user-avatar">
+            <i class="bi bi-person"></i>
         </div>
-        <button type="submit">Вывести</button>
-    </form>
-    <div th:if="${schedules == null || schedules.isEmpty()}">
-        Список расписаний пуст
+        <div class="user-details">
+            <div class="username">
+                <span th:text="${#authentication.principal.username}">Username</span>
+            </div>
+            <div class="user-role" th:text="${#authentication.principal.authorities}">
+                Роль пользователя
+            </div>
+        </div>
     </div>
-    <div th:each="schedule : ${schedules}">
-        <p th:text="|${schedule.dateTime} ${schedule.status.name()} ${schedule.action} назначил ${schedule.createdUser.username} кому назначил ${schedule.user.username}|">Schedule</p>
+
+    <div class="nav-links">
+            <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">
+                <a href="/camper/home" class="nav-link">
+                    <i class="bi bi-house-door"></i>
+                    Домой
+                </a>
+            </span>
+
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="logout-btn">
+                <i class="bi bi-box-arrow-right"></i>
+                Выйти
+            </button>
+        </form>
     </div>
+</div>
+
+<!-- Основной контент -->
+<div class="schedule-container">
+    <div class="page-header">
+        <h1 class="page-title">Страница расписаний</h1>
+        <p class="page-subtitle">Просмотр и фильтрация вашего расписания</p>
+    </div>
+
+    <!-- Фильтры -->
+    <div class="filter-section">
+        <h2 class="section-title">
+            <i class="bi bi-funnel"></i>
+            Фильтры расписаний
+        </h2>
+
+        <form class="filter-form" action="/camper/schedules">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-calendar-date"></i>
+                        Дата
+                    </label>
+                    <input id="date"
+                           type="date"
+                           name="date"
+                           class="form-input"
+                           placeholder="Выберите дату">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-flag"></i>
+                        Статус
+                    </label>
+                    <select name="status" class="form-select">
+                        <option value="">Все статусы</option>
+                        <option th:each="status : ${statuses}"
+                                th:value="${status}"
+                                th:text="${status}">Status</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="bi bi-search"></i>
+                Применить фильтры
+            </button>
+        </form>
+    </div>
+
+    <!-- Результаты -->
+    <div class="results-section">
+        <div class="results-header">
+            <h2 class="section-title">
+                <i class="bi bi-calendar-week"></i>
+                Расписания
+            </h2>
+            <div class="results-count" th:if="${schedules != null}">
+                Найдено: <span th:text="${schedules.size()}">0</span>
+            </div>
+        </div>
+
+        <div th:if="${schedules == null || schedules.isEmpty()}" class="empty-state">
+            <div class="empty-icon">
+                <i class="bi bi-calendar-x"></i>
+            </div>
+            <h3 class="empty-title">Список расписаний пуст</h3>
+            <p class="empty-text">
+                По выбранным фильтрам расписания не найдены.
+                Попробуйте изменить параметры поиска или выберите другую дату.
+            </p>
+        </div>
+
+        <div class="schedules-grid" th:unless="${schedules == null || schedules.isEmpty()}">
+            <div th:each="schedule : ${schedules}" class="schedule-card">
+                <div class="schedule-header">
+                    <div class="schedule-date">
+                        <i class="bi bi-clock"></i>
+                        <span th:text="${#temporals.format(schedule.dateTime, 'dd.MM.yyyy HH:mm')}">
+                                Дата и время
+                            </span>
+                    </div>
+                    <div th:classappend="'schedule-status ' +
+                                (${schedule.status.name() == 'ACTIVE'} ? 'status-active' :
+                                (${schedule.status.name() == 'PENDING'} ? 'status-pending' :
+                                (${schedule.status.name() == 'COMPLETED'} ? 'status-completed' : '')))"
+                         th:text="${schedule.status.name()}">
+                        Статус
+                    </div>
+                </div>
+
+                <div class="schedule-content">
+                    <h3 class="schedule-action" th:text="${schedule.action}">
+                        Действие
+                    </h3>
+
+                    <div class="schedule-details">
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-person-plus"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Назначил</div>
+                                <div class="detail-value" th:text="${schedule.createdUser.username}">
+                                    Пользователь
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-item">
+                            <div class="detail-icon">
+                                <i class="bi bi-person-check"></i>
+                            </div>
+                            <div class="detail-content">
+                                <div class="detail-label">Назначено кому</div>
+                                <div class="detail-value" th:text="${schedule.user.username}">
+                                    Пользователь
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Установка сегодняшней даты по умолчанию
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('date');
+        if (dateInput && !dateInput.value) {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            dateInput.value = formattedDate;
+        }
+
+        // Анимация карточек
+        const scheduleCards = document.querySelectorAll('.schedule-card');
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        scheduleCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = (index * 0.1) + 's';
+            observer.observe(card);
+        });
+
+        // Сохранение выбранных фильтров
+        const filterForm = document.querySelector('.filter-form');
+        const statusSelect = filterForm.querySelector('select[name="status"]');
+
+        // Восстановление значений из localStorage
+        const savedDate = localStorage.getItem('schedule_filter_date');
+        const savedStatus = localStorage.getItem('schedule_filter_status');
+
+        if (savedDate && dateInput) {
+            dateInput.value = savedDate;
+        }
+
+        if (savedStatus && statusSelect) {
+            statusSelect.value = savedStatus;
+        }
+
+        // Сохранение при изменении
+        if (dateInput) {
+            dateInput.addEventListener('change', function() {
+                localStorage.setItem('schedule_filter_date', this.value);
+            });
+        }
+
+        if (statusSelect) {
+            statusSelect.addEventListener('change', function() {
+                localStorage.setItem('schedule_filter_status', this.value);
+            });
+        }
+
+        // Очистка фильтров
+        const clearFiltersBtn = document.createElement('button');
+        clearFiltersBtn.type = 'button';
+        clearFiltersBtn.className = 'submit-btn';
+        clearFiltersBtn.style.background = 'linear-gradient(135deg, #718096 0%, #4a5568 100%)';
+        clearFiltersBtn.style.marginLeft = '15px';
+        clearFiltersBtn.innerHTML = '<i class="bi bi-x-circle"></i> Сбросить фильтры';
+
+        clearFiltersBtn.addEventListener('click', function() {
+            if (dateInput) {
+                dateInput.value = '';
+                localStorage.removeItem('schedule_filter_date');
+            }
+            if (statusSelect) {
+                statusSelect.value = '';
+                localStorage.removeItem('schedule_filter_status');
+            }
+            filterForm.submit();
+        });
+
+        const submitBtn = filterForm.querySelector('.submit-btn');
+        submitBtn.parentNode.insertBefore(clearFiltersBtn, submitBtn.nextSibling);
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <div th:insert="~{fragment :: header}"></div>-->
+<!--    <h1>Страница расписаний</h1>-->
+<!--    <h2>Расписания</h2>-->
+<!--    <form action="/camper/schedules">-->
+<!--        <div>-->
+<!--            <label for="date">date:-->
+<!--                <input id="date" type="date" name="date">-->
+<!--            </label><br>-->
+<!--            <select name="status">-->
+<!--                <option th:each="status : ${statuses}"-->
+<!--                        th:value="${status}"-->
+<!--                        th:text="${status}">Status</option>-->
+<!--            </select><br>-->
+<!--        </div>-->
+<!--        <button type="submit">Вывести</button>-->
+<!--    </form>-->
+<!--    <div th:if="${schedules == null || schedules.isEmpty()}">-->
+<!--        Список расписаний пуст-->
+<!--    </div>-->
+<!--    <div th:each="schedule : ${schedules}">-->
+<!--        <p th:text="|${schedule.dateTime} ${schedule.status.name()} ${schedule.action} назначил ${schedule.createdUser.username} кому назначил ${schedule.user.username}|">Schedule</p>-->
+<!--    </div>-->
+<!--</body>-->
+<!--</html>-->

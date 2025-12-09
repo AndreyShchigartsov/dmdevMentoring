@@ -31,10 +31,8 @@
             <a th:href="${rolePath} + '/schedules'">Посмотреть расписание</a><br><!-- В ней если работник можно названчить встречу-->
         </p>
         <p th:if="${user.role.name() == 'USER'}">
-            Админ вам выдал доступ пользователя <br>
             <a th:href="${rolePath} + '/campers'">Список отдыхающих</a><br>
         </p>
     </div>
-
 </body>
 </html>

@@ -2,31 +2,570 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        /* Общие стили */
+        body {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Контейнер для всей страницы */
+        .register-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* Карточка регистрации */
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Заголовок карточки */
+        .register-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .register-logo {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 36px;
+        }
+
+        .register-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .register-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Форма регистрации */
+        .register-form {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .form-label i {
+            color: #10b981;
+            width: 20px;
+            text-align: center;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+            box-sizing: border-box;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #10b981;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Требования к паролю */
+        .password-requirements {
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #065f46;
+        }
+
+        .requirements-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .requirements-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .requirements-list li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .requirements-list li i {
+            font-size: 12px;
+            color: #10b981;
+        }
+
+        /* Кнопки */
+        .register-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            border: 2px solid #10b981;
+            color: #10b981;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .login-btn:hover {
+            background: #10b981;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Сообщения об ошибках */
+        .error-container {
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c53030;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-item {
+            background: white;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            color: #c53030;
+            font-size: 14px;
+            border-left: 4px solid #fc8181;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .error-item i {
+            color: #fc8181;
+        }
+
+        /* Разделитель */
+        .form-divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .form-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .form-divider span {
+            background: white;
+            padding: 0 20px;
+            color: #718096;
+            font-size: 14px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Информация о системе */
+        .system-info {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .system-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .system-description {
+            font-size: 14px;
+            color: #718096;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 576px) {
+            .register-container {
+                padding: 10px;
+            }
+
+            .register-header {
+                padding: 30px 20px;
+            }
+
+            .register-form {
+                padding: 30px 20px;
+            }
+
+            .register-title {
+                font-size: 1.8rem;
+            }
+
+            .form-input {
+                padding: 14px 16px;
+            }
+        }
+
+        /* Эффект ввода */
+        .input-focus {
+            transform: translateY(-2px);
+        }
+
+        /* Стили для кнопок формы */
+        form {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-<div>
-    <h2>Страница регистрации!</h2>
-    <form action="/registration" method="post">
-        <div style="color: red" th:if="${errors}">
-            <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
-                Error message
-            </p>
+<div class="register-container">
+    <div class="register-card">
+        <!-- Заголовок -->
+        <div class="register-header">
+            <div class="register-logo">
+                <i class="bi bi-person-plus"></i>
+            </div>
+            <h1 class="register-title">Регистрация</h1>
+            <p class="register-subtitle">Создайте учетную запись в системе кемпинга</p>
         </div>
-        <div>
-            <input id="username" type="text" name="username">
-            <label for="username"><span th:text="#{login.username}">Username</span></label>
+
+        <!-- Форма регистрации -->
+        <div class="register-form">
+            <!-- Сообщения об ошибках -->
+            <div th:if="${errors}" class="error-container">
+                <div class="error-title">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>Обнаружены ошибки</span>
+                </div>
+                <ul class="error-list">
+                    <li th:each="error : ${errors}" class="error-item">
+                        <i class="bi bi-x-circle-fill"></i>
+                        <span th:text="${error.defaultMessage}">Error message</span>
+                    </li>
+                </ul>
+            </div>
+
+            <form action="/registration" method="post">
+                <!-- Поле имени пользователя -->
+                <div class="form-group">
+                    <label class="form-label" for="username">
+                        <i class="bi bi-person-circle"></i>
+                        <span th:text="#{login.username}">Имя пользователя</span>
+                    </label>
+                    <input id="username"
+                           type="text"
+                           name="username"
+                           class="form-input"
+                           placeholder="Придумайте имя пользователя"
+                           required
+                           autofocus
+                           minlength="3"
+                           maxlength="50">
+                    <div class="password-requirements">
+                        <div class="requirements-title">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Требования к имени пользователя:</span>
+                        </div>
+                        <ul class="requirements-list">
+                            <li><i class="bi bi-check-circle"></i> Минимум 3 символа</li>
+                            <li><i class="bi bi-check-circle"></i> Максимум 50 символов</li>
+                            <li><i class="bi bi-check-circle"></i> Только латинские буквы и цифры</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Поле пароля -->
+                <div class="form-group">
+                    <label class="form-label" for="password">
+                        <i class="bi bi-key"></i>
+                        <span th:text="#{login.password}">Пароль</span>
+                    </label>
+                    <input id="password"
+                           type="password"
+                           name="rawPassword"
+                           class="form-input"
+                           placeholder="Придумайте надежный пароль"
+                           required
+                           minlength="6">
+                    <div class="password-requirements">
+                        <div class="requirements-title">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Требования к паролю:</span>
+                        </div>
+                        <ul class="requirements-list">
+                            <li><i class="bi bi-check-circle"></i> Минимум 6 символов</li>
+                            <li><i class="bi bi-check-circle"></i> Рекомендуется использовать буквы и цифры</li>
+                            <li><i class="bi bi-check-circle"></i> Избегайте простых паролей</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Кнопка регистрации -->
+                <button type="submit" class="register-btn">
+                    <i class="bi bi-person-plus-fill"></i>
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <!-- Разделитель -->
+            <div class="form-divider">
+                <span>Уже есть аккаунт?</span>
+            </div>
+
+            <!-- Кнопка входа -->
+            <form action="/login">
+                <button type="submit" class="login-btn">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Войти в систему
+                </button>
+            </form>
+
+            <!-- Информация о системе -->
+            <div class="system-info">
+                <div class="system-name">Camping Management System</div>
+                <div class="system-description">После регистрации вам будет доступен базовый функционал системы</div>
+            </div>
         </div>
-        <div>
-            <input id="password" type="password" name="rawPassword">
-            <label for="password"><span th:text="#{login.password}">Password</span></label>
-        </div>
-        <button type="submit">Register</button>
-    </form>
-    <form action="/login">
-        <button type="submit">Login</button>
-    </form>
+    </div>
 </div>
+
+<script>
+    // Добавляем эффект фокуса на полях ввода
+    document.querySelectorAll('.form-input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('input-focus');
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.classList.remove('input-focus');
+        });
+    });
+
+    // Показываем/скрываем пароль
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('password');
+        const showPasswordBtn = document.createElement('button');
+        showPasswordBtn.type = 'button';
+        showPasswordBtn.innerHTML = '<i class="bi bi-eye"></i>';
+        showPasswordBtn.style.position = 'absolute';
+        showPasswordBtn.style.right = '10px';
+        showPasswordBtn.style.top = 'calc(50% + 15px)';
+        showPasswordBtn.style.background = 'none';
+        showPasswordBtn.style.border = 'none';
+        showPasswordBtn.style.color = '#718096';
+        showPasswordBtn.style.cursor = 'pointer';
+        showPasswordBtn.style.transform = 'translateY(-50%)';
+        showPasswordBtn.style.zIndex = '2';
+
+        passwordInput.parentElement.style.position = 'relative';
+        passwordInput.parentElement.appendChild(showPasswordBtn);
+
+        showPasswordBtn.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+        });
+
+        // Валидация в реальном времени
+        const usernameInput = document.getElementById('username');
+
+        usernameInput.addEventListener('input', function() {
+            validateUsername(this.value);
+        });
+
+        passwordInput.addEventListener('input', function() {
+            validatePassword(this.value);
+        });
+
+        function validateUsername(username) {
+            const requirements = document.querySelector('.requirements-list');
+            if (requirements) {
+                const items = requirements.querySelectorAll('li');
+                items[0].style.color = username.length >= 3 ? '#10b981' : '#dc2626';
+                items[1].style.color = username.length <= 50 ? '#10b981' : '#dc2626';
+                items[2].style.color = /^[a-zA-Z0-9]+$/.test(username) ? '#10b981' : '#dc2626';
+            }
+        }
+
+        function validatePassword(password) {
+            const requirements = document.querySelectorAll('.requirements-list')[1];
+            if (requirements) {
+                const items = requirements.querySelectorAll('li');
+                items[0].style.color = password.length >= 6 ? '#10b981' : '#dc2626';
+                items[1].style.color = /[a-zA-Z]/.test(password) && /[0-9]/.test(password) ? '#10b981' : '#dc2626';
+                items[2].style.color = !['password', '123456', 'qwerty'].includes(password.toLowerCase()) ? '#10b981' : '#dc2626';
+            }
+        }
+    });
+</script>
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Title</title>-->
+<!--    <link rel="stylesheet" href="/css/styles.css" th:href="@{/css/styles.css}">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div>-->
+<!--    <h2>Страница регистрации!</h2>-->
+<!--    <form action="/registration" method="post">-->
+<!--        <div style="color: red" th:if="${errors}">-->
+<!--            <p th:each="error : ${errors}" th:text="${error.defaultMessage}">-->
+<!--                Error message-->
+<!--            </p>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <input id="username" type="text" name="username">-->
+<!--            <label for="username"><span th:text="#{login.username}">Username</span></label>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <input id="password" type="password" name="rawPassword">-->
+<!--            <label for="password"><span th:text="#{login.password}">Password</span></label>-->
+<!--        </div>-->
+<!--        <button type="submit">Register</button>-->
+<!--    </form>-->
+<!--    <form action="/login">-->
+<!--        <button type="submit">Login</button>-->
+<!--    </form>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->

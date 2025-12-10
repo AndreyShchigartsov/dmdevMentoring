@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div><!--Страница выбора пользователя для добавления фото-->
+    <h1>Страница детей для добавления отряд!</h1>
+    <p>Список отдыхающих!</p>
+    <p>Выберете ребенка для добавления в отряд!</p>
+    <form action="/worker/structures/users">
+        <label for="username">Name:
+            <input id="username" type="text" name="username" th:value="${filter.username}">
+        </label><br>
+        <div>
+            <label for="page">Page:
+                <input id="page" type="number" name="page" th:value="${users.metadata.page}">
+            </label><br>
+            <label for="size">Size:
+                <input id="size" type="number" name="size" th:value="${users.metadata.size}">
+            </label><br>
+        </div>
+        <button type="submit">Filter</button>
+    </form>
+    <div th:each="user : ${users.content}">
+        <a th:href="@{'/worker/structures/' + ${user.id}}" th:text="|Добавить в отряд ребенка ${user.username} ${user.role.name()}|" >User</a>
+    </div>
+</body>
+</html>

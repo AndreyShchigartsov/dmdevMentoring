@@ -16,6 +16,7 @@
         <form th:action="@{'/admin/excursions/' + ${excursion.id} + '/delete'}" method="post">
             <button>Удалить</button>
         </form>
+        <div th:insert="~{fragment :: error}"></div>
     </div>
     <div th:if="${not structures.isEmpty()}">
         <a href="/admin/excursions/create">Добавить экскурсию'</a>

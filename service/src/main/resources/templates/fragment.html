@@ -11,9 +11,19 @@
         <form th:action="@{/logout}" method="post">
             <button type="submit">Logout</button>
         </form>
-        <!-- Для пользователей без роли ADMIN -->
-        <span th:unless="${#lists.contains(#authentication.principal.authorities.![authority], 'ADMIN')}">
+        <!-- Для пользователей с роли USER -->
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'USER')}">
             <a href="/user/home">Домой user</a>
+        </span>
+
+        <!-- Для пользователей с роли WORKER -->
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'WORKER')}">
+            <a href="/worker/home">Домой worker</a>
+        </span>
+
+        <!-- Для пользователей с роли CAMPER -->
+        <span th:if="${#lists.contains(#authentication.principal.authorities.![authority], 'CAMPER')}">
+            <a href="/camper/home">Домой camper</a>
         </span>
 
         <!-- Для пользователей с ролью ADMIN -->
@@ -30,6 +40,11 @@
                 <option value="ru">RU</option>
             </select>
         </form>
+    </div>
+    <div th:fragment="error" style="color: red" th:if="${errors}">
+        <p th:each="error : ${errors}" th:text="${error.defaultMessage}">
+            Error message
+        </p>
     </div>
 </body>
 </html>

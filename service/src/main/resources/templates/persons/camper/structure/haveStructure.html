@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница структуры</h1>
+    <div th:if="${structure != null}">
+        <div th:text="|Город: ${structure.name}|">Город</div>
+        <div th:text="|Губерния: ${structure.parentId.name}|">Губерния</div>
+        <div th:text="|Организация: ${structure.parentId.parentId.name}|">Организация</div>
+    </div>
+    <div th:if="${structure == null}">
+        Вы не принадлежите ни к одной структуре
+    </div>
+</body>
+</html>

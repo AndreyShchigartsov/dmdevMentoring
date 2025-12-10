@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница подтверждения оплаты экскурсий!</h1>
+    <p>Список неоплаченных экскурсий!</p>
+    <div th:each="userExcursion : ${notPaidUserExcursions}">
+      <p th:text="|Имя ${userExcursion.username} название экскурсии ${userExcursion.excursion} время брони ${userExcursion.purchaseDateTime}
+      статус оплаты ${userExcursion.paymentStatus.name()} способ оплаты ${userExcursion.paymentMethod.name()} пожелание ${userExcursion.notes}|" >User</p>
+      <form th:action="@{'/worker/user-excursions/payment/' + ${userExcursion.id}}" style="display: inline;" method="post">
+        <button type="submit">Подтвердить оплату</button>
+      </form>
+    </div>
+    <p th:if="payment != null" th:text="${payment}" style="color: green">
+        Error message
+    </p>
+</body>
+</html>

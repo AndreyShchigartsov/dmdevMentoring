@@ -23,7 +23,7 @@ SELECT SETVAL('structure_division_id_seq', (SELECT MAX(id) FROM structure_divisi
 
 INSERT INTO room(id, corps, room_number, seats_value, province_id)
 VALUES (1, '3ий корпус(аврора)', 101, 4, 8),
-       (2, '3ий корпус(аврора)', 102, 4, 8),
+       (2, '3ий корпус(аврора)', 102, 2, 8),
        (3, '3ий корпус(аврора)', 103, 4, 8),
        (4, '3ий корпус(аврора)', 104, 4, 8),
        (5, '4ий корпус(аврора)', 101, 4, 9),
@@ -38,10 +38,12 @@ VALUES (1, '3ий корпус(аврора)', 101, 4, 8),
        (14, '5ий корпус(Вита)', 162, 4, 6);
 SELECT SETVAL('room_id_seq', (SELECT MAX(id) FROM room));
 
-INSERT INTO users(id, username, lastname, password, date_registration, email, active, role, salary, job_position, room_id, structure_division_id)
-VALUES (1, 'Andrey', 'Shchigartsov', '12345', '10-05-2025', 'a.shch@yandex.ru', true, USER, 30000, 'SENIOR_COUNSELOR', 1, 1),
-       (2, 'Slava', 'Shchigartsov', '123456', '10-05-2025', 'slava.shchigartsov@yandex.ru', true, USER, 300000, 'CAMP_DIRECTOR', 2, 1),
-       (3, 'Valery', 'Orlov', '123456', '10-05-2025', 'valera.orlov@yandex.ru', true, USER, 300000, 'SENIOR_COUNSELOR', 2, 1);
+INSERT INTO users(id, username, password, registration_date, email, active, role, salary, job_position, room_id, structure_division_id, type)
+VALUES (1, 'Andrey', '12345', '2025-05-10', 'a.shch@yandex.ru', true, 'USER', 30000, 'SENIOR_COUNSELOR', 1, 1, 'User'),
+       (2, 'Slava', '123456', '2025-05-10', 'slava.shchigartsov@yandex.ru', true, 'USER', 300000, 'CAMP_DIRECTOR', 2, 1, 'User'),
+       (3, 'Valery', '123456', '2025-05-10', 'valera.orlov@yandex.ru', true, 'USER', 300000, 'SENIOR_COUNSELOR', 2, 1, 'User'),
+       (4, 'ValeryCamper', '123456', '2025-05-10', 'valeraCamper.orlov@yandex.ru', true, 'CAMPER', 300000, 'SENIOR_COUNSELOR', 10, 11, 'Camper'),
+       (5, 'Alexandr', '123456', '2025-05-10', 'Alexandr.orlov@yandex.ru', true, 'CAMPER', 300000, 'SENIOR_COUNSELOR', null, 2, 'Camper');
 SELECT SETVAL('users_id_seq', (SELECT MAX(id) FROM users));
 
 INSERT INTO event(id, name, category)
@@ -56,24 +58,37 @@ VALUES (1, 'Баскетбол', 'SPORT'),
        (9, 'Шахматы фишера', 'CHESS');
 SELECT SETVAL('event_id_seq', (SELECT MAX(id) FROM event));
 
-INSERT INTO schedule(id, user_id, event_id, structure_division_id, date_time, status, action)
-VALUES (1, 1, 2, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (2, 1, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (3, 2, 2, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (4, 2, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (5, 2, 4, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (6, 3, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
-       (7, 3, 2, null, '2024-05-20 14:30:00', 'ACTIVE', null);
+INSERT INTO schedule(id, user_id, user_created_id, event_id, structure_division_id, date_time, status, action)
+VALUES (1, 1, 2, 2, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (2, 1, 3, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (3, 2, 4, 2, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (4, 2, 1, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (5, 2, 3, 4, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (6, 3, 1, 3, null, '2024-05-20 14:30:00', 'ACTIVE', null),
+       (7, 3, 2, 2, null, '2025-11-10 14:30:00', 'ACTIVE', null);
 SELECT SETVAL('schedule_id_seq', (SELECT MAX(id) FROM schedule));
 
-INSERT INTO extra_service(id, structure_division_id, service, price, duration)
-VALUES (1, 1, 'Шоколадная фабрика', 2500, INTERVAL '200 minutes'),
-       (2, 1, 'Сап-серфинг', 800, INTERVAL '20 minutes'),
-       (3, 1, 'Квадрациклы', 800, INTERVAL '20 minutes'),
-       (4, 1, 'Дельфинарий', 800, INTERVAL '20 minutes'),
-       (5, 1, 'Самокат', 800, INTERVAL '20 minutes'),
-       (6, 1, 'Плавание', 500, INTERVAL '30 minutes');
-SELECT SETVAL('extra_service_id_seq', (SELECT MAX(id) FROM extra_service));
+INSERT INTO excursion(id, structure_division_id, service, price, duration)
+VALUES (1, 1, 'Шоколадная фабрика', 2500, 200),
+       (2, 1, 'Сап-серфинг', 800, 20),
+       (3, 1, 'Квадрациклы', 800, 20),
+       (4, 2, 'Дельфинарий', 800, 20),
+       (5, 2, 'Самокат', 800, 20),
+       (6, 2, 'Плавание', 500, 30);
+SELECT SETVAL('excursion_id_seq', (SELECT MAX(id) FROM excursion));
+
+INSERT INTO user_excursion(id, user_id, excursion_id, purchase_date, purchase_price, payment_status, payment_method, payment_reference, notes)
+VALUES (1, 1, 1, '2024-05-20 14:30:00', 300, 'CANCELLED', 'CARD', '12314251232', 'не умеет плавать'),
+       (2, 1, 1, '2024-05-20 14:30:00', 600, 'PENDING', 'CASH', '12314251232', 'не умеет прегать'),
+       (3, 2, 5, '2024-05-20 14:30:00', 300, 'CONFIRMED', 'CASH', '12314251232', 'не умеет петь'),
+       (4, 4, 4, '2024-05-20 14:30:00', 400, 'COMPLETED', 'CARD', '12314251232', 'не умеет выходить на орбиту'),
+       (5, 5, 5, '2024-05-20 14:30:00', 200, 'CANCELLED', 'CARD', '12314251232', 'не умеет прямо ходить'),
+       (6, 3, 3, '2024-05-20 14:30:00', 700, 'REFUNDED', 'ONLINE', '12314251232', 'asd'),
+       (7, 3, 2, '2024-05-20 14:30:00', 200, 'CANCELLED', 'CASH', '12314251232', 'умеет прямо ходить'),
+       (8, 2, 1, '2024-05-20 14:30:00', 400, 'REFUNDED', 'ONLINE', '12314251232', 'не умеет плавать'),
+       (9, 4, 4, '2024-05-20 14:30:00', 1200, 'CONFIRMED', 'CARD', '12314251232', 'умеет плавать'),
+       (10, 1, 1, '2024-05-20 14:30:00', 200, 'PENDING', 'ONLINE', '12314251232', 'не умеет плавать');
+SELECT SETVAL('user_excursion_id_seq', (SELECT MAX(id) FROM user_excursion));
 
 INSERT INTO image(id, path, user_id)
 VALUES (1, 'image/andrey/1.png', 1),

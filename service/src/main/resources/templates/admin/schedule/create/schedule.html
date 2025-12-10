@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <h1>Страница рассписаний</h1>
+
+    <a>Создать группу для общего рассписания</a>
+    <p>Интерфейс создания рассписания</p>
+    <form action="/admin/schedules/create" method="post">
+        <label for="createdUser">
+            <input id="createdUser" type="hidden" name="createdUser" th:value="${createdUser}">
+        </label><br>
+        <select name="user">
+            <option th:each="user : ${users}"
+                    th:value="${user.username}"
+                    th:text="${user.username}">User</option>
+        </select><br>
+        <select name="structureDivision">
+            <option value="">-- Выберите подразделение --</option>
+            <option th:each="structureDivision : ${structureDivisions}"
+                    th:value="${structureDivision.name}"
+                    th:text="${structureDivision.name}">StructureDivision</option>
+        </select><br>
+        <select name="event">
+            <option th:each="event : ${events}"
+                    th:value="${event.name}"
+                    th:text="${event.name}">Event</option>
+        </select><br>
+        <label for="dateTime">Время:
+            <input id="dateTime" type="datetime-local" name="dateTime">
+        </label><br>
+        <select name="status">
+            <option th:each="status : ${statuses}"
+                    th:value="${status}"
+                    th:text="${status}">Status</option>
+        </select><br>
+        <label for="action">Описание:
+            <input id="action" type="text" name="action">
+        </label><br>
+        <button type="submit">Добавить событие</button>
+    </form>
+    <div th:insert="~{fragment :: error}"></div>
+</body>
+</html>

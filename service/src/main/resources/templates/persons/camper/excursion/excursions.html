@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div th:insert="~{fragment :: header}"></div>
+    <p>Список экскурсий</p>
+    <div th:if="${excursions.isEmpty()}">
+        Список экскурсий пуст
+    </div>
+    <div th:each="excursion : ${excursions}">
+        <a th:href="@{'/camper/excursions/' + ${excursion.id}}" th:text="|Название экскурсии: ${excursion.service} Цена: ${excursion.price}|">Excursion</a>
+    </div>
+</body>
+</html>
